@@ -12,13 +12,18 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
+import RoundedButton from "../RoundedButton";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%'
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+    left: 0,
+    top: 0
   }
 }))
 
@@ -29,8 +34,9 @@ interface RewindCache {
 
 const LoadingStage: React.FC<{
   user: UserProfile,
+  onComplete: (data: RewindData) => void,
   ref: React.Ref<HTMLDivElement>
-}> = forwardRef(({user}, ref) => {
+}> = forwardRef(({user, onComplete}, ref) => {
   const [progress, setProgress] = useState(0)
   const [progressText, setProgressText] = useState('Loading...')
   const [rewindData, setRewindData] = useState<RewindData | null>(null)
@@ -41,6 +47,7 @@ const LoadingStage: React.FC<{
     if (cache) {
       try {
         const data: RewindCache = JSON.parse(cache)
+        data.data.firstTrack.listenedAt = new Date(data.data.firstTrack.listenedAt)
         if (data.data.user.name !== user.name) throw new Error('Username mismatch')
         setCacheData(data)
       } catch (e) {
@@ -63,6 +70,7 @@ const LoadingStage: React.FC<{
       cachedAt: new Date().getTime(),
       data
     }))
+    onComplete(data)
   }
 
   // @ts-ignore
@@ -71,6 +79,17 @@ const LoadingStage: React.FC<{
   }))
 
   const getFormatted = (d: number) => moment(d).format('MMM Do')
+
+  const fetchAgain = () => {
+    setCacheData(null)
+    localStorage.removeItem('cache')
+    fetchData()
+  }
+
+  const complete = () => {
+    if (cacheData?.data)
+      onComplete(cacheData?.data)
+  }
 
   const styles = useStyles()
   return <>
@@ -83,7 +102,8 @@ const LoadingStage: React.FC<{
                   <Box fontWeight={600}>We found out a past rewind.</Box>
                 </Typography>
                 <br/>
-                <Typography>You already used Musicorum Rewind at <strong>{getFormatted(cacheData.cachedAt)}</strong></Typography>
+                <Typography>You already used Musicorum Rewind
+                  at <strong>{getFormatted(cacheData.cachedAt)}</strong></Typography>
                 <ListItem>
                   <ListItemAvatar>
                     <Avatar style={{
@@ -91,11 +111,23 @@ const LoadingStage: React.FC<{
                       height: 50
                     }} src={cacheData.data.user.image[3]["#text"]}/>
                   </ListItemAvatar>
-                  <ListItemText primary={cacheData.data.user.realname} secondary={'@' + cacheData.data.user.name} />
+                  <ListItemText
+                    primary={<Box component="span" color="primary.main">
+                      {cacheData.data.user.realname}
+                    </Box>}
+                    secondary={'@' + cacheData.data.user.name}
+                  />
                 </ListItem>
-              <Box mt={2}>
-
-              </Box>
+                <Box my={2}>
+                  <RoundedButton onClick={complete} fullWidth color="primary">
+                    Continue
+                  </RoundedButton>
+                  <Box mt={1}>
+                    <RoundedButton onClick={fetchAgain} outlined fullWidth color="primary">
+                      Fetch again
+                    </RoundedButton>
+                  </Box>
+                </Box>
               </>
               : <>
                 <Typography component="h4" variant="h4">

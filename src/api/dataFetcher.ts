@@ -19,6 +19,7 @@ import {chunks as chunkArray} from '@reactgular/chunks'
 import BezierEasing from 'bezier-easing'
 import {addToMap} from "../utils";
 import MusicorumAPI from "./MusicorumAPI";
+import {userInfo} from "os";
 
 const year = 2019
 const startTime = new Date(year, 0, 0, 0, 0).getTime() / 1000

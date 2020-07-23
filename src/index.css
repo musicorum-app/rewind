@@ -2,19 +2,12 @@
   border-radius: 200px;
 }
 
-::-webkit-scrollbar {
-  display: none;
-}
+/*::-webkit-scrollbar {*/
+/*  display: none;*/
+/*}*/
 
 .App{
-  overflow-y: hidden;
   overflow-x: hidden;
   height: 100vh;
-  position: fixed;
   width: 100vw;
-}
-
-.no-limit-scroll {
-  overflow-y: scroll !important;
-
 }

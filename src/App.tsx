@@ -1,20 +1,19 @@
-import React, {useRef, useState} from 'react';
-import logo from './logo.svg';
+import React, {useEffect, useRef, useState} from 'react';
+import {TweenMax, TimelineMax, Power3, Sine} from 'gsap'
 import './App.css';
 import Button from '@material-ui/core/Button/Button';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {createStyles, Theme, Grid, TextField, LinearProgress} from "@material-ui/core";
 import StartGraphic from './assets/start.svg'
 import Box from "@material-ui/core/Box";
-import TweenOne from 'rc-tween-one'
 import API from "./api";
-import {UserProfile} from "./api/interfaces";
+import {RewindData, UserProfile} from "./api/interfaces";
 import {DEFAULT_AVATAR} from "./api/Constants";
 import Typography from "@material-ui/core/Typography";
 import moment from 'moment'
 import LoadingStage from "./stages/loading";
-import Slide from "@material-ui/core/Slide";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import RewindStage from "./stages/rewind";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   mainBtn: {
@@ -49,8 +48,83 @@ function App() {
   const [user, setUser] = useState('metye')
   const [userData, setUserData] = useState<UserProfile | null>(null)
   const [showStage0, setShowStage0] = useState(true)
+  const [showStage1, setShowStage1] = useState(false)
+  const [formTimeline, setFormTimeline] = useState<TimelineMax | null>(null)
+  const [rewindStartTimeline, setStartTimeline] = useState<TimelineMax | null>(null)
+  const [rewindData, setRewindData] = useState<RewindData | null>(null)
+  const [showApp, setShowApp] = useState(true)
+
   const smallHeight = useMediaQuery('(max-height:700px)');
-  const loadingRef = useRef()
+  const smallWidth = useMediaQuery('(max-width:580px)');
+  const loadingRef = useRef(null)
+
+  // Animation refs
+  const mainImageRef = useRef(null)
+  const mainTextRef = useRef(null)
+  const mainSubTextRef = useRef(null)
+  const mainButtonRef = useRef(null)
+  const formRef = useRef(null)
+  const userAccountRef = useRef(null)
+  const loadingDivRef = useRef(null)
+  const rewindStageRef = useRef(null)
+
+  if (rewindStartTimeline) {
+    rewindStartTimeline.play()
+    setStartTimeline(null)
+  }
+
+  useEffect(() => {
+    // doAnimation()
+
+    const data: {} = JSON.parse(localStorage.getItem('cache') as string)
+    // @ts-ignore
+    data.data.firstTrack.listenedAt = new Date(data.data.firstTrack.listenedAt)
+    // @ts-ignore
+    setRewindData(data.data)
+    setUserData(null)
+    setShowApp(false)
+    setShowStage1(true)
+  }, [])
+
+  const doAnimation = () => {
+    TweenMax.fromTo([mainTextRef, mainSubTextRef, mainButtonRef].map(r => r.current), 2.8, {
+      y: '50vh',
+      opacity: 0
+    }, {
+      y: 0,
+      opacity: 1,
+      stagger: 0.25,
+      ease: Power3.easeOut,
+      delay: 0.3
+    })
+    TweenMax.fromTo(
+      mainImageRef.current, 3, {
+        y: -400,
+        opacity: 0
+      }, {
+        y: 0,
+        opacity: 1,
+        ease: Power3.easeOut,
+        delay: 0.3
+      }
+    )
+
+    const tl = new TimelineMax()
+    tl.to(mainButtonRef.current, {
+      x: '-180vw',
+      ease: Sine.easeInOut,
+      stagger: 0
+    }, 0)
+    tl.fromTo(formRef.current, {
+      x: '180vw',
+    }, {
+      x: 0,
+      ease: Sine.easeInOut,
+      stagger: 0
+    }, 0)
+    tl.pause()
+    setFormTimeline(tl)
+  }
 
   const handleUserChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUser(event.target.value)
@@ -70,305 +144,241 @@ function App() {
   }
 
   const startLoad = () => {
+    const tl = new TimelineMax()
+    tl.to(userAccountRef.current, {
+      opacity: 0,
+      y: 50,
+      onComplete: () => setShowStage0(false)
+    })
+    tl.fromTo(loadingDivRef.current, {
+      opacity: 0,
+      top: -50
+    }, {
+      opacity: 1,
+      top: 0,
+      // @ts-ignore
+      onComplete: () => loadingRef.current.load()
+    })
+    tl.play()
+
     setStage(1)
-    // @ts-ignore
-    loadingRef.current.load()
-    setTimeout(() => {
-      setShowStage0(false)
-    }, 900)
   }
 
-  const ease = 'easeOutQuart'
-  return (
-    <div className={!formAnimation ? 'App' : 'no-limit-scroll App'}>
-      <TweenOne
-        animation={{
-          right: '0vw',
-          duration: 900,
-          ease
-        }}
-        style={{
-          position: 'relative',
-          right: '-200vw',
-          height: '100vh'
-        }}
-        componentProps={{
-          show: stage === 1
-        }}
-        paused={stage !== 1}
-      >
-        {
-          // @ts-ignore
-          userData ? <LoadingStage user={userData} ref={loadingRef}/> : null
-        }
-      </TweenOne>
-      <TweenOne
-        animation={{
-          right: '200vw',
-          duration: 900,
-          ease: 'easeInOutQuint',
-        }}
-        style={{
-          position: 'relative',
-          right: '0vw',
-          top: '-100vh'
-        }}
-        componentProps={{
-          show: stage === 0
-        }}
-        paused={stage === 0}
-      >
+  const startForm = () => {
+    setFormAnimation(true)
+    formTimeline?.play()
+  }
+
+  const fetchComplete = (data: RewindData) => {
+    setShowStage1(true)
+    setRewindData(data)
+    const tl = new TimelineMax({paused: true})
+    tl.to(loadingDivRef.current, {
+      opacity: 0,
+      duration: 0.4,
+      onComplete: () => setUserData(null)
+    })
+    tl.fromTo(rewindStageRef.current, {
+      opacity: 0,
+    }, {
+      opacity: 1,
+      duration: 0.4,
+      onComplete: () => setShowApp(false)
+    })
+
+    setStartTimeline(tl)
+  }
+
+  return <div>
+
+    <div style={{
+      // opacity: 0,
+    }} ref={rewindStageRef}>
+      {
+        showStage1 && rewindData ? <RewindStage data={rewindData}/> : null
+      }
+    </div>
+    {
+      showApp ? <div className={'App'}>
+        <div style={{
+          opacity: 0,
+        }} ref={loadingDivRef}>
+          {
+            userData && !showStage0 ?
+              <LoadingStage onComplete={fetchComplete} user={userData as UserProfile} ref={loadingRef}/> : null
+          }
+        </div>
         {
           showStage0 ? (
-            <div>
-              <TweenOne
-                animation={{
-                  y: 300,
-                  opacity: 1,
-                  duration: 2000,
-                  ease,
-                }}
-                style={{
-                  position: 'relative',
-                  top: -300,
-                  opacity: 0
-                }}
-              >
-                <img style={{
-                  maxWidth: smallHeight ? '80%' : '50%'
-                }} src={StartGraphic} className={styles.startGraphic}/>
-              </TweenOne>
+            <div ref={userAccountRef}>
+              <img style={{
+                maxWidth: smallHeight ? '80%' : '70%'
+              }}
+                   src={StartGraphic}
+                   className={styles.startGraphic}
+                   ref={mainImageRef}
+              />
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <TweenOne
-                    animation={{
-                      top: 0,
-                      ease,
-                      delay: 0,
-                      opacity: 1,
-                      duration: 2000
-                    }}
-                    style={{
-                      position: 'relative',
-                      top: '100vw',
-                      opacity: 0
-                    }}
-                  >
-                    <Box fontWeight={800} fontSize={30} mb={1}>
+                  <div ref={mainTextRef}>
+                    <Box fontWeight={800} fontSize={smallWidth ? 23 : 30} mb={1} mt={5} mx={2}>
                       Let's rewind your <Box component="span" color="primary.main">2020</Box> on music
                     </Box>
-                  </TweenOne>
-                  <TweenOne
-                    animation={{
-                      top: 0,
-                      ease,
-                      delay: 300,
-                      opacity: 1,
-                      duration: 1700
-                    }}
-                    style={{
-                      position: 'relative',
-                      top: '100vw',
-                      opacity: 0
-                    }}
-                  >
-                    <Box fontSize={20}>
+                  </div>
+                  <div ref={mainSubTextRef}>
+                    <Box fontSize={smallWidth ? 15 : 20}>
                       from your last.fm profile
                     </Box>
-                  </TweenOne>
+                  </div>
                 </Grid>
 
                 <Grid item xs={12}>
-                  <TweenOne
-                    animation={{
-                      top: 0,
-                      ease,
-                      delay: 600,
-                      opacity: 1,
-                      duration: 1400
-                    }}
-                    style={{
-                      position: 'relative',
-                      top: '120vw',
-                      opacity: 0
-                    }}
+                  <Button
+                    ref={mainButtonRef}
+                    color="primary"
+                    size="large"
+                    variant="contained"
+                    disableElevation
+                    className={styles.mainBtn}
+                    onClick={startForm}
                   >
-                    <TweenOne
-                      animation={{
-                        right: '100vw',
-                        ease: 'easeOutQuad',
-                        duration: 600
-                      }}
-                      style={{
-                        position: 'relative',
-                        right: 0
-                      }}
-                      paused={!formAnimation}
-                    >
-                      <Button
-                        color="primary"
-                        size="large"
-                        variant="contained"
-                        disableElevation
-                        className={styles.mainBtn}
-                        onClick={() => {
-                          setFormAnimation(true)
-                        }}
-                      >
-                        Start
-                      </Button>
-                    </TweenOne>
-                    <TweenOne
-                      animation={{
-                        right: 0,
-                        ease: 'easeOutQuad',
-                        duration: 600,
-                      }}
-                      style={{
-                        position: 'relative',
-                        right: '-100vw',
-                        top: -53
-                      }}
-                      paused={!formAnimation}
-                    >
-                      {
-                        userData ? <Grid container justify="center" spacing={1}>
-                            {
-                              !!userData.name ? <>
-                                <Grid item xs={12}>
-                                  <img className={styles.avatar} src={getAvatar()} alt="lastfm avatar"/>
-                                </Grid>
-                                <Grid item xs={12}>
-                                  <Typography color="primary" variant="h3">
-                                    <Box fontWeight={800}>
-                                      {userData.realname || userData.name}
-                                    </Box>
-                                  </Typography>
-                                  <Typography variant="h5">
-                                    <Box fontWeight={600} mt={1} mb={1}>
-                                      @{userData.name}
-                                    </Box>
-                                  </Typography>
-                                  <Typography>
-                                    Scrobbling since {moment(userData.registered["#text"] * 1000).format('MMMM Do YYYY')}
-                                  </Typography>
-                                </Grid>
-                                <Grid item xs={12} sm={6} xl={4}>
-                                  <Box marginX={1}>
-                                    <Grid container justify="center" spacing={2}>
-                                      <Grid item xs={12} sm={6}>
-                                        <Button
-                                          fullWidth
-                                          color="primary"
-                                          size="large"
-                                          type="submit"
-                                          variant="outlined"
-                                          className={styles.formBtn}
-                                          onClick={() => {
-                                            setUserData(null)
-                                            setLoading(false)
-                                          }}
-                                        >
-                                          Back
-                                        </Button>
-                                      </Grid>
-                                      <Grid item xs={12} sm={6}>
-                                        <Button
-                                          fullWidth
-                                          color="primary"
-                                          size="large"
-                                          type="submit"
-                                          variant="contained"
-                                          className={styles.continueBtn}
-                                          onClick={startLoad}
-                                        >
-                                          Continue
-                                        </Button>
-                                      </Grid>
-                                    </Grid>
-                                  </Box>
-                                </Grid>
-                              </> : <>
-                                <Typography variant="h6" color="error">
-                                  User not found
-                                </Typography>
-                                <Grid item xs={12} sm={6}>
-                                  <Button
-                                    fullWidth
-                                    color="primary"
-                                    size="large"
-                                    type="submit"
-                                    variant="outlined"
-                                    className={styles.formBtn}
-                                    onClick={() => {
-                                      setUserData(null)
-                                      setLoading(false)
-                                    }}
-                                  >
-                                    Back
-                                  </Button>
-                                </Grid>
-                              </>
-                            }
-                          </Grid>
-                          : <form noValidate onSubmit={handleStart}>
-                            <Grid container justify="center" spacing={1}>
-                              <Grid item xs={12}>
-                                <Grid justify="center" container>
-                                  <Grid item xs={12}>
-                                    <Grid container justify="center">
-                                      <Grid item xs={12} sm={6} xl={4}>
-                                        <Box mb={1} mt={1} style={{
-                                          height: 10
-                                        }}>
-                                          {
-                                            loading ?
-                                              <LinearProgress/>
-                                              : <></>
-                                          }
-                                        </Box>
-                                      </Grid>
-                                    </Grid>
+                    Start
+                  </Button>
+                  {
+                    userData ? <Grid container justify="center" spacing={1}>
+                        {
+                          !!userData.name ? <>
+                            <Grid item xs={12}>
+                              <img className={styles.avatar} src={getAvatar()} alt="lastfm avatar"/>
+                            </Grid>
+                            <Grid item xs={12}>
+                              <Typography color="primary" variant="h3">
+                                <Box fontWeight={800}>
+                                  {userData.realname || userData.name}
+                                </Box>
+                              </Typography>
+                              <Typography variant="h5">
+                                <Box fontWeight={600} mt={1} mb={1}>
+                                  @{userData.name}
+                                </Box>
+                              </Typography>
+                              <Typography>
+                                Scrobbling since {moment(userData.registered["#text"] * 1000).format('MMMM Do YYYY')}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={6} xl={4}>
+                              <Box marginX={1} mb={5}>
+                                <Grid container justify="center" spacing={2}>
+                                  <Grid item xs={12} sm={6}>
+                                    <Button
+                                      fullWidth
+                                      color="primary"
+                                      size="large"
+                                      type="submit"
+                                      variant="outlined"
+                                      className={styles.formBtn}
+                                      onClick={() => {
+                                        setUserData(null)
+                                        setLoading(false)
+                                      }}
+                                    >
+                                      Back
+                                    </Button>
                                   </Grid>
+                                  <Grid item xs={12} sm={6}>
+                                    <Button
+                                      fullWidth
+                                      color="primary"
+                                      size="large"
+                                      type="submit"
+                                      variant="contained"
+                                      className={styles.continueBtn}
+                                      onClick={startLoad}
+                                    >
+                                      Continue
+                                    </Button>
+                                  </Grid>
+                                </Grid>
+                              </Box>
+                            </Grid>
+                          </> : <>
+                            <Typography variant="h6" color="error">
+                              User not found
+                            </Typography>
+                            <Grid item xs={12} sm={6}>
+                              <Button
+                                fullWidth
+                                color="primary"
+                                size="large"
+                                type="submit"
+                                variant="outlined"
+                                className={styles.formBtn}
+                                onClick={() => {
+                                  setUserData(null)
+                                  setLoading(false)
+                                }}
+                              >
+                                Back
+                              </Button>
+                            </Grid>
+                          </>
+                        }
+                      </Grid>
+                      : <form ref={formRef} noValidate onSubmit={handleStart}>
+                        <Grid container justify="center" spacing={1}>
+                          <Grid item xs={12}>
+                            <Grid justify="center" container>
+                              <Grid item xs={12}>
+                                <Grid container justify="center">
                                   <Grid item xs={12} sm={6} xl={4}>
-                                    <Box paddingX={3} mb={2}>
-                                      <TextField
-                                        fullWidth
-                                        label="Last.fm username"
-                                        variant="outlined"
-                                        onChange={handleUserChange}
-                                        value={user}
-                                      />
+                                    <Box mb={1} mt={1} style={{
+                                      height: 10
+                                    }}>
+                                      {
+                                        loading ?
+                                          <LinearProgress/>
+                                          : <></>
+                                      }
                                     </Box>
                                   </Grid>
                                 </Grid>
                               </Grid>
-                              <Grid item xs={10} sm={4} xl={3}>
-                                <Button
-                                  fullWidth
-                                  color="primary"
-                                  size="large"
-                                  type="submit"
-                                  variant="outlined"
-                                  className={styles.formBtn}
-                                >
-                                  Start
-                                </Button>
+                              <Grid item xs={12} sm={6} xl={4}>
+                                <Box paddingX={3} mb={2}>
+                                  <TextField
+                                    fullWidth
+                                    label="Last.fm username"
+                                    variant="outlined"
+                                    onChange={handleUserChange}
+                                    value={user}
+                                  />
+                                </Box>
                               </Grid>
                             </Grid>
-                          </form>
-                      }
-                    </TweenOne>
-                  </TweenOne>
+                          </Grid>
+                          <Grid item xs={10} sm={4} xl={3}>
+                            <Button
+                              fullWidth
+                              color="primary"
+                              size="large"
+                              type="submit"
+                              variant="outlined"
+                              className={styles.formBtn}
+                            >
+                              Start
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </form>
+                  }
                 </Grid>
               </Grid>
             </div>
           ) : <></>
         }
-      </TweenOne>
-
-    </div>
-  );
+      </div> : null
+    }
+  </div>
 }
 
 export default App;

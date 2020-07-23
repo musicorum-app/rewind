@@ -1,18 +1,6 @@
 .App {
   text-align: center;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -35,4 +23,56 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.textCenter {
+  white-space: normal;
+}
+
+.yearBox {
+  text-align: center;
+  width: 65px;
+  font-size: 19px;
+}
+.yearBoxes {
+  position: absolute;
+  right: 28px;
+  bottom: 28px;
+  overflow: hidden;
+}
+
+.outBox {
+  overflow: hidden;
+}
+
+.monthBar {
+  width: 20px
+}
+
+.actual {
+  background: #FD0F57;
+}
+
+.last {
+  background: white;
+}
+
+.monthItem {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+}
+
+.graphs {
+  position: absolute;
+  bottom: 28px;
+  width: calc(100% - 28px - 65px) !important;
+}
+
+.monthName {
+  width: 100%;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 4px;
 }
