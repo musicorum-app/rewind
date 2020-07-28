@@ -46,27 +46,56 @@
 }
 
 .monthBar {
-  width: 20px
+  width: 20px;
+  pointer-events: none;
 }
 
-.actual {
+.monthBar.actual {
   background: #FD0F57;
 }
 
-.last {
+.monthBar.last {
   background: white;
+}
+
+.monthSection > * {
+  pointer-events: none;
 }
 
 .monthItem {
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
   justify-content: center;
+  padding-top: 10px;
+  pointer-events: none;
+}
+
+.monthSection {
+  transition: background 0.2s;
+  border-radius: 3px;
+}
+
+.monthSection:hover > .selectedMonth {
+  display: flex;
+}
+
+.graphs:hover {
+  cursor: none;
+}
+
+.monthSection.selected {
+  border: 1.3px solid #FD0F57;
+}
+
+.monthSection:hover {
+  background: rgba(255, 255, 255, 0.09);
 }
 
 .graphs {
   position: absolute;
   bottom: 28px;
-  width: calc(100% - 28px - 65px) !important;
+  margin-left: 20px !important;
+  width: calc(100% - 38px - 28px - 65px) !important;
 }
 
 .monthName {
@@ -75,4 +104,89 @@
   text-transform: uppercase;
   font-weight: 600;
   margin-top: 4px;
+  margin-bottom: -3px;
+}
+
+.selectedMonthImage {
+  max-width: 170px;
+  margin-left: 18px;
+}
+
+.selectedMonth {
+  display: flex;
+  align-content: center;
+  z-index: 2000;
+  pointer-events: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.monthTooltipSection > p {
+  font-weight: 900;
+  color: black;
+  font-size: 17px;
+  text-align: center;
+  padding: 0px 8px 0px 8px;
+  margin: 4px 8px 4px 8px;
+  pointer-events: none;
+}
+
+.monthTooltipSection {
+  display: flex;
+  align-items: center;
+  border: 1px solid white;
+  margin: 0px;
+  background: black;
+
+}
+
+.monthTooltipSection.last {
+  border-color: white;
+  border-right-color: black;
+  border-radius: 5px 0px 0px 5px;
+  padding-left: 7px;
+  margin-right: -2px;
+}
+
+.monthTooltipSection.actual {
+  border-color: #FD0F57;
+  border-left-color: black;
+  border-radius: 0px 5px 5px 0px;
+  padding-right: 7px;
+  margin-left: -2px;
+}
+
+.monthTooltipSection.actual > p {
+  color: #FD0F57
+}
+
+.monthTooltipSection.last > p {
+  color: white;
+}
+
+.selectedMonthTop {
+  display: flex;
+}
+
+.selectedMonthArtist {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  flex-direction: column;
+}
+
+.selectedMonthTooltipImage {
+  width: 20px;
+  height: 20px;
+  border-radius: 32px;
+}
+
+.odometer-inside {
+  font-family: Montserrat;
+}
+
+#scrobbleCount {
+  width: 100%;
+  margin: 0;
 }

@@ -76,14 +76,18 @@ function App() {
   useEffect(() => {
     // doAnimation()
 
-    const data: {} = JSON.parse(localStorage.getItem('cache') as string)
-    // @ts-ignore
-    data.data.firstTrack.listenedAt = new Date(data.data.firstTrack.listenedAt)
-    // @ts-ignore
-    setRewindData(data.data)
-    setUserData(null)
-    setShowApp(false)
-    setShowStage1(true)
+    try {
+      const data: {} = JSON.parse(localStorage.getItem('cache') as string)
+      // @ts-ignore
+      data.data.firstTrack.listenedAt = new Date(data.data.firstTrack.listenedAt)
+      // @ts-ignore
+      setRewindData(data.data)
+      setUserData(null)
+      setShowApp(false)
+      setShowStage1(true)
+    } catch (e) {
+      doAnimation()
+    }
   }, [])
 
   const doAnimation = () => {

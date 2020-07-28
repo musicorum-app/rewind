@@ -15,6 +15,7 @@
     "bezier-easing": "^2.1.0",
     "gsap": "^3.4.2",
     "moment": "^2.26.0",
+    "odometer": "^0.4.8",
     "rc-tween-one": "^2.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
