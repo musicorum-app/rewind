@@ -1,15 +1,18 @@
 import React, {forwardRef, MouseEventHandler, useEffect, useRef, Ref, useState} from "react";
-import {MonthData, RewindData} from "../api/interfaces";
+import {FormattedArtist, MonthData, RewindData, SpotifyArtistBase} from "../api/interfaces";
 import Grid from "@material-ui/core/Grid/Grid";
 import Box from "@material-ui/core/Box/Box";
 import Container from "@material-ui/core/Container/Container";
 import Typography from "@material-ui/core/Typography/Typography";
 import Link from "@material-ui/core/Link/Link";
-import {gsap} from 'gsap'
+import {gsap, TimelineMax} from 'gsap'
 import {ScrollTrigger} from 'gsap/ScrollTrigger'
-import {convertRange, handleArtistImage} from "../utils";
+import {convertRange, getShuffledArray, handleArtistImage} from "../utils";
 // @ts-ignore
 import Odometer from 'odometer';
+import SplittedWordText from "../SplittedWordText";
+import {getMostListenedTrackFromArtist} from "../api/dataAnalyzer";
+import {SHOW_PEDRO_PRINT} from "../api/Constants";
 
 interface MonthState {
   actual: MonthData,
@@ -40,14 +43,19 @@ const RewindStage: React.FC<{
   const dateRef = useRef(null)
   const firstTrackSecondTextRef = useRef(null)
   const firstTrackImageRef = useRef(null)
+  const firstTrackImageSectionRef = useRef(null)
   const firstTrackInfo = useRef(null)
 
   const scrobbleSectionRef = useRef(null)
+
+  const graphItWasLikeThatRef = useRef(null)
 
   const graphSectionRef = useRef(null)
   const graphWelcomeTextRef = useRef(null)
   const graphYear0Ref = useRef(null)
   const graphYear1Ref = useRef(null)
+
+  const artistScrobblesNode = useRef(null)
 
   const getResponsiveness = () => {
     const height = window.innerHeight
@@ -79,26 +87,23 @@ const RewindStage: React.FC<{
 
   useEffect(() => {
     if (firstTrackAnimated) return
-    console.log('loaded')
-    // @ts-ignore
-    firstTrackTimeline.fromTo(firstTrackImageRef.current, {
-      opacity: 0,
-      position: 'absolute',
-      x: -50
-    }, {
-      opacity: 1,
-      duration: 3.5,
-      x: 0,
-    }, "-=8")
-      .fromTo(firstTrackInfo.current, {
-        opacity: 0,
-        position: 'absolute',
-
-        x: -50
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: '#presentation',
+        endTrigger: '#presentationEnd',
+        start: 'top 0%',
+        end: 'bottom 100%',
+        scrub: .3,
+        // markers: true,
+      }
+    })
+      .fromTo('.progressBar', {
+        height: 0
       }, {
-        opacity: 1,
-        x: 0,
-      }, "-=6")
+        height: '100vh',
+        ease: "linear"
+      })
+
     setFirstTrackAnimated(true)
   }, [firstTrackAnimated, firstTrackTimeline])
 
@@ -108,6 +113,8 @@ const RewindStage: React.FC<{
     if (disclaimerRef && disclaimerRef.current) {
       window.addEventListener('mousemove', ev => handleMouseMove(ev))
       window.addEventListener('resize', () => setRefresh(Math.random()))
+
+
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: disclaimerRef.current!,
@@ -143,23 +150,41 @@ const RewindStage: React.FC<{
           duration: 3,
           opacity: 1,
         })
-        .to(dateRef.current, {
-          x: '150vw',
-          duration: 9,
-          opacity: 0.7
+
+      const imgTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: firstTrackImageSectionRef.current!,
+          // markers: true,
+          scrub: 0.2,
+          start: 'top 50%',
+          end: 'bottom 0%'
+        }
+      })
+        .fromTo(firstTrackImageRef.current, {
+          y: window.innerHeight / 1.6
+        }, {
+          y: -(window.innerHeight / 1.6)
         })
-        .to(firstTrackSecondTextRef.current, {
-          x: '-150vw',
-          duration: 9,
-          // scrub: 2,
-          opacity: 0.7
-        }, "-=9")
+      // .to(dateRef.current, {
+      //   x: '150vw',
+      //   duration: 9,
+      //   opacity: 0.7
+      // })
+      // .to(firstTrackSecondTextRef.current, {
+      //   x: '-150vw',
+      //   duration: 9,
+      //   // scrub: 2,
+      //   opacity: 0.7
+      // }, "-=9")
       setFirstTrackTimeline(firstTrackTL)
 
       animateScrobbleCount()
+      animateItWasLikeThat()
       animateGraphs()
+
+      animateArtists()
     }
-  }, [disclaimerRef])
+  }, [disclaimerRef, graphYear1Ref, artistScrobblesNode])
 
   const animateScrobbleCount = () => {
     const scrobbles = data.stats.scrobbles - 1
@@ -171,7 +196,7 @@ const RewindStage: React.FC<{
         trigger: scrobbleSectionRef.current!,
         start: 'top 20%',
         end: 'top 20%',
-        markers: true,
+        // markers: true,
         // pin: true,
         // scrub: .2
       }
@@ -181,7 +206,7 @@ const RewindStage: React.FC<{
           const od = new Odometer({
             el: document.getElementById('scrobbleCount'),
             value: 0,
-            duration: 5000
+            duration: 80000
           })
           console.log(od)
           od.render()
@@ -192,9 +217,43 @@ const RewindStage: React.FC<{
         //   // setScrobbleCount(counter.scrobbles)
         // }
       })
-      // .to({}, {
-      //   duration: 1
-      // })
+    // .to({}, {
+    //   duration: 1
+    // })
+  }
+
+  const animateItWasLikeThat = () => {
+    const markers = false
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: '#itWasLikeThatSection',
+        markers,
+        start: 'top 60%',
+        end: 'top 40%',
+        scrub: .5
+      }
+    })
+      .from('#graphItWasLikeThat', {
+        y: 90,
+        opacity: 0,
+        scale: .9
+      })
+
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: '#itWasLikeThatSection',
+        markers,
+        start: 'bottom 55%',
+        end: 'bottom 35%',
+        scrub: .5
+      }
+    })
+      .to('#graphItWasLikeThat', {
+        y: -90,
+        opacity: 0,
+        scale: .9
+      })
+
   }
 
   const animateFirstTrackImage = () => {
@@ -243,6 +302,104 @@ const RewindStage: React.FC<{
       }, `-=${.1 * 12}`)
   }
 
+  const animateArtists = () => {
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: '#artistsTitleSection',
+        // markers: true,
+        start: 'top 40%',
+        end: 'bottom 50%',
+        scrub: .5
+      }
+    })
+      .fromTo('#artistsTitle', {
+        scale: .9,
+      }, {
+        scale: 1,
+        duration: 1
+      })
+      .fromTo('#artistsTitle', {
+        opacity: 0
+      }, {
+        opacity: 1,
+        duration: 1
+      }, 0)
+      .to('#artistsTitle', {
+        opacity: 0,
+        scale: 1.2,
+        duration: 1,
+        ease: 'Power4.easeIn'
+      }, 2)
+
+    const el = document.getElementById('artistsImageArray')
+    if (el) {
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: '#artistsArray',
+          start: 'center 100%',
+          end: 'center 0%',
+          // markers: true,
+          scrub: .4
+        }
+      })
+        .fromTo('#artistsImageArray', {
+          x: 0
+        }, {
+          x: '-100%',
+          ease: 'linear'
+        })
+    }
+
+    new TimelineMax({
+      scrollTrigger: {
+        trigger: '#artistsSection',
+        // markers: true,
+        start: 'top 10%',
+        // scrub: .5,
+      },
+    })
+      .fromTo('.artistsCountNumber', {
+        top: 18,
+        opacity: 0,
+      }, {
+        top: 0,
+        opacity: 1,
+        stagger: .09
+      })
+      .fromTo('.mostListenedArtistNameNodes', {
+        top: 18,
+        opacity: 0,
+      }, {
+        top: 0,
+        opacity: 1,
+        stagger: .05
+      }, 0.2)
+      .from('.mostListenedArtistSubText', {
+        y: 18,
+        opacity: 0,
+        stagger: .3
+      }, 0.3)
+      .from('#mostListenedArtistImage', {
+        x: -38,
+        opacity: 0
+      }, 0.4)
+
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: '#artistBoxes',
+        markers: true,
+        start: 'top 55%'
+      }
+    })
+      .fromTo('.itemBox', {
+        opacity: 0,
+      }, {
+        opacity: 1,
+        stagger: .15
+      })
+
+  }
+
   const getFormatted = () => {
     return data.firstTrack.listenedAt.toLocaleDateString("en-US", {
       weekday: 'long',
@@ -263,61 +420,6 @@ const RewindStage: React.FC<{
     const maxScrobble = Math.max.apply(Math, totalScrobbles)
     // return convertRange(scrobbles, [0, maxScrobble], [0, maxBarHeight])
     return ((100 * scrobbles) / maxScrobble) + '%';
-  }
-
-  const handleSelectMonth = (month: MonthData, i: number) => {
-    return
-    const tl = gsap.timeline()
-    if (selectedMonth) {
-      tl.fromTo('.selectedMonth', {
-        x: 0,
-        opacity: 1
-      }, {
-        opacity: 0,
-        x: 20,
-        duration: .5,
-        onComplete: () => setSelectedMonth({
-          actual: month,
-          last: data.months.last[i],
-          index: i
-        })
-        // y: 20
-      })
-    } else {
-      setSelectedMonth({
-        actual: month,
-        last: data.months.last[i],
-        index: i
-      })
-    }
-    tl.fromTo('.selectedMonth', {
-      x: 20,
-      opacity: 0
-    }, {
-      x: 0,
-      duration: .5,
-      opacity: 1
-    })
-
-  }
-
-  const handleMouseOver = (event: React.MouseEvent<HTMLElement>, month: MonthData, i: number) => {
-    setSelectedMonth({
-      actual: month,
-      index: i,
-      last: data.months.last[i]
-    })
-    // const el = document.getElementsByClassName('selectedMonth').item(0)
-    // el.style.x
-    // gsap.fromTo('.selectedMonth', {
-    //   y: 5,
-    //   opacity: 0
-    // }, {
-    //   opacity: 1,
-    //   y: 0,
-    //   duration: .2,
-    //   // y: 20
-    // })
   }
 
   const handleMouseMove = (event: MouseEvent) => {
@@ -363,10 +465,14 @@ const RewindStage: React.FC<{
     })
   }
 
+  const getArtistBoxes = (): FormattedArtist[] => data.topArtists.slice(1, 5)
+
   return <div style={{
     height: '100%',
     width: '100%'
-  }}>
+  }}
+              id="presentation"
+  >
     <Box mx={1}>
       {
         refresh ? ' ' : ''
@@ -427,7 +533,7 @@ const RewindStage: React.FC<{
         <Grid item>
           <Typography ref={firstTrackSecondTextRef}>
             <Box textAlign="center" mb={2}>
-              Your 2020 journey started on
+              Your journey started on
             </Box>
           </Typography>
           <Typography ref={dateRef}>
@@ -439,51 +545,73 @@ const RewindStage: React.FC<{
           </Typography>
         </Grid>
       </Grid>
-      <Grid container justify='center' alignItems="center">
-        <img
-          style={{
-            margin: imgMargin,
-            maxWidth: width > 400 ? 300 : 150,
-            position: 'absolute',
-            left: ftLeft,
-            top: ftTop
-          }}
-          ref={firstTrackImageRef}
-          src={data.firstTrack.image}
-          alt="first track"
-          onLoad={animateFirstTrackImage}
-        />
 
-      </Grid>
-
-      <div ref={firstTrackInfo} style={{
-        position: "absolute",
-        left: ftTextLeft,
-        top: ftTextTop
+    </section>
+    <section
+      style={{
+        height: '70vh',
+        width: '100%',
+        // overflowX: 'hidden',
+      }}
+      ref={firstTrackImageSectionRef}
+    >
+      <Grid container justify='space-between' alignItems="center" style={{
+        height: '100%'
       }}>
-        <Typography component="h4" variant="h4" style={{
-          maxWidth: mobile ? width - (imgMargin * 2) : width - 300 - (imgMargin * 2)
-        }}>
-          <Box className="textCenter" color="primary.main" fontWeight={900}>
-            {data.firstTrack.name}
-          </Box>
-        </Typography>
-        <Typography>
-          <Box className="textCenter" my={2} fontSize={24}>
-            {data.firstTrack.artist}
-          </Box>
-        </Typography>
-        <Typography>
-          <Box className="textCenter" mt={3} fontWeight={800} fontSize={13}>
-            FIRST SCROBBLE OF THE YEAR
-          </Box>
-        </Typography>
-      </div>
+        <Grid item xs={12} md={6}>
+          <img
+            style={{
+              // margin: imgMargin,
+              marginLeft: 20,
+              borderRadius: 4,
+
+              width: '80%'
+              // position: 'absolute',
+              // left: ftLeft,
+              // top: 0
+              // top: ftTop
+            }}
+            ref={firstTrackImageRef}
+            src={data.firstTrack.image}
+            alt="first track"
+            onLoad={animateFirstTrackImage}
+          />
+        </Grid>
+
+
+        <Grid item xs={12} md={6}>
+          <div ref={firstTrackInfo}>
+            <Typography component="h4" variant="h1" style={{
+              // maxWidth: mobile ? width - (imgMargin * 2) : width - 300 - (imgMargin * 2)
+            }}>
+              <Box className="textCenter" color="primary.main" fontWeight={900}>
+                {data.firstTrack.name}
+              </Box>
+            </Typography>
+            <Typography>
+              <Box className="textCenter" my={2} fontSize={24}>
+                {data.firstTrack.artist}
+              </Box>
+            </Typography>
+            <Typography>
+              <Box className="textCenter" mt={3} fontWeight={700} fontSize={13}>
+                This was the first song you listened this year
+              </Box>
+            </Typography>
+            {
+              data.user.name === 'pedrofracassi' && SHOW_PEDRO_PRINT ?
+                <img src={`https://i.imgur.com/${SHOW_PEDRO_PRINT}.png`}/>
+                : null
+            }
+          </div>
+        </Grid>
+        <Grid item></Grid>
+      </Grid>
     </section>
 
     <section
       style={{
-        height: '90vh',
+        height: '95vh',
         width: '100%',
         overflow: 'hidden',
       }}
@@ -492,14 +620,15 @@ const RewindStage: React.FC<{
       <Grid container justify='center' alignItems="center" style={{height: '100%'}}>
         <Grid item>
           <Typography style={{}}>
-            <Box my={4} textAlign="center">
-              And then, you scrobbled more
-              <Box component="p" fontWeight={900} id="scrobbleCount" className="odometer" color="primary.main" fontSize={mobile ? 90 : 150}>
+            <Box my={4} textAlign="center" fontSize={mobile ? 28 : 40}>
+              And then you scrobbled
+              <Box component="p" fontWeight={900} id="scrobbleCount" className="odometer" color="primary.main"
+                   fontSize={mobile ? 90 : 170}>
                 {/*{parseInt(scrobbleCount.toFixed()).toLocaleString()}*/}
                 0
                 {/*<Odometer value={scrobbleCount.toFixed()} animation={graphAnimationsLoaded} />*/}
               </Box>
-              times through the year.
+              more times this year
             </Box>
           </Typography>
         </Grid>
@@ -509,15 +638,16 @@ const RewindStage: React.FC<{
 
     <section
       style={{
-        height: '30vh',
+        height: '45vh',
         width: '100%',
         overflow: 'hidden',
       }}
+      id="itWasLikeThatSection"
     >
       <Grid container justify='center' alignItems="center" style={{height: '100%'}}>
         <Grid item>
-          <Typography align="center">
-            And it was like that...
+          <Typography align="center" variant="h3" id="graphItWasLikeThat">
+            <Box fontWeight={700} fontSize={mobile ? 30 : 50}>And it was like that...</Box>
           </Typography>
         </Grid>
       </Grid>
@@ -536,13 +666,13 @@ const RewindStage: React.FC<{
           <Grid container justify="space-between">
             <Grid item>
               <Typography variant="h4" className="graphSectionWelcomeText">
-                <Box ml={3} mb={1} mt={3} fontWeight={700}>
+                <Box ml={3} mb={1} mt={3} fontWeight={700} fontSize={mobile ? 30 : 46}>
                   This was your whole year on music
                 </Box>
               </Typography>
               <Typography className="graphSectionWelcomeText">
                 <Box ml={3}>
-                  You can click on some month to see more details
+                  You can hover or touch on any month to see more details
                 </Box>
               </Typography>
             </Grid>
@@ -609,14 +739,187 @@ const RewindStage: React.FC<{
 
       </Grid>
     </section>
+
+    <section
+      style={{
+        height: '100vh',
+        width: '100%',
+        overflow: 'hidden'
+      }}
+      id="artistsTitleSection"
+    >
+      <Grid container justify='center' alignItems="center" style={{height: '100%'}}>
+        <Grid item>
+          <Typography align="center" variant="h3" id="artistsTitle" color="primary">
+            <Box fontWeight={900} fontSize={mobile ? 60 : 140}>ARTISTS</Box>
+          </Typography>
+        </Grid>
+      </Grid>
+    </section>
+
+    {
+      data.spotifyData ? <section
+          style={{
+            width: '100%',
+            overflowX: 'hidden',
+          }}
+          id="artistsArray"
+        >
+          <Grid container spacing={2} className="imageArray" id="artistsImageArray" wrap="nowrap">
+            {
+              data.spotifyData.filter((a: SpotifyArtistBase) => a && a.url).map((artist: SpotifyArtistBase) =>
+                <Grid item>
+                  <div className="artistArrayImage" style={{
+                    backgroundImage: `url(${artist.url})`
+                  }}/>
+                  <div className="artistArrayImageGlow" style={{
+                    backgroundImage: `url(${artist.url})`
+                  }}/>
+                </Grid>
+              )
+            }
+          </Grid>
+        </section>
+        : null
+    }
+
+    <section
+      style={{
+        height: '130%',
+        width: '100%',
+        overflowX: 'hidden',
+      }}
+      id="artistsSection"
+    >
+      <Grid container justify='center' style={{height: '100%', marginBottom: '12em'}}>
+        <Grid item>
+          <Typography align="center" variant="h3" id="aa" color="primary">
+            <Box fontWeight={800} fontSize={mobile ? 30 : 80}>{
+              data.stats.artists > 400 ? 'You like to vary' : 'You prefer the same'
+            }</Box>
+          </Typography>
+          <Typography align="center">
+            <Box fontSize={20}>
+              {data.stats.artists > 400 ? 'This year you switched and listened to a lot of different artists'
+                : 'This year you haven\'t listened to a lot of artists, and preferred to stay on your favorites'}
+            </Box>
+          </Typography>
+        </Grid>
+      </Grid>
+      <Grid style={{
+        // minHeight: '100vh'
+      }}>
+        <Grid container justify="space-between" style={{width: '100%'}}>
+          {/*<Grid item>*/}
+          {/*  */}
+          {/*</Grid>*/}
+          <Grid item xs={12}>
+            <Box ml={3} id="topArtistImage">
+              <div style={{
+                backgroundImage: `url(${handleArtistImage(data.topArtists[0])})`
+              }} id="mostListenedArtistImage"/>
+              <Box ml={2} className="artistsSpaceBetween">
+                <div>
+                  <Typography align="right" id="aab" color="primary">
+                    <Box fontWeight={900} fontSize={mobile ? 30 : 60} mr={5} style={{marginBottom: mobile ? -40 : -45}}>
+                      <SplittedWordText text={data.stats.artists.toLocaleString()} nodesClass="artistsCountNumber"/>
+                    </Box>
+                    <Box fontWeight={400} fontSize={25} color="white" className="artistsCountNumber" mr={5}>
+                      artists listened
+                    </Box>
+                  </Typography>
+                </div>
+                <div>
+                  <Box fontSize={50} fontWeight={900} my={0.5} color="primary.main">
+                    <SplittedWordText text={data.topArtists[0].name} nodesClass="mostListenedArtistNameNodes"/>
+                  </Box>
+                  <Box fontSize={20} className="mostListenedArtistSubText">
+                    Is your most listened artist
+                    with <Box color="primary.main" fontWeight="800"
+                              component="span">{data.topArtists[0].playcount.toLocaleString()}</Box> scrobbles
+                  </Box>
+                  <Box fontSize={18} mt={1}>
+                    {
+                      getMostListenedTrackFromArtist(data.topArtists[0], data) ?
+                        <Box className="mostListenedArtistSubText">
+                          You really
+                          liked <Box color="primary.main" fontWeight="800"
+                                     component="span">{getMostListenedTrackFromArtist(data.topArtists[0], data)?.name}
+                        </Box>, being the most listened track from this artist
+                        </Box> : null
+                    }
+                  </Box>
+                </div>
+                {/*<div>*/}
+                {/*  {*/}
+                {/*    getMostListenedTrackFromArtist(data.topArtists[0], data) ?*/}
+                {/*      <Box className="mostListenedArtistSubText">*/}
+                {/*        You really liked <strong>{getMostListenedTrackFromArtist(data.topArtists[0], data)?.name}</strong>, being*/}
+                {/*        your most listened track from this artist*/}
+                {/*      </Box> : null*/}
+                {/*  }*/}
+                {/*</div>*/}
+              </Box>
+            </Box>
+          </Grid>
+
+        </Grid>
+      </Grid>
+      <div style={{
+        height: 30
+      }}>
+        {" "}
+      </div>
+    </section>
+
+
+    <section
+      id="artistBoxes"
+    >
+      <Grid container justify="space-evenly" spacing={2}>
+        {
+          getArtistBoxes().map((artist: FormattedArtist, i: number) => <Grid item xs={6} md={3}>
+            <div className="itemBox">
+              <span className="boxNumber">#{i + 2}</span>
+              <img src={handleArtistImage(artist)} className="boxImage"/>
+              <Grid container direction="column" justify="space-between" className="scrobblesSection">
+                <Grid item>
+                  <Box className="artistName" fontWeight={700} color="primary.main">{artist.name}</Box>
+                </Grid>
+                <Grid item>
+                  <Box className="artistScrobbles" fontWeight={900} color="primary.main">{artist.playcount}</Box>
+                  <Box className="artistScrobblesText" fontWeight={400}>scrobbles</Box>
+                </Grid>
+              </Grid>
+            </div>
+          </Grid>)
+        }
+      </Grid>
+    </section>
+
+
+    <section
+      style={{
+        height: '90vh',
+        width: '100%',
+        overflow: 'hidden',
+      }}
+    >
+      <Box textAlign="center">
+        <h2>a</h2>
+      </Box>
+    </section>
+
+
     {
       selectedMonth ? <div id="tooltipGraph" className="selectedMonth">
         <div className="monthTooltipSection last">
-          <img
-            src={handleArtistImage(selectedMonth.last.artists[0])}
-            className="selectedMonthTooltipImage"
-            alt="Top artist from this month"
-          />
+          {/*<img*/}
+          {/*  src={handleA
+}rtistImage(selectedMonth.last.artists[0])}*/}
+          {/*  className="selectedMonthTooltipImage"*/}
+          {/*  alt="Top artist from this month"*/}
+          {/*/>*/}
           <Box component="p">
             {selectedMonth.last.scrobbles}
           </Box>
@@ -625,16 +928,18 @@ const RewindStage: React.FC<{
           <Box component="p">
             {selectedMonth.actual.scrobbles}
           </Box>
-          <img
-            src={handleArtistImage(selectedMonth.actual.artists[0])}
-            className="selectedMonthTooltipImage"
-            alt="Top artist from this month"
-          />
+          {/*<img*/}
+          {/*  src={handleArtistImage(selectedMonth.actual.artists[0])}*/}
+          {/*  className="selectedMonthTooltipImage"*/}
+          {/*  alt="Top artist from this month"*/}
+          {/*/>*/}
         </div>
 
 
       </div> : null
     }
+    <div className="progressBar">&nbsp;</div>
+    <div id="presentationEnd"></div>
   </div>
 })
 

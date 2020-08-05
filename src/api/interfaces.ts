@@ -195,7 +195,7 @@ export interface FormattedTrackWithListenTime extends FormattedTrack {
 
 export interface FormattedArtist {
   name: string,
-  playCount: number,
+  playcount: number,
   url: string
   image?: string,
   spotify?: SpotifyArtistBase
@@ -246,7 +246,8 @@ export interface RewindData {
   topAlbums: FormattedAlbum[],
   topTracks: FormattedTrack[],
   lovedTracks: FormattedLovedTrack[],
-  months: MonthsData
+  months: MonthsData,
+  spotifyData?: SpotifyArtistBase[]
 }
 
 export interface SpotifyArtistBase {

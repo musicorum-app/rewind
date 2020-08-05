@@ -17,11 +17,11 @@ import {
 import API from "./index";
 import {chunks as chunkArray} from '@reactgular/chunks'
 import BezierEasing from 'bezier-easing'
-import {addToMap} from "../utils";
+import {addToMap, getShuffledArray} from "../utils";
 import MusicorumAPI from "./MusicorumAPI";
 import {userInfo} from "os";
 
-const year = 2019
+const year = 2020
 const startTime = new Date(year, 0, 0, 0, 0).getTime() / 1000
 const endTime = new Date(year + 1, 0, 0, 0, 0).getTime() / 1000
 
@@ -105,19 +105,23 @@ const dataFetcher = async (
 
   const toFetch = new Map<string, SpotifyArtistBase>()
 
-  addToMap(result[5].artist.slice(0, 10).map((a: ArtistBase) => a.name), toFetch)
+  addToMap(result[5].artist.slice(0, 25).map((a: ArtistBase) => a.name), toFetch)
   addMonthsArtistsToMap(result[4], toFetch)
   await fetchArtistsFromAPI(toFetch)
   console.log(toFetch)
 
-  const topArtists = result[5].artist.map((a: FormattedArtist) => ({
+  const topArtists: FormattedArtist[] = result[5].artist.map((a: WeeklyArtist) => ({
     ...a,
     spotify: toFetch.get(a.name)
   }))
 
+  const spotifyArtists: SpotifyArtistBase[] = []
+  toFetch.forEach(a => spotifyArtists.push(a))
+
   const artists = groupArtists(result[2])
   const albums = groupAlbums(result[3])
-  const firstTrack: ListenedTrack = result[1].track[0]
+  const firstTrack: ListenedTrack = result[1].track[1] || result[1].track[0]
+  console.log(firstTrack)
   const scrobbles = Number(result[0]['@attr']['total'])
   return {
     user: userData,
@@ -139,7 +143,8 @@ const dataFetcher = async (
     topAlbums: result[6],
     topArtists: topArtists,
     topTracks: result[9].map((t: TrackInfo) => formatTrack(t)),
-    months: mergeSpotifyToMonths(result[4], toFetch)
+    months: mergeSpotifyToMonths(result[4], toFetch),
+    spotifyData: getShuffledArray(spotifyArtists)
   }
 }
 
