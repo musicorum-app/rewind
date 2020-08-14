@@ -15,6 +15,8 @@ import LoadingStage from "./stages/loading";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import RewindStage from "./stages/rewind";
 
+import sample from './api/sample.json'
+
 const useStyles = makeStyles((theme: Theme) => createStyles({
   mainBtn: {
     borderRadius: 50,
@@ -75,6 +77,12 @@ function App() {
 
   useEffect(() => {
     // doAnimation()
+      document.addEventListener("keypress", e => {
+        if (e.ctrlKey && e.code === 'KeyM') {
+          localStorage.setItem('cache', JSON.stringify(sample))
+          document.location.reload()
+        }
+      });
 
     try {
       const data: {} = JSON.parse(localStorage.getItem('cache') as string)

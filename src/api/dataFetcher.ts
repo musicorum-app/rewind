@@ -12,7 +12,14 @@ import {
   ExtendedTrackWithPlaytime,
   WeeklyTrackChart,
   WeeklyTrack,
-  TrackInfo, FormattedTrack, MonthsData, FormattedLovedTrack, ListenedTrack, SpotifyArtistBase, FormattedArtist
+  TrackInfo,
+  FormattedTrack,
+  MonthsData,
+  FormattedLovedTrack,
+  ListenedTrack,
+  SpotifyArtistBase,
+  FormattedArtist,
+  FormattedAlbum
 } from "./interfaces";
 import API from "./index";
 import {chunks as chunkArray} from '@reactgular/chunks'
@@ -140,7 +147,7 @@ const dataFetcher = async (
       albums: albums.length,
       artists: artists.length
     },
-    topAlbums: result[6],
+    topAlbums: result[6].album,
     topArtists: topArtists,
     topTracks: result[9].map((t: TrackInfo) => formatTrack(t)),
     months: mergeSpotifyToMonths(result[4], toFetch),
@@ -477,5 +484,15 @@ const mergeSpotifyToMonths = (months: MonthsData, map: Map<string, SpotifyArtist
     last: task(months.last),
   }
 }
+
+// const formatAlbum = (album: WeeklyAlbum): FormattedAlbum => {
+//   return {
+//     name: album.name,
+//     artist: album.artist["#text"],
+//     playCount: Number(album.playcount),
+//     url: album.url,
+//     image: album.
+//   }
+// }
 
 export default dataFetcher

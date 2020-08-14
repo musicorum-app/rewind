@@ -1,5 +1,5 @@
 import React, {forwardRef, MouseEventHandler, useEffect, useRef, Ref, useState} from "react";
-import {FormattedArtist, MonthData, RewindData, SpotifyArtistBase} from "../api/interfaces";
+import {FormattedAlbum, FormattedArtist, MonthData, RewindData, SpotifyArtistBase} from "../api/interfaces";
 import Grid from "@material-ui/core/Grid/Grid";
 import Box from "@material-ui/core/Box/Box";
 import Container from "@material-ui/core/Container/Container";
@@ -13,6 +13,8 @@ import Odometer from 'odometer';
 import SplittedWordText from "../SplittedWordText";
 import {getMostListenedTrackFromArtist} from "../api/dataAnalyzer";
 import {SHOW_PEDRO_PRINT} from "../api/Constants";
+import RoundedButton from "../RoundedButton";
+import {Collapse} from "@material-ui/core";
 
 interface MonthState {
   actual: MonthData,
@@ -29,6 +31,7 @@ const RewindStage: React.FC<{
   const [firstTrackAnimated, setFirstTrackAnimated] = useState(true)
   const [scrobbleCount, setScrobbleCount] = useState(0)
   const [refresh, setRefresh] = useState(1)
+  const [showArtistListExpand, setShowArtistListExpand] = useState(false)
   const [graphAnimationsLoaded, setGraphAnimationsLoaded] = useState(false)
   const [selectedMonth, _setSelectedMonth] = useState<MonthState | null>(null)
   const selectedMonthRef = useRef(selectedMonth)
@@ -183,6 +186,7 @@ const RewindStage: React.FC<{
       animateGraphs()
 
       animateArtists()
+      animateAlbums()
     }
   }, [disclaimerRef, graphYear1Ref, artistScrobblesNode])
 
@@ -387,17 +391,47 @@ const RewindStage: React.FC<{
     gsap.timeline({
       scrollTrigger: {
         trigger: '#artistBoxes',
-        markers: true,
+        // markers: true,
         start: 'top 55%'
       }
     })
-      .fromTo('.itemBox', {
+      .fromTo('.artistBoxesAnimation', {
         opacity: 0,
       }, {
         opacity: 1,
         stagger: .15
       })
 
+  }
+
+  const animateAlbums = () => {
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: '#albumsTitleSection',
+        // markers: true,
+        start: 'top 40%',
+        end: 'bottom 50%',
+        scrub: .5
+      }
+    })
+      .fromTo('#albumsTitle', {
+        scale: .9,
+      }, {
+        scale: 1,
+        duration: 1
+      })
+      .fromTo('#albumsTitle', {
+        opacity: 0
+      }, {
+        opacity: 1,
+        duration: 1
+      }, 0)
+      .to('#albumsTitle', {
+        opacity: 0,
+        scale: 1.2,
+        duration: 1,
+        ease: 'Power4.easeIn'
+      }, 2)
   }
 
   const getFormatted = () => {
@@ -411,7 +445,6 @@ const RewindStage: React.FC<{
   }
 
   let {maxBarHeight, width, mobile, imgMargin} = getResponsiveness()
-  const [ftLeft, ftTop, ftTextLeft, ftTextTop] = getFirstTrackImagePosition()
 
   const calculateBarHeight = (scrobbles: number) => {
     // console.log(maxBarHeight)
@@ -466,6 +499,13 @@ const RewindStage: React.FC<{
   }
 
   const getArtistBoxes = (): FormattedArtist[] => data.topArtists.slice(1, 5)
+
+  const getShowMoreArtists = (): FormattedArtist[] => data.topArtists.slice(5, 15)
+
+  const switchShowMoreArtists = () => {
+    const newState = !showArtistListExpand
+    setShowArtistListExpand(newState)
+  }
 
   return <div style={{
     height: '100%',
@@ -749,10 +789,11 @@ const RewindStage: React.FC<{
       id="artistsTitleSection"
     >
       <Grid container justify='center' alignItems="center" style={{height: '100%'}}>
-        <Grid item>
-          <Typography align="center" variant="h3" id="artistsTitle" color="primary">
-            <Box fontWeight={900} fontSize={mobile ? 60 : 140}>ARTISTS</Box>
+        <Grid item id="artistsTitle">
+          <Typography align="center" variant="h3" color="primary">
+            <Box fontWeight={900} fontSize={mobile ? 60 : 140} mb={3}>ARTISTS</Box>
           </Typography>
+          <Box textAlign="center" fontSize={30}>Here are some of the people and bands that helped you this year</Box>
         </Grid>
       </Grid>
     </section>
@@ -879,7 +920,7 @@ const RewindStage: React.FC<{
       <Grid container justify="space-evenly" spacing={2}>
         {
           getArtistBoxes().map((artist: FormattedArtist, i: number) => <Grid item xs={6} md={3}>
-            <div className="itemBox">
+            <div className="itemBox artistBoxesAnimation">
               <span className="boxNumber">#{i + 2}</span>
               <img src={handleArtistImage(artist)} className="boxImage"/>
               <Grid container direction="column" justify="space-between" className="scrobblesSection">
@@ -895,21 +936,90 @@ const RewindStage: React.FC<{
           </Grid>)
         }
       </Grid>
+
+      <Box mt={4} style={{width: '100%'}} className="artistBoxesAnimation">
+        <Grid container justify="center">
+          <Box mx={4} id="artistListExpandable">
+            <Collapse in={showArtistListExpand}>
+              <Grid container justify="space-between" spacing={4}>
+                {
+                  getShowMoreArtists().map((a, i) => <Grid item xs={12} md={6} className="artistListItem">
+                    <Grid container justify="space-between" spacing={2}>
+                      <Grid item>
+                        <Box><span className="artistListNumber">{5 + i}.</span> {a.name}</Box>
+                      </Grid>
+                      <Grid item>
+                        <Box fontWeight={800} color="primary.main">{a.playcount}</Box>
+                      </Grid>
+                    </Grid>
+                  </Grid>)
+                }
+              </Grid>
+            </Collapse>
+          </Box>
+          <RoundedButton onClick={switchShowMoreArtists} color="primary" outlined>
+            Show {showArtistListExpand ? 'less' : 'more'}
+          </RoundedButton>
+        </Grid>
+      </Box>
     </section>
 
+    <section
+      style={{
+        height: '100vh',
+        width: '100%',
+        overflow: 'hidden'
+      }}
+      id="albumsTitleSection"
+    >
+      <Grid container justify='center' alignItems="center" style={{height: '100%'}}>
+        <Grid item id="albumsTitle">
+          <Typography align="center" variant="h3" color="primary">
+            <Box fontWeight={900} fontSize={mobile ? 60 : 140} mb={3}>ALBUMS</Box>
+          </Typography>
+          <Box textAlign="center" fontSize={30}>
+            And now, the albums you most enjoyed
+          </Box>
+        </Grid>
+      </Grid>
+    </section>
+
+    <section
+      style={{
+        width: '100%',
+        overflowX: 'hidden',
+      }}
+      id="artistsArray"
+    >
+      <Grid container spacing={2} className="imageArray" id="artistsImageArray" wrap="nowrap">
+        {
+          data.topAlbums.filter((a: FormattedAlbum) => a).map((album: FormattedAlbum) =>
+            <Grid item>
+              <Typography>{album.name}</Typography>
+              {/*<div className="artistArrayImage" style={{*/}
+              {/*  backgroundImage: `url(${album.image})`*/}
+              {/*}}/>*/}
+              {/*<div className="artistArrayImageGlow" style={{*/}
+              {/*  backgroundImage: `url(${album.image})`*/}
+              {/*}}/>*/}
+            </Grid>
+          )
+        }
+      </Grid>
+    </section>
 
     <section
       style={{
         height: '90vh',
         width: '100%',
         overflow: 'hidden',
+        marginTop: 400
       }}
     >
       <Box textAlign="center">
-        <h2>a</h2>
+        <h2>tem mais 😔😔</h2>
       </Box>
     </section>
-
 
     {
       selectedMonth ? <div id="tooltipGraph" className="selectedMonth">

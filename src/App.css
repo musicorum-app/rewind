@@ -353,3 +353,22 @@
     width: 80%;
   }
 }
+
+.artistListItem > div {
+  font-size: 1.5em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.21);
+  padding-left: 20px;
+
+}
+
+.artistListItem:nth-child(n+9) > div {
+  border-bottom: none;
+}
+
+.artistListItem .artistListNumber {
+  font-weight: 700;
+}
+
+#artistListExpandable {
+  overflow: hidden;
+}
