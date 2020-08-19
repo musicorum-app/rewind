@@ -19,3 +19,9 @@ export function getShuffledArray(array: any[]): any[] {
   c.sort(() => Math.random() - 0.5);
   return c
 }
+
+export function getReversed(arr: any[]): any[] {
+  const clone = [ ...arr ]
+  clone.reverse()
+  return clone
+}

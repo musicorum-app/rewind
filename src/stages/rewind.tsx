@@ -7,7 +7,7 @@ import Typography from "@material-ui/core/Typography/Typography";
 import Link from "@material-ui/core/Link/Link";
 import {gsap, TimelineMax} from 'gsap'
 import {ScrollTrigger} from 'gsap/ScrollTrigger'
-import {convertRange, getShuffledArray, handleArtistImage} from "../utils";
+import {convertRange, getReversed, getShuffledArray, handleArtistImage} from "../utils";
 // @ts-ignore
 import Odometer from 'odometer';
 import SplittedWordText from "../SplittedWordText";
@@ -432,6 +432,45 @@ const RewindStage: React.FC<{
         duration: 1,
         ease: 'Power4.easeIn'
       }, 2)
+
+    const el = document.getElementById('albumsImageArray')
+    if (el) {
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: '#albumsArray',
+          start: '30% 100%',
+          end: '70% 0%',
+          markers: true,
+          scrub: .4
+        }
+      })
+        .fromTo('#albumsImageArray', {
+          x: 0
+        }, {
+          x: '-100%',
+          ease: 'linear'
+        })
+    }
+
+    // Reverse
+    const elReverse = document.getElementById('albumsImageArrayReverse')
+    if (elReverse) {
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: '#albumsArrayReverse',
+          start: '30% 100%',
+          end: '70% 0%',
+          markers: true,
+          scrub: .4
+        }
+      })
+        .fromTo('#albumsImageArrayReverse', {
+          x: '-100%  '
+        }, {
+          x: 0,
+          ease: 'linear'
+        })
+    }
   }
 
   const getFormatted = () => {
@@ -989,19 +1028,45 @@ const RewindStage: React.FC<{
         width: '100%',
         overflowX: 'hidden',
       }}
-      id="artistsArray"
+      id="albumsArray"
+      className="albumsArray"
     >
-      <Grid container spacing={2} className="imageArray" id="artistsImageArray" wrap="nowrap">
+      <Grid container spacing={2} className="imageArray" id="albumsImageArray" wrap="nowrap">
         {
           data.topAlbums.filter((a: FormattedAlbum) => a).map((album: FormattedAlbum) =>
             <Grid item>
-              <Typography>{album.name}</Typography>
-              {/*<div className="artistArrayImage" style={{*/}
-              {/*  backgroundImage: `url(${album.image})`*/}
-              {/*}}/>*/}
-              {/*<div className="artistArrayImageGlow" style={{*/}
-              {/*  backgroundImage: `url(${album.image})`*/}
-              {/*}}/>*/}
+              {/*<Typography>{album.name}</Typography>*/}
+              <div className="artistArrayImage" style={{
+                backgroundImage: `url(${album.image})`
+              }}/>
+              <div className="artistArrayImageGlow" style={{
+                backgroundImage: `url(${album.image})`
+              }}/>
+            </Grid>
+          )
+        }
+      </Grid>
+    </section>
+
+    <section
+      style={{
+        width: '100%',
+        overflowX: 'hidden',
+      }}
+      id="albumsArrayReverse"
+      className="albumsArray"
+    >
+      <Grid container spacing={2} className="imageArray" id="albumsImageArrayReverse" wrap="nowrap">
+        {
+          getReversed(data.topAlbums).filter((a: FormattedAlbum) => a).map((album: FormattedAlbum) =>
+            <Grid item>
+              {/*<Typography>{album.name}</Typography>*/}
+              <div className="artistArrayImage" style={{
+                backgroundImage: `url(${album.image})`
+              }}/>
+              <div className="artistArrayImageGlow" style={{
+                backgroundImage: `url(${album.image})`
+              }}/>
             </Grid>
           )
         }
