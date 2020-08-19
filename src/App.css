@@ -1,385 +1,414 @@
 :root {
-  --small-breakpoint: 600px
+    --small-breakpoint: 600px
 }
 
 .App {
-  text-align: center;
+    text-align: center;
 }
+
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
 }
 
 .App-link {
-  color: #61dafb;
+    color: #61dafb;
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .textCenter {
-  white-space: normal;
+    white-space: normal;
 }
 
 .yearBox {
-  text-align: center;
-  width: 65px;
-  font-size: 19px;
+    text-align: center;
+    width: 65px;
+    font-size: 19px;
 }
+
 .yearBoxes {
-  position: absolute;
-  right: 28px;
-  bottom: 28px;
-  overflow: hidden;
+    position: absolute;
+    right: 28px;
+    bottom: 28px;
+    overflow: hidden;
 }
 
 .outBox {
-  overflow: hidden;
+    overflow: hidden;
 }
 
 .monthBar {
-  width: 20px;
-  pointer-events: none;
+    width: 20px;
+    pointer-events: none;
 }
 
 .monthBar.actual {
-  background: #FD0F57;
+    background: #FD0F57;
 }
 
 .monthBar.last {
-  background: white;
+    background: white;
 }
 
 .monthSection > * {
-  pointer-events: none;
+    pointer-events: none;
 }
 
 .monthItem {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-top: 10px;
-  pointer-events: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-top: 10px;
+    pointer-events: none;
 }
 
 .monthSection {
-  transition: background 0.2s;
-  border-radius: 3px;
+    transition: background 0.2s;
+    border-radius: 3px;
 }
 
 .monthSection:hover > .selectedMonth {
-  display: flex;
+    display: flex;
 }
 
 .graphs:hover {
-  cursor: none;
+    cursor: none;
 }
 
 .monthSection.selected {
-  border: 1.3px solid #FD0F57;
+    border: 1.3px solid #FD0F57;
 }
 
 .monthSection:hover {
-  background: rgba(255, 255, 255, 0.09);
+    background: rgba(255, 255, 255, 0.09);
 }
 
 .graphs {
-  position: absolute;
-  bottom: 28px;
-  margin-left: 20px !important;
-  width: calc(100% - 38px - 28px - 65px) !important;
+    position: absolute;
+    bottom: 28px;
+    margin-left: 20px !important;
+    width: calc(100% - 38px - 28px - 65px) !important;
 }
 
 .monthName {
-  width: 100%;
-  text-align: center;
-  text-transform: uppercase;
-  font-weight: 600;
-  margin-top: 4px;
-  margin-bottom: -3px;
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-top: 4px;
+    margin-bottom: -3px;
 }
 
 .selectedMonthImage {
-  max-width: 170px;
-  margin-left: 18px;
+    max-width: 170px;
+    margin-left: 18px;
 }
 
 .selectedMonth {
-  display: flex;
-  align-content: center;
-  z-index: 2000;
-  pointer-events: none;
-  position: fixed;
-  left: 0;
-  top: 0;
+    display: flex;
+    align-content: center;
+    z-index: 2000;
+    pointer-events: none;
+    position: fixed;
+    left: 0;
+    top: 0;
 }
 
 .monthTooltipSection > p {
-  font-weight: 900;
-  color: black;
-  font-size: 17px;
-  text-align: center;
-  padding: 0px 8px 0px 8px;
-  margin: 4px 8px 4px 8px;
-  pointer-events: none;
+    font-weight: 900;
+    color: black;
+    font-size: 17px;
+    text-align: center;
+    padding: 0px 8px 0px 8px;
+    margin: 4px 8px 4px 8px;
+    pointer-events: none;
 }
 
 .monthTooltipSection {
-  display: flex;
-  align-items: center;
-  border: 1px solid white;
-  margin: 0px;
-  background: black;
+    display: flex;
+    align-items: center;
+    border: 1px solid white;
+    margin: 0px;
+    background: black;
 
 }
 
 .monthTooltipSection.last {
-  border-color: white;
-  border-right-color: black;
-  border-radius: 5px 0px 0px 5px;
-  padding-left: 7px;
-  margin-right: -2px;
+    border-color: white;
+    border-right-color: black;
+    border-radius: 5px 0px 0px 5px;
+    padding-left: 7px;
+    margin-right: -2px;
 }
 
 .monthTooltipSection.actual {
-  border-color: #FD0F57;
-  border-left-color: black;
-  border-radius: 0px 5px 5px 0px;
-  padding-right: 7px;
-  margin-left: -2px;
+    border-color: #FD0F57;
+    border-left-color: black;
+    border-radius: 0px 5px 5px 0px;
+    padding-right: 7px;
+    margin-left: -2px;
 }
 
 .monthTooltipSection.actual > p {
-  color: #FD0F57
+    color: #FD0F57
 }
 
 .monthTooltipSection.last > p {
-  color: white;
+    color: white;
 }
 
 .selectedMonthTop {
-  display: flex;
+    display: flex;
 }
 
 .selectedMonthArtist {
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
-  flex-direction: column;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    flex-direction: column;
 }
 
 .selectedMonthTooltipImage {
-  width: 20px;
-  height: 20px;
-  border-radius: 32px;
+    width: 20px;
+    height: 20px;
+    border-radius: 32px;
 }
 
 .odometer-inside {
-  font-family: Montserrat;
+    font-family: Montserrat;
 }
 
 #scrobbleCount {
-  width: 100%;
-  margin: 0;
+    width: 100%;
+    margin: 0;
 }
 
 .progressBar {
-  position: fixed;
-  left: 0;
-  top: 0;
-  background: #FD0F57;
-  width: 8px;
-  height: 50vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: #FD0F57;
+    width: 8px;
+    height: 50vh;
 }
 
 @media only screen and (max-width: var(--small-breakpoint)) {
-  .progressBar {
-    width: 3px;
-  }
+    .progressBar {
+        width: 3px;
+    }
 }
 
 
 #artistsArray, .albumsArray, #albumsArrayReversed {
-  margin-top: 20px;
-  margin-bottom: 200px;
-  height: 350px;
+    margin-top: 20px;
+    margin-bottom: 200px;
+    height: 350px;
 }
 
 .albumsArray {
-  margin-bottom: 0;
-  height: 300px;
+    margin-bottom: 0;
+    height: 300px;
 }
 
 .imageArray {
-  /*overflow-y: hidden;*/
-  height: 100%;
-  align-items: center;
+    /*overflow-y: hidden;*/
+    height: 100%;
+    align-items: center;
 }
 
 .imageArray > div > div {
-  width: 200px;
-  height: 200px;
-  background-position: center;
-  background-size: cover;
-  border-radius: 3px;
+    width: 200px;
+    height: 200px;
+    background-position: center;
+    background-size: cover;
+    border-radius: 3px;
 }
 
 .albumsArray .artistArrayImage,
 .albumsArray .artistArrayImageGlow {
-  width: 170px;
-  height: 170px;
+    width: 170px;
+    height: 170px;
 }
 
 .artistArrayImage {
-  z-index: 1000;
-  transition: transform .4s;
+    z-index: 1000;
+    transition: transform .4s;
 }
 
 .artistArrayImage:hover {
-  transform: translateY(-16px);
+    transform: translateY(-16px);
 }
 
 .artistArrayImage:hover + .artistArrayImageGlow {
-  opacity: .4;
+    opacity: .4;
 }
 
 .artistArrayImageGlow {
-  position: absolute;
-  bottom: 90px;
-  filter: brightness(180%) blur(28px);
-  transform: scale(1.12);
-  z-index: -1;
-  opacity: 0;
-  transition: opacity .4s;
+    position: absolute;
+    bottom: 75px;
+    filter: brightness(180%) blur(32px);
+    transform: scale(1.12);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity .4s;
 }
 
 .artistsCountNumber {
-  font-size: 2em;
-  position: relative;
+    font-size: 2em;
+    position: relative;
 }
 
 #topArtistImage {
-  display: flex;
-  margin-right: 30px;
+    display: flex;
+    margin-right: 30px;
 }
 
 #mostListenedArtistImage {
-  width: 400px;
-  height: 400px;
-  min-width: 400px;
-  border-radius: 3px;
-  background-position: center;
-  background-size: cover;
+    width: 400px;
+    height: 400px;
+    min-width: 400px;
+    border-radius: 3px;
+    background-position: center;
+    background-size: cover;
 }
 
 .artistsSpaceBetween {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
 }
 
 #artistBoxes {
-  /*overflow-x: hidden;*/
-  margin-top: 250px;
-  margin-left: 35px;
-  margin-right: 20px;
+    /*overflow-x: hidden;*/
+    margin-top: 250px;
+    margin-left: 35px;
+    margin-right: 20px;
 
 }
 
 .itemBox {
-  background: rgba(253, 15, 87, 0.12);
-  display: flex;
-  align-content: center;
-  align-items: center;
-  flex-direction: column;
-  /*padding-top: 10px;*/
-  padding-bottom: 20px;
-  transition: transform .3s, background .3s;
-  height: 100%;
+    background: rgba(253, 15, 87, 0.10);
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-direction: column;
+    /*padding-top: 10px;*/
+    padding-bottom: 20px;
+    transition: transform .3s, background .3s;
+    height: 100%;
+    border-radius: 4px;
 }
 
 .itemBox:hover {
-  transform: translateY(-7px);
-  background: rgba(253, 15, 87, 0.18);
-  /*box-shadow: 0px 0px 20px 7px rgba(255, 35, 101, 0.2);*/
+    transform: translateY(-7px);
+    background: rgba(253, 15, 87, 0.14);
+    /*box-shadow: 0px 0px 20px 7px rgba(255, 35, 101, 0.2);*/
 }
 
 .boxImage {
-  width: 60%;
-  height: auto;
-  object-fit: cover;
-  object-position: center;
-  margin-top: 10px;
+    width: 70%;
+    height: auto;
+    object-fit: cover;
+    object-position: center;
+    margin-top: 10px;
+    border-radius: 4px;
 }
 
 .boxNumber {
-  background: #FD0F57;
-  color: black;
-  width: 100%;
-  text-align: center;
-  font-weight: 900;
-  font-size: 70px;
-  margin-top: 0px;
-  padding: -4px 8px -4px 8px;
-  line-height: 75px;
-  margin-bottom: 12px;
+    background: #FD0F57;
+    color: black;
+    width: 100%;
+    text-align: center;
+    font-weight: 900;
+    font-size: 70px;
+    margin-top: 0px;
+    padding: -4px 8px -4px 8px;
+    line-height: 75px;
+    margin-bottom: 12px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
 }
 
 .itemBox .artistName {
-  font-size: 28px;
-  padding: 18px 14px 20px 14px;
-  text-align: center;
-  word-wrap: break-word;
+    font-size: 28px;
+    padding: 18px 14px 20px 14px;
+    text-align: center;
+    word-wrap: break-word;
 }
 
 .scrobblesSection {
-  height: 100%;
+    height: 100%;
 }
 
 .scrobblesSection .artistScrobbles {
-  font-size: 4.5em;
-  text-align: center;
+    font-size: 4.5em;
+    text-align: center;
 }
 
 .scrobblesSection .artistScrobblesText {
-  margin-top: -17px;
-  text-align: center;
+    margin-top: -17px;
+    text-align: center;
 }
 
 @media only screen and (max-width: 960px) {
-  .boxImage {
-    width: 80%;
-  }
+    .boxImage {
+        width: 80%;
+    }
 }
 
 .artistListItem > div {
-  font-size: 1.5em;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.21);
-  padding-left: 20px;
+    font-size: 1.5em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.21);
+    padding-left: 20px;
 
 }
 
 .artistListItem:nth-child(n+9) > div {
-  border-bottom: none;
+    border-bottom: none;
 }
 
 .artistListItem .artistListNumber {
-  font-weight: 700;
+    font-weight: 700;
+    margin-right: 11px;
 }
 
 #artistListExpandable {
-  overflow: hidden;
+    overflow: hidden;
+}
+
+
+.albumsSection {
+    /*padding-left: 30px;*/
+}
+
+.albumsSection > div {
+    width: 100%;
+    padding-right: 12px;
+    margin: 0;
+}
+
+.albumsSection .topAlbumImage {
+    border-radius: 4px;
+    width: 400px;
+    object-fit: cover;
+}
+
+.alignRight {
+    text-align: right;
 }

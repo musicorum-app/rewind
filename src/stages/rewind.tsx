@@ -11,7 +11,7 @@ import {convertRange, getReversed, getShuffledArray, handleArtistImage} from "..
 // @ts-ignore
 import Odometer from 'odometer';
 import SplittedWordText from "../SplittedWordText";
-import {getMostListenedTrackFromArtist} from "../api/dataAnalyzer";
+import {getMostListenedTrackFromAlbum, getMostListenedTrackFromArtist} from "../api/dataAnalyzer";
 import {SHOW_PEDRO_PRINT} from "../api/Constants";
 import RoundedButton from "../RoundedButton";
 import {Collapse} from "@material-ui/core";
@@ -69,24 +69,6 @@ const RewindStage: React.FC<{
     return {height, width, mobile, imgMargin, maxBarHeight}
   }
 
-  const getFirstTrackImagePosition = () => {
-    if (!firstTrackImageRef.current || !firstTrackImageRef.current) return [0, 0, 0, 0]
-    const {height, width, mobile, imgMargin} = getResponsiveness()
-    const sizeInverted = mobile ? height : width
-    // @ts-ignore
-    const imgSize = firstTrackImageRef.current.clientHeight
-    // @ts-ignore
-    const textHeight = () => firstTrackInfo.current.clientHeight
-    // @ts-ignore
-    const imgY = (height / 2) - ((imgSize + (imgMargin * 2)) / 2)
-    const imgX = (width / 2) - ((imgSize + (imgMargin * 2)) / 2)
-    const left = mobile ? imgX : 0
-    const top = mobile ? 0 : imgY
-
-    const textLeft = mobile ? imgMargin : imgSize + (imgMargin * 2)
-    const textTop = mobile ? (imgSize + imgMargin * 2) : (height / 2) - (textHeight() / 2)
-    return [left, top, textLeft, textTop]
-  }
 
   useEffect(() => {
     if (firstTrackAnimated) return
@@ -979,7 +961,6 @@ const RewindStage: React.FC<{
       <Box mt={4} style={{width: '100%'}} className="artistBoxesAnimation">
         <Grid container justify="center">
           <Box mx={4} id="artistListExpandable">
-            <Collapse in={showArtistListExpand}>
               <Grid container justify="space-between" spacing={4}>
                 {
                   getShowMoreArtists().map((a, i) => <Grid item xs={12} md={6} className="artistListItem">
@@ -994,11 +975,7 @@ const RewindStage: React.FC<{
                   </Grid>)
                 }
               </Grid>
-            </Collapse>
           </Box>
-          <RoundedButton onClick={switchShowMoreArtists} color="primary" outlined>
-            Show {showArtistListExpand ? 'less' : 'more'}
-          </RoundedButton>
         </Grid>
       </Box>
     </section>
@@ -1071,6 +1048,69 @@ const RewindStage: React.FC<{
           )
         }
       </Grid>
+    </section>
+
+    <section
+      style={{
+        width: '100%',
+        overflowX: 'hidden',
+      }}
+      className="albumsSection"
+    >
+      <Grid container spacing={3} justify="space-between">
+        <Grid item style={{ flex: 1, marginRight: 12}}>
+          <Box ml={2} className="artistsSpaceBetween">
+            <div>
+              <Typography id="aab" color="primary">
+                <Box fontWeight={900} fontSize={mobile ? 30 : 60} mr={5} style={{
+                  marginBottom: mobile ? -10 : -15,
+                  lineHeight: '1.4em'
+                }}>
+                  <SplittedWordText text={data.stats.albums.toLocaleString()} nodesClass="artistsCountNumber"/>
+                </Box>
+                <Box fontWeight={400} fontSize={25} color="white" className="artistsCountNumber" mr={5}>
+                  albums listened
+                </Box>
+              </Typography>
+            </div>
+            <div className="alignRight">
+              <Box fontSize={50} fontWeight={900} my={0.5} color="primary.main">
+                <SplittedWordText text={data.topAlbums[0].name} nodesClass="mostListenedArtistNameNodes"/>
+              </Box>
+              <Box fontSize={20} className="mostListenedArtistSubText">
+                Is your most listened album
+                with <Box color="primary.main" fontWeight="800"
+                          component="span">{data.topArtists[0].playcount.toLocaleString()}</Box> scrobbles
+              </Box>
+              <Box fontSize={18} mt={1}>
+                {
+                  getMostListenedTrackFromAlbum(data.topAlbums[0], data) ?
+                    <Box className="mostListenedArtistSubText">
+                      You listened a lot of{" "}
+                      <Box color="primary.main"
+                           fontWeight="800"
+                           component="span">{getMostListenedTrackFromAlbum(data.topAlbums[0], data)?.name}
+                      </Box> from this album
+                    </Box> : null
+                }
+              </Box>
+            </div>
+            {/*<div>*/}
+            {/*  {*/}
+            {/*    getMostListenedTrackFromArtist(data.topArtists[0], data) ?*/}
+            {/*      <Box className="mostListenedArtistSubText">*/}
+            {/*        You really liked <strong>{getMostListenedTrackFromArtist(data.topArtists[0], data)?.name}</strong>, being*/}
+            {/*        your most listened track from this artist*/}
+            {/*      </Box> : null*/}
+            {/*  }*/}
+            {/*</div>*/}
+          </Box>
+        </Grid>
+        <Grid item>
+          <img src={data.topAlbums[0].image} alt={data.topAlbums[0].name} className="topAlbumImage"/>
+        </Grid>
+      </Grid>
+
     </section>
 
     <section
