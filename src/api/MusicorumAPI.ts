@@ -1,4 +1,4 @@
-import {API_URL} from "./Constants";
+import {API_URL} from "../Constants";
 import {Nullable, SpotifyArtistBase} from "./interfaces";
 
 export default class API {

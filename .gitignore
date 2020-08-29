@@ -22,4 +22,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+gsap-bonus.tgz
+
 .vercel
+
+# Local Netlify folder
+.netlify

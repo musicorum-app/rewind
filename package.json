@@ -12,14 +12,16 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
+    "@types/styled-components": "^5.1.2",
     "bezier-easing": "^2.1.0",
-    "gsap": "^3.4.2",
+    "gsap": "file:gsap-bonus.tgz",
     "moment": "^2.26.0",
     "odometer": "^0.4.8",
     "rc-tween-one": "^2.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
+    "styled-components": "^5.1.1",
     "typescript": "~3.7.2"
   },
   "scripts": {
