@@ -4,6 +4,8 @@ import {THEME_COLOR} from "../Constants";
 
 const Wrapper = styled.div`
   padding: 40px 0px 0px 40px;
+  position: absolute;
+  z-index: 20;
 `
 
 const Title = styled.h2`

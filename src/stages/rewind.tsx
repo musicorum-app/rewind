@@ -1,9 +1,9 @@
 import React, {forwardRef, useEffect, useRef, useState} from "react";
 import {MonthData, RewindData} from "../api/interfaces";
 import Section from "../components/Section";
-import SplashSection from "../sections/splash";
+import MonthsAnimation from "../sections/MonthsAnimation";
 import SideController from "../components/SideController";
-import BeginningSection from "../sections/beginning";
+import BeginningSection from "../sections/Beginning";
 
 interface MonthState {
   actual: MonthData,
@@ -11,7 +11,6 @@ interface MonthState {
   index: number
 }
 
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 const RewindStage: React.FC<{
   data: RewindData,
@@ -34,7 +33,7 @@ const RewindStage: React.FC<{
 
   const start = async () => {
     // @ts-ignore
-    setTimeout(() => splashRef.current.start(), 1000)
+    splashRef.current.start()
   }
 
   const handleSplashEnd = () => {
@@ -44,7 +43,7 @@ const RewindStage: React.FC<{
 
 
   return <div>
-    <SplashSection data={data} ref={splashRef} onEnd={handleSplashEnd} />
+    <MonthsAnimation data={data} ref={splashRef} onEnd={handleSplashEnd} />
     <BeginningSection data={data} ref={beginningRef} />
 
     <SideController />
