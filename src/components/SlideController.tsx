@@ -49,34 +49,36 @@ interface DownIconProps {
 
 const DownIcon = styled(DownNavigationIcon)`
   position: absolute;
-  bottom: 10px;
+  bottom: 20px;
   left: 50vw;
   transform: translateX(-50%);
   opacity: ${(props: DownIconProps) => props.show ? '.4' : '0'};
   transition: opacity .4s;
   &:hover {
     opacity: ${(props: DownIconProps) => props.show ? '.7' : '0'};
-    cursor: opacity: ${(props: DownIconProps) => props.show ? 'pointer': ''};;
+    cursor: ${(props: DownIconProps) => props.show ? 'pointer': ''};;
   }
 `
 
-const SideController: React.FC<{
-  showBottomIcon?: boolean
-}> = ({showBottomIcon}) => {
+const SlideController: React.FC<{
+  showBottomIcon?: boolean,
+  onClick?: () => void,
+  stage?: number
+}> = ({showBottomIcon, stage, onClick}) => {
 
   return <div>
     <Controller>
       <Navigation />
       <NavigationText>
-        2 / 6
+        {(stage || 0) + 1} / 6
       </NavigationText>
       <NavigationDown />
     </Controller>
     {
-      <DownIcon />
+      <DownIcon show={showBottomIcon} onClick={onClick} />
     }
   </div>
 }
 
 
-export default SideController
+export default SlideController

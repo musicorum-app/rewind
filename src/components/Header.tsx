@@ -14,6 +14,7 @@ const Title = styled.h2`
   font-size: 80px;
   margin: 0px;
   line-height: 61px;
+  //transform: translateZ(20px);
 `
 
 const SubTitle = styled.p`
