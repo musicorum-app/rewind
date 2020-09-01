@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle, useState} from "react";
+import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import Section from "../components/Section";
 import {Typography, Box} from "@material-ui/core";
 import {FormattedArtist, RewindData} from "../api/interfaces";
@@ -10,11 +10,14 @@ import ParallaxWrapper from "../components/ParallaxWrapper";
 import Header from "../components/Header";
 import {handleArtistImage} from "../utils";
 import {THEME_COLOR} from "../Constants";
+import {on} from "cluster";
 
 gsap.registerPlugin(CustomEase)
 
-const Perspective = styled.div`
-
+const TopArtistsSection = styled.div`
+  position: absolute;
+  top: 100vh;
+  opacity: 0;
 `
 
 const ImageWraper = styled.div`
@@ -31,7 +34,6 @@ const Image = styled.img`
   width: 100%;
   height: 0px;
   padding: 50% 0;
-  /* reset just in case */
   background-clip: border-box;
   background-position: center;
   background-repeat: space;
@@ -50,7 +52,6 @@ const ArtistList = styled.div`
 `
 
 const List = styled.div`
-  color: ${THEME_COLOR};
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -58,8 +59,12 @@ const List = styled.div`
   padding-bottom: 100px;
 `
 
+interface ListItemProps {
+  hovered?: boolean
+}
+
 const ListItem = styled.span`
-  //margin-top: 20px;
+  color: ${(props: ListItemProps) => props.hovered ? 'white' : THEME_COLOR};
   font-weight: 800;
   font-size: 45px;
   width: 100%;
@@ -82,13 +87,13 @@ const ImageBase = styled.img`
 `
 
 const TopImage = styled(ImageBase)`
-  transform: translateZ(-90px);
+  transform: translateZ(-290px);
   top: 4vh;
   right: calc(55vw - ${backgroundImageSize}px);
 `
 
 const CenterImage = styled(ImageBase)`
-  transform: translateZ(-270px);
+  transform: translateZ(-80px);
   top: 40vh;
   right: calc(20vw - ${backgroundImageSize}px);
 `
@@ -99,18 +104,71 @@ const BottomImage = styled(ImageBase)`
   right: calc(45vw - ${backgroundImageSize}px);
 `
 
+const ScrobbleCount = styled.div`
+  position: absolute;
+  bottom: 30px;
+  left: 60px;
+  transform: translateZ(100px);
+  & > h3 {
+    color: ${THEME_COLOR};
+    font-weight: 900;
+    font-size: 90px;
+    margin: 0px;
+    line-height: 70px;
+  }
+`
+
 const TopArtists: React.FC<{
   data: RewindData,
   ref?: React.Ref<HTMLDivElement>,
   onEnd?: () => void;
 }> = forwardRef(({onEnd, data}, ref) => {
 
+  const [show, setShow] = useState(false)
   const [hoveredArtist, setHoveredArtist] = useState<FormattedArtist>(data.topArtists[0])
 
-  const start = () => {
-    console.log('Starting')
-    const tl = new TimelineMax()
+  useEffect(() => {
+    if (show) {
+      console.log('AAaa')
+      const tl = new TimelineMax()
+        .to('#topArtistsSection', {
+          top: 0,
+          duration: 0
+        })
+        .to('#topArtistsSection', {
+          opacity: 1
+        }, 0)
+        .from('#bigImage', {
+          x: -200,
+          opacity: 0,
+          ease: 'expo.out',
+          duration: 3
+        }, 0)
+        .from('.topArtistsBackgroundImage', {
+          opacity: 0,
+          y: 120,
+          ease: 'expo.out',
+          duration: 3,
+          stagger: .2
+        }, 0)
+        .from('.topArtistsListNode', {
+          x: -120,
+          opacity: 0,
+          ease: 'expo.out',
+          duration: 3,
+          stagger: .1
+        }, 0)
+        .to({}, {
+          duration: 1.8,
+          onComplete: () => {
+            if (onEnd) onEnd()
+          }
+        })
+    }
+  }, [show])
 
+  const start = () => {
+    setShow(true)
   }
 
   // @ts-ignore
@@ -118,32 +176,54 @@ const TopArtists: React.FC<{
     start
   }))
 
-  const artists = data.topArtists.slice(1, 6)
 
-  return <Section center>
-    <ParallaxWrapper>
-      <Header title="THE ARTISTS">
-      </Header>
-      <ImageWraper>
-        <Image src={handleArtistImage(data.topArtists[0])} style={{
-          backgroundImage: `url(${handleArtistImage(data.topArtists[0])})`
-        }} />
-      </ImageWraper>
-      <ArtistList>
-        Your most listened artists were
-        <List>
-          {
-            artists.map((a, i) => <ListItem key={i}>
-              {a.name}
-            </ListItem>)
-          }
-        </List>
-      </ArtistList>
-      <TopImage src={handleArtistImage(data.topArtists[1])} />
-      <CenterImage src={handleArtistImage(data.topArtists[2])} />
-      <BottomImage src={handleArtistImage(data.topArtists[3])} />
-    </ParallaxWrapper>
-  </Section>
+  const artists = data.topArtists.slice(0, 5)
+
+  return show ? <Section center>
+    <TopArtistsSection id="topArtistsSection">
+      <ParallaxWrapper>
+        <Header title="THE ARTISTS">
+        </Header>
+        <ImageWraper id="bigImage">
+          <Image src={handleArtistImage(hoveredArtist)} style={{
+            backgroundImage: `url(${handleArtistImage(hoveredArtist)})`
+          }} />
+        </ImageWraper>
+        <ScrobbleCount>
+          <h3>{hoveredArtist.playcount.toLocaleString()}</h3>
+          scrobbles
+        </ScrobbleCount>
+
+        <ArtistList>
+          Your most listened artists were
+          <List>
+            {
+              artists.map((a, i) => <ListItem
+                hovered={hoveredArtist === a}
+                onMouseEnter={() => setHoveredArtist(a)}
+                className="topArtistsListNode"
+                key={i}
+              >
+                {a.name}
+              </ListItem>)
+            }
+          </List>
+        </ArtistList>
+        <TopImage
+          className="topArtistsBackgroundImage"
+          src={handleArtistImage(data.topArtists[5])}
+        />
+        <CenterImage
+          className="topArtistsBackgroundImage"
+          src={handleArtistImage(data.topArtists[6])}
+        />
+        <BottomImage
+          className="topArtistsBackgroundImage"
+          src={handleArtistImage(data.topArtists[7])}
+        />
+      </ParallaxWrapper>
+    </TopArtistsSection>
+  </Section> : null
 })
 
 TopArtists.defaultProps = {

@@ -160,9 +160,23 @@ const ScrobbleCount: React.FC<{
     setShow(true)
   }
 
+  const animateEnd = () => {
+    return new Promise(resolve => {
+      new TimelineMax().to('#scrobbleWrapper', {
+        opacity: 0
+      })
+        .to('#scrobbleWrapper', {
+          top: '100vh',
+          duration: 0,
+          onComplete: resolve
+        })
+    })
+  }
+
   // @ts-ignore
   useImperativeHandle(ref, () => ({
-    start
+    start,
+    animateEnd
   }))
 
   const getBound = (i: number): number => {
@@ -181,17 +195,17 @@ const ScrobbleCount: React.FC<{
     <SectionWrapper id="scrobbleWrapper">
       <ParallaxWrapper>
         {/*<CarouselWrapper>*/}
-          <Carousel id="carousel">
-            {
-              texts.map((text, i) =>
-                <CarouselItem key={i} id={`carouselNode-${i}`} className="carouselNode" style={{
-                  transform: `translateX(-50%) translateY(-50%) rotateX(${i * 45}deg) translateZ(148px)`
-                }}>
-                  {text}
-                </CarouselItem>
-              )
-            }
-          </Carousel>
+        <Carousel id="carousel">
+          {
+            texts.map((text, i) =>
+              <CarouselItem key={i} id={`carouselNode-${i}`} className="carouselNode" style={{
+                transform: `translateX(-50%) translateY(-50%) rotateX(${i * 45}deg) translateZ(148px)`
+              }}>
+                {text}
+              </CarouselItem>
+            )
+          }
+        </Carousel>
         {/*</CarouselWrapper>*/}
         <CarouselBox id="carouselBox"/>
         <BottomTextBox>

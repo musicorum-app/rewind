@@ -39,9 +39,10 @@ const RewindStage: React.FC<{
 
   const start = async () => {
     // @ts-ignore
-    // splashRef.current.start()
-    // @ts-ignore
-    topArtistsCountRef.current.start()
+    splashRef.current.start()
+    // @ts-ignoreb
+    // topArtistsCountRef.current.start()
+    // setTimeout(() => topArtistsCountRef.current.start(), 600)
   }
 
   const handleSplashEnd = () => {
@@ -49,12 +50,7 @@ const RewindStage: React.FC<{
     beginningRef.current.start()
   }
 
-  const handleBeginningEnd = () => {
-    setShowDownButton(true)
-    setCanChangeSlide(true)
-  }
-
-  const handleScrobblingEnd = () => {
+  const handleStageEnd = () => {
     setShowDownButton(true)
     setCanChangeSlide(true)
   }
@@ -77,15 +73,20 @@ const RewindStage: React.FC<{
       beginningRef.current.animateEnd()
       // @ts-ignore
         .then(() => scrobbleCountRef.current.start())
+    } else if (stage === 2 && isNext) {
+      // @ts-ignore
+      scrobbleCountRef.current.animateEnd()
+        // @ts-ignore
+        .then(() => topArtistsCountRef.current.start())
     }
   }
 
 
   return <div>
     <MonthsAnimation data={data} ref={splashRef} onEnd={handleSplashEnd} />
-    <BeginningSection data={data} ref={beginningRef} onEnd={handleBeginningEnd} />
-    <ScrobbleCount data={data} ref={scrobbleCountRef} onEnd={handleScrobblingEnd} />
-    <TopArtists data={data} ref={topArtistsCountRef} />
+    <BeginningSection data={data} ref={beginningRef} onEnd={handleStageEnd} />
+    <ScrobbleCount data={data} ref={scrobbleCountRef} onEnd={handleStageEnd} />
+    <TopArtists data={data} ref={topArtistsCountRef} onEnd={handleStageEnd} />
 
     <SlideController
       stage={stage}

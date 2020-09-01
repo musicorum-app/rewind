@@ -29,8 +29,9 @@ import MusicorumAPI from "./MusicorumAPI";
 import {userInfo} from "os";
 
 const year = 2020
-const startTime = new Date(year, 0, 0, 0, 0).getTime() / 1000
-const endTime = new Date(year + 1, 0, 0, 0, 0).getTime() / 1000
+const offset = new Date().getTimezoneOffset()
+const startTime = (new Date(year, 0, 0, 0, 0).getTime() / 1000) + offset * 60
+const endTime = (new Date(year + 1, 0, 0, 0, 0).getTime() / 1000) + offset * 60
 
 const dataFetcher = async (
   userData: UserProfile,
@@ -59,9 +60,8 @@ const dataFetcher = async (
       28
     ],
     [
-      (r: any[], pgr: Function) => fetchMonths(userData, r, pgr),
-      'Snooping around your months...',
-      50
+      () => console.log('DEPRECATED'),
+      'Snooping around your months...'
     ],
     [
       () =>
@@ -113,7 +113,7 @@ const dataFetcher = async (
   const toFetch = new Map<string, SpotifyArtistBase>()
 
   addToMap(result[5].artist.slice(0, 25).map((a: ArtistBase) => a.name), toFetch)
-  addMonthsArtistsToMap(result[4], toFetch)
+  // addMonthsArtistsToMap(result[4], toFetch)
   await fetchArtistsFromAPI(toFetch)
   console.log(toFetch)
 
@@ -147,10 +147,10 @@ const dataFetcher = async (
       albums: albums.length,
       artists: artists.length
     },
-    topAlbums: result[6].album,
+    topAlbums: await formatAlbums(result[6].album),
     topArtists: topArtists,
     topTracks: result[9].map((t: TrackInfo) => formatTrack(t)),
-    months: mergeSpotifyToMonths(result[4], toFetch),
+    // months: mergeSpotifyToMonths(result[4], toFetch),
     spotifyData: getShuffledArray(spotifyArtists)
   }
 }
@@ -472,17 +472,23 @@ const fetchArtistsFromAPI = async (artists: Map<string, SpotifyArtistBase>) => {
   }
 }
 
-const mergeSpotifyToMonths = (months: MonthsData, map: Map<string, SpotifyArtistBase>): MonthsData => {
-  const task = (months: MonthData[]): MonthData[] => {
-    return months.map((m: MonthData) => ({
-      artists: m.artists.map(a => ({...a, spotify: map.get(a.name)})),
-      scrobbles: m.scrobbles
-    }))
-  }
-  return {
-    actual: task(months.actual),
-    last: task(months.last),
-  }
+
+const formatAlbums = async (albums: WeeklyAlbum[]): Promise<FormattedAlbum[]> => {
+  const formatted: FormattedAlbum[] = albums.map(album => ({
+    name: album.name,
+    url: album.url,
+    artist: album.artist["#text"],
+    playCount: Number(album.playcount)
+  }))
+
+  const toFetch = formatted.slice(0, 9)
+  const result = await MusicorumAPI.fetchAlbumsMetadata(toFetch)
+
+  return formatted.map((album, i) => {
+    if (i > 9) return album
+    if (result[i] && result[i].cover) album.image = result[i].cover
+    return album
+  })
 }
 
 // const formatAlbum = (album: WeeklyAlbum): FormattedAlbum => {

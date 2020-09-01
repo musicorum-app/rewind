@@ -246,7 +246,7 @@ export interface RewindData {
   topAlbums: FormattedAlbum[],
   topTracks: FormattedTrack[],
   lovedTracks: FormattedLovedTrack[],
-  months: MonthsData,
+  // months: MonthsData,
   spotifyData?: SpotifyArtistBase[]
 }
 
