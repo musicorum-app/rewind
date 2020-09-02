@@ -1,4 +1,4 @@
-import {API_URL} from "../Constants";
+import {API_URL, RESOURCE_API_URL} from "../Constants";
 import {Nullable, SpotifyArtistBase} from "./interfaces";
 
 interface AlbumBase {
@@ -12,9 +12,24 @@ interface AlbumResponse {
   cover?: string
 }
 
+interface TrackBase {
+  name: string,
+  artist: string,
+  album?: string
+}
+
+interface TrackResponse {
+  id: string,
+  name: string,
+  artist: string,
+  album: string,
+  cover?: string,
+  preview?: string
+}
+
 export default class API {
   static async fetchArtistsMetadata(artists: string[]): Promise<Nullable<SpotifyArtistBase>[]> {
-    return fetch(API_URL + 'fetch/artists', {
+    return fetch(RESOURCE_API_URL + 'fetch/artists', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -24,12 +39,22 @@ export default class API {
   }
 
   static async fetchAlbumsMetadata(albums: AlbumBase[]): Promise<AlbumResponse[]> {
-    return fetch(API_URL + 'fetch/albums', {
+    return fetch(RESOURCE_API_URL + 'fetch/albums', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ albums })
+    }).then(r => r.json())
+  }
+
+  static async fetchTracksMetadata(tracks: TrackBase[]): Promise<TrackResponse[]> {
+    return fetch(API_URL + 'rewind/tracks', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ tracks })
     }).then(r => r.json())
   }
 }

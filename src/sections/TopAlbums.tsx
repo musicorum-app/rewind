@@ -1,20 +1,20 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import Section from "../components/Section";
 import {Typography, Box} from "@material-ui/core";
-import {FormattedArtist, RewindData} from "../api/interfaces";
+import {FormattedAlbum, RewindData} from "../api/interfaces";
 import logo from '../assets/logo.svg'
 import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
 import ParallaxWrapper from "../components/ParallaxWrapper";
 import Header from "../components/Header";
-import {handleArtistImage} from "../utils";
+import {handleAlbumImage} from "../utils";
 import {THEME_COLOR} from "../Constants";
 import {on} from "cluster";
 
 gsap.registerPlugin(CustomEase)
 
-const TopArtistsSection = styled.div`
+const TopAlbumsSection = styled.div`
   position: absolute;
   top: 100vh;
   opacity: 0;
@@ -40,7 +40,7 @@ const Image = styled.img`
   background-size: cover;
 `
 
-const ArtistList = styled.div`
+const AlbumList = styled.div`
   position: absolute;
   right: 0px;
   top: 0px;
@@ -87,21 +87,21 @@ const ImageBase = styled.img`
 `
 
 const TopImage = styled(ImageBase)`
-  transform: translateZ(-290px);
+  transform: translateZ(-70px);
   top: 4vh;
-  right: calc(55vw - ${backgroundImageSize}px);
+  right: calc(25vw - ${backgroundImageSize}px);
 `
 
 const CenterImage = styled(ImageBase)`
-  transform: translateZ(-80px);
-  top: 40vh;
-  right: calc(20vw - ${backgroundImageSize}px);
+  transform: translateZ(-220px);
+  top: 30vh;
+  right: calc(50vw - ${backgroundImageSize}px);
 `
 
 const BottomImage = styled(ImageBase)`
-  transform: translateZ(-180px);
-  bottom: calc(40vh - ${backgroundImageSize}px);
-  right: calc(45vw - ${backgroundImageSize}px);
+  transform: translateZ(-170px);
+  bottom: calc(30vh - ${backgroundImageSize}px);
+  right: calc(25vw - ${backgroundImageSize}px);
 `
 
 const ScrobbleCount = styled.div`
@@ -118,40 +118,39 @@ const ScrobbleCount = styled.div`
   }
 `
 
-const TopArtists: React.FC<{
+const TopAlbums: React.FC<{
   data: RewindData,
   ref?: React.Ref<HTMLDivElement>,
   onEnd?: () => void;
 }> = forwardRef(({onEnd, data}, ref) => {
 
   const [show, setShow] = useState(false)
-  const [hoveredArtist, setHoveredArtist] = useState<FormattedArtist>(data.topArtists[0])
+  const [hoveredAlbum, setHoveredAlbum] = useState<FormattedAlbum>(data.topAlbums[0])
 
   useEffect(() => {
     if (show) {
-      console.log('AAaa')
       const tl = new TimelineMax()
-        .to('#topArtistsSection', {
+        .to('#topAlbumsSection', {
           top: 0,
           duration: 0
         })
-        .to('#topArtistsSection', {
+        .to('#topAlbumsSection', {
           opacity: 1
         }, 0)
-        .from('#bigImage', {
+        .from('#bigImageAlbums', {
           x: -200,
           opacity: 0,
           ease: 'expo.out',
           duration: 3
         }, 0)
-        .from('.topArtistsBackgroundImage', {
+        .from('.topAlbumsBackgroundImage', {
           opacity: 0,
           y: 120,
           ease: 'expo.out',
           duration: 3,
           stagger: .2
         }, 0)
-        .from('.topArtistsListNode', {
+        .from('.topAlbumsListNode', {
           x: -120,
           opacity: 0,
           ease: 'expo.out',
@@ -159,7 +158,7 @@ const TopArtists: React.FC<{
           stagger: .1
         }, 0)
         .to({}, {
-          duration: 1,
+          duration: 1.8,
           onComplete: () => {
             if (onEnd) onEnd()
           }
@@ -173,10 +172,10 @@ const TopArtists: React.FC<{
 
   const animateEnd = () => {
     return new Promise(resolve => {
-      new TimelineMax().to('#topArtistsSection', {
+      new TimelineMax().to('#topAlbumsSection', {
         opacity: 0
       })
-        .to('#topArtistsSection', {
+        .to('#topAlbumsSection', {
           top: '100vh',
           duration: 0,
           onComplete: resolve
@@ -191,58 +190,58 @@ const TopArtists: React.FC<{
   }))
 
 
-  const artists = data.topArtists.slice(0, 5)
+  const Albums = data.topAlbums.slice(0, 5)
 
   return show ? <Section center>
-    <TopArtistsSection id="topArtistsSection">
+    <TopAlbumsSection id="topAlbumsSection">
       <ParallaxWrapper>
-        <Header title="THE ARTISTS">
+        <Header title="THE ALBUMS">
         </Header>
-        <ImageWraper id="bigImage">
-          <Image src={handleArtistImage(hoveredArtist)} style={{
-            backgroundImage: `url(${handleArtistImage(hoveredArtist)})`
-          }}/>
+        <ImageWraper id="bigImageAlbums">
+          <Image src={handleAlbumImage(hoveredAlbum)} style={{
+            backgroundImage: `url(${handleAlbumImage(hoveredAlbum)})`
+          }} />
         </ImageWraper>
         <ScrobbleCount>
-          <h3>{hoveredArtist.playcount.toLocaleString()}</h3>
+          <h3>{hoveredAlbum.playCount.toLocaleString()}</h3>
           scrobbles
         </ScrobbleCount>
 
-        <ArtistList>
-          Your most listened artists were
+        <AlbumList>
+          Your most listened albums were
           <List>
             {
-              artists.map((a, i) => <ListItem
-                hovered={hoveredArtist === a}
-                onMouseEnter={() => setHoveredArtist(a)}
-                className="topArtistsListNode"
+              Albums.map((a, i) => <ListItem
+                hovered={hoveredAlbum === a}
+                onMouseEnter={() => setHoveredAlbum(a)}
+                className="topAlbumsListNode"
                 key={i}
               >
                 {a.name}
               </ListItem>)
             }
           </List>
-        </ArtistList>
+        </AlbumList>
         <TopImage
-          className="topArtistsBackgroundImage"
-          src={handleArtistImage(data.topArtists[5])}
+          className="topAlbumsBackgroundImage"
+          src={handleAlbumImage(data.topAlbums[5])}
         />
         <CenterImage
-          className="topArtistsBackgroundImage"
-          src={handleArtistImage(data.topArtists[6])}
+          className="topAlbumsBackgroundImage"
+          src={handleAlbumImage(data.topAlbums[6])}
         />
         <BottomImage
-          className="topArtistsBackgroundImage"
-          src={handleArtistImage(data.topArtists[7])}
+          className="topAlbumsBackgroundImage"
+          src={handleAlbumImage(data.topAlbums[7])}
         />
       </ParallaxWrapper>
-    </TopArtistsSection>
+    </TopAlbumsSection>
   </Section> : null
 })
 
-TopArtists.defaultProps = {
+TopAlbums.defaultProps = {
   onEnd: () => {
   }
 }
 
-export default TopArtists
+export default TopAlbums

@@ -57,7 +57,7 @@ export interface WeeklyAlbumChart {
 
 export interface TrackBase {
   name: string,
-  url: string
+  url: string,
 }
 
 export interface ListenedTrack extends TrackBase {
@@ -101,6 +101,8 @@ export interface LovedTracksResponse {
 export interface WeeklyTrack extends TrackBase {
   playcount: string | number,
   mbid: string,
+  album?: string,
+  image: ImagesObject,
   artist: {
     '#text': string
   }
@@ -186,7 +188,8 @@ export interface FormattedTrack {
   artist: string,
   album?: string,
   url: string,
-  image?: string
+  image?: string,
+  preview?: string
 }
 
 export interface FormattedTrackWithListenTime extends FormattedTrack {

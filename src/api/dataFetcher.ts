@@ -84,11 +84,15 @@ const dataFetcher = async (
       'Rating your favorite songs...'
     ],
     [
-      (r: any[], pgr: Function) =>
-        fetchTrackInfos(userData.name, r, pgr),
-      'Fetching more information on your most played songs...',
-      50
-    ]
+      () => console.log('DEPRECATED'),
+      'Snooping around your months...'
+    ],
+    // [
+    //   (r: any[], pgr: Function) =>
+    //     fetchTrackInfos(userData.name, r, pgr),
+    //   'Fetching more information on your most played songs...',
+    //   50
+    // ]
   ]
 
   const result: any[] = []
@@ -143,13 +147,13 @@ const dataFetcher = async (
     lovedTracks: result[8].map((t: LovedTrack) => formatLovedTrack(t)),
     stats: {
       scrobbles: scrobbles,
-      playTime: calculatePlayTime(result[7], result[9], scrobbles),
+      playTime: 2,
       albums: albums.length,
       artists: artists.length
     },
     topAlbums: await formatAlbums(result[6].album),
     topArtists: topArtists,
-    topTracks: result[9].map((t: TrackInfo) => formatTrack(t)),
+    topTracks: await formatTracks(result[7].track),
     // months: mergeSpotifyToMonths(result[4], toFetch),
     spotifyData: getShuffledArray(spotifyArtists)
   }
@@ -488,6 +492,26 @@ const formatAlbums = async (albums: WeeklyAlbum[]): Promise<FormattedAlbum[]> =>
     if (i > 9) return album
     if (result[i] && result[i].cover) album.image = result[i].cover
     return album
+  })
+}
+
+const formatTracks = async (tracks: WeeklyTrack[]): Promise<FormattedTrack[]> => {
+  const formatted: FormattedTrack[] = tracks.map(track => ({
+    name: track.name,
+    album: track.album,
+    artist: track.artist["#text"],
+    image: track?.image[3]["#text"],
+    url: track.url
+  }))
+
+  const toFetch = formatted.slice(0, 20)
+  const result = await MusicorumAPI.fetchTracksMetadata(toFetch)
+
+  return formatted.map((track, i) => {
+    if (i > 20) return track
+    if (result[i] && result[i].cover) track.image = result[i].cover
+    if (result[i] && result[i].preview) track.preview = result[i].preview
+    return track
   })
 }
 

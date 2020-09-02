@@ -6,6 +6,8 @@ import SlideController from "../components/SlideController";
 import BeginningSection from "../sections/Beginning";
 import ScrobbleCount from "../sections/ScrobbleCount";
 import TopArtists from "../sections/TopArtists";
+import TopAlbums from "../sections/TopAlbums";
+import TopTracks from "../sections/TopTracks";
 
 interface MonthState {
   actual: MonthData,
@@ -27,6 +29,8 @@ const RewindStage: React.FC<{
   const beginningRef = useRef(null)
   const scrobbleCountRef = useRef(null)
   const topArtistsCountRef = useRef(null)
+  const topAlbumsCountRef = useRef(null)
+  const topTracksCountRef = useRef(null)
 
 
   useEffect(() => {
@@ -39,9 +43,9 @@ const RewindStage: React.FC<{
 
   const start = async () => {
     // @ts-ignore
-    splashRef.current.start()
-    // @ts-ignoreb
-    // topArtistsCountRef.current.start()
+    // splashRef.current.start()
+    // @ts-ignore
+    topTracksCountRef.current.start()
     // setTimeout(() => topArtistsCountRef.current.start(), 600)
   }
 
@@ -66,6 +70,9 @@ const RewindStage: React.FC<{
   }
 
   const updateStages = (stage: number, isNext: boolean) => {
+    // @ts-ignore
+    // return topArtistsCountRef.current.animateEnd()
+
     if (stage === 0) {
 
     } else if (stage === 1 && isNext) {
@@ -78,6 +85,16 @@ const RewindStage: React.FC<{
       scrobbleCountRef.current.animateEnd()
         // @ts-ignore
         .then(() => topArtistsCountRef.current.start())
+    } else if (stage === 3 && isNext) {
+    // @ts-ignore
+      topArtistsCountRef.current.animateEnd()
+      // @ts-ignore
+      .then(() => topAlbumsCountRef.current.start())
+    } else if (stage === 4 && isNext) {
+      // @ts-ignore
+      topAlbumsCountRef.current.animateEnd()
+        // @ts-ignore
+        .then(() => beginningRef.current.start())
     }
   }
 
@@ -87,6 +104,8 @@ const RewindStage: React.FC<{
     <BeginningSection data={data} ref={beginningRef} onEnd={handleStageEnd} />
     <ScrobbleCount data={data} ref={scrobbleCountRef} onEnd={handleStageEnd} />
     <TopArtists data={data} ref={topArtistsCountRef} onEnd={handleStageEnd} />
+    <TopAlbums data={data} ref={topAlbumsCountRef} onEnd={handleStageEnd} />
+    <TopTracks data={data} ref={topTracksCountRef} onEnd={handleStageEnd} />
 
     <SlideController
       stage={stage}
