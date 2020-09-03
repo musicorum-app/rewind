@@ -34,7 +34,7 @@ export default class API {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ artists })
+      body: JSON.stringify({artists})
     }).then(r => r.json())
   }
 
@@ -44,17 +44,25 @@ export default class API {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ albums })
+      body: JSON.stringify({albums})
     }).then(r => r.json())
   }
 
   static async fetchTracksMetadata(tracks: TrackBase[]): Promise<TrackResponse[]> {
+    const albumObj = (track: TrackBase) => track.album ? {
+      album: encodeURIComponent(track.album)
+    } : {}
+    tracks = tracks.map(t => ({
+      name: encodeURIComponent(t.name),
+      artist: encodeURIComponent(t.artist),
+      ...albumObj(t)
+    }))
     return fetch(API_URL + 'rewind/tracks', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ tracks })
+      body: JSON.stringify({tracks})
     }).then(r => r.json())
   }
 }

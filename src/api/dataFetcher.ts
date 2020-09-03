@@ -500,7 +500,7 @@ const formatTracks = async (tracks: WeeklyTrack[]): Promise<FormattedTrack[]> =>
     name: track.name,
     album: track.album,
     artist: track.artist["#text"],
-    image: track?.image[3]["#text"],
+    image: track?.image[3]?.["#text"],
     url: track.url
   }))
 

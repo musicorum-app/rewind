@@ -43,10 +43,10 @@ const RewindStage: React.FC<{
 
   const start = async () => {
     // @ts-ignore
-    // splashRef.current.start()
+    splashRef.current.start()
     // @ts-ignore
-    topTracksCountRef.current.start()
-    // setTimeout(() => topArtistsCountRef.current.start(), 600)
+    // topTracksCountRef.current.start()
+    // setTimeout(() => topTracksCountRef.current.start(), 600)
   }
 
   const handleSplashEnd = () => {
@@ -94,7 +94,7 @@ const RewindStage: React.FC<{
       // @ts-ignore
       topAlbumsCountRef.current.animateEnd()
         // @ts-ignore
-        .then(() => beginningRef.current.start())
+        .then(() => topTracksCountRef.current.start())
     }
   }
 
