@@ -1,14 +1,14 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useState} from "react";
 import Section from "../components/Section";
-import {Typography, Box} from "@material-ui/core";
-import {FormattedAlbum, RewindData} from "../api/interfaces";
-import logo from '../assets/logo.svg'
+import {Nullable, RewindData} from "../api/interfaces";
 import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
 import ParallaxWrapper from "../components/ParallaxWrapper";
 import Header from "../components/Header";
 import {ReactComponent as ScrollerArrow} from '../assets/scrollerArrow.svg'
+import {ReactComponent as PlayIcon} from '../assets/playIcon.svg'
+import {ReactComponent as PauseIcon} from '../assets/pauseIcon.svg'
 import {THEME_COLOR} from "../Constants";
 import {handleTrackImage} from "../utils";
 
@@ -87,6 +87,28 @@ const LeftNavigationArrow = styled(RightNavigationArrow)`
   transform: translateY(-50%) translateZ(25px) rotateZ(180deg);
 `
 
+const TrackPreview = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`
+
+const PlayButton = styled.div`
+  & > svg {
+    width: 42px;
+    height: 42px;
+    transform: scale(1);
+    transition: transform .2s;
+    
+    &:hover {
+      transform: scale(1.18);
+      cursor: pointer;
+    }
+  }
+`
+
+
 const centerImageParams: gsap.TweenVars = {
   translateX: '-50%',
   translateY: '-50%',
@@ -110,11 +132,13 @@ const TopTracks: React.FC<{
   ref?: React.Ref<HTMLDivElement>,
   onEnd?: () => void;
 }> = forwardRef(({onEnd, data}, ref) => {
-  const tracks = data.topTracks.slice(0, 8)
+  const tracks = data.topTracks.slice(0, 16)
 
   const [show, setShow] = useState(false)
   const [currentTrack, setCurrentTrack] = useState<number>(0)
+  const [previewPlaying, setPreviewPlaying] = useState(false)
   const [windowSize, setWindowSize] = useState<number[]>([0, 0])
+  const [audio, setAudio] = useState<Nullable<HTMLAudioElement>>(null)
 
   useLayoutEffect(() => {
     function updateSize() {
@@ -143,10 +167,6 @@ const TopTracks: React.FC<{
     }
   }, [show])
 
-  useEffect(() => {
-
-  }, [windowSize])
-
   const setupScroll = () => {
     gsap.set('.topTracksItem', {
       ...borderImageParams,
@@ -165,6 +185,10 @@ const TopTracks: React.FC<{
   }
 
   const updateOrder = (newOrder: number) => {
+    if (audio) {
+      audio.pause()
+      setPreviewPlaying(false)
+    }
 
     console.log(newOrder)
     if (newOrder >= tracks.length) return
@@ -221,7 +245,6 @@ const TopTracks: React.FC<{
     })
   }
 
-
   // @ts-ignore
   useImperativeHandle(ref, () => ({
     start,
@@ -229,6 +252,35 @@ const TopTracks: React.FC<{
   }))
 
   // console.log(tracks)
+
+  const handlePreviewButtonClick = () => {
+    const track = tracks[currentTrack]
+    if (!track) console.error('Track not found!')
+    if (!track.preview) console.error('Preview not found!')
+
+    // Pause
+    if (previewPlaying) {
+      if (audio) audio.pause()
+      // Play
+    } else {
+      if (!audio) {
+        const audioObject = new Audio(track.preview)
+        setAudio(audioObject)
+        audioObject.addEventListener('canplaythrough', () => {
+          audioObject.play()
+        })
+        audioObject.addEventListener('ended', () => {
+          audioObject.pause()
+          setPreviewPlaying(false)
+        })
+      } else {
+        audio.src = track.preview || ''
+
+      }
+    }
+
+    setPreviewPlaying(!previewPlaying)
+  }
 
   return show ? <Section center>
     <TopTracksSection id="topTracksSection">
@@ -238,7 +290,7 @@ const TopTracks: React.FC<{
         {/*<TracksScroller>*/}
         {tracks.map((track, index) => (
           <TrackItem className="topTracksItem" id={`topTracksItem-${index}`} key={track.url}>
-            <TrackCover src={handleTrackImage(track.image)}/>
+            <TrackCover draggable={false} src={handleTrackImage(track.image)}/>
           </TrackItem>
         ))}
         {/*</TracksScroller>*/}
@@ -248,6 +300,25 @@ const TopTracks: React.FC<{
             {tracks[currentTrack].name}
           </TrackDataTitle>
           {tracks[currentTrack].artist}
+          <TrackPreview>
+            {
+              tracks[currentTrack].preview ? <PlayButton
+                onClick={handlePreviewButtonClick}
+              >
+                {
+                  previewPlaying ? <PauseIcon/> : <PlayIcon/>
+                }
+              </PlayButton> : tracks[currentTrack].spotify ?
+                <iframe
+                  src={`https://open.spotify.com/embed/track/${tracks[currentTrack].spotify}`}
+                  width="100%"
+                  height="80"
+                  frameBorder="0"
+                  allowTransparency={true}
+                  allow="encrypted-media"
+                /> : null
+            }
+          </TrackPreview>
         </TrackData>
 
         <LeftNavigationArrow available={currentTrack > 0}

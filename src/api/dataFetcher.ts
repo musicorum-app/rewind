@@ -84,15 +84,11 @@ const dataFetcher = async (
       'Rating your favorite songs...'
     ],
     [
-      () => console.log('DEPRECATED'),
-      'Snooping around your months...'
-    ],
-    // [
-    //   (r: any[], pgr: Function) =>
-    //     fetchTrackInfos(userData.name, r, pgr),
-    //   'Fetching more information on your most played songs...',
-    //   50
-    // ]
+      (r: any[], pgr: Function) =>
+        fetchTrackInfos(userData.name, r, pgr),
+      'Fetching more information on your most played songs...',
+      20
+    ]
   ]
 
   const result: any[] = []
@@ -153,7 +149,7 @@ const dataFetcher = async (
     },
     topAlbums: await formatAlbums(result[6].album),
     topArtists: topArtists,
-    topTracks: await formatTracks(result[7].track),
+    topTracks: await formatTracks(result[9]),
     // months: mergeSpotifyToMonths(result[4], toFetch),
     spotifyData: getShuffledArray(spotifyArtists)
   }
@@ -413,7 +409,7 @@ const fetchTrackInfos = async (user: string, r: any[], pgr: Function): Promise<T
   const tracks: WeeklyTrack[] = r[7].track
   const trackInfos: TrackInfo[] = []
 
-  const chunks = chunkArray(tracks, 4)
+  const chunks = chunkArray(tracks.slice(0, 20), 4)
 
   for (const chunk of chunks) {
     const res = await Promise.all(chunk.map(async t =>
@@ -495,12 +491,12 @@ const formatAlbums = async (albums: WeeklyAlbum[]): Promise<FormattedAlbum[]> =>
   })
 }
 
-const formatTracks = async (tracks: WeeklyTrack[]): Promise<FormattedTrack[]> => {
+const formatTracks = async (tracks: TrackInfo[]): Promise<FormattedTrack[]> => {
   const formatted: FormattedTrack[] = tracks.map(track => ({
     name: track.name,
-    album: track.album,
-    artist: track.artist["#text"],
-    image: track?.image[3]?.["#text"],
+    album: track.album?.title,
+    artist: track.artist.name,
+    image: track.album?.image[3]?.["#text"],
     url: track.url
   }))
 
@@ -509,8 +505,12 @@ const formatTracks = async (tracks: WeeklyTrack[]): Promise<FormattedTrack[]> =>
 
   return formatted.map((track, i) => {
     if (i > 20) return track
-    if (result[i] && result[i].cover) track.image = result[i].cover
-    if (result[i] && result[i].preview) track.preview = result[i].preview
+    if (result[i]) {
+      if (result[i].cover) track.image = track.image || result[i].cover
+      if (result[i].preview) track.preview = result[i].preview
+      track.spotify = result[i].id
+      // track.name = result[i].name
+    }
     return track
   })
 }

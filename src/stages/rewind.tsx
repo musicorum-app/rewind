@@ -43,10 +43,10 @@ const RewindStage: React.FC<{
 
   const start = async () => {
     // @ts-ignore
-    splashRef.current.start()
+    // splashRef.current.start()
     // @ts-ignore
     // topTracksCountRef.current.start()
-    // setTimeout(() => topTracksCountRef.current.start(), 600)
+    setTimeout(() => topTracksCountRef.current.start(), 600)
   }
 
   const handleSplashEnd = () => {

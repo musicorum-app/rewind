@@ -13,3 +13,14 @@
 #rewindText {
     opacity: 0;
 }
+
+
+::-moz-selection {
+    background: #FD0F57;
+    color: white
+}
+
+::selection {
+    background: #FD0F57;
+    color: white;
+}

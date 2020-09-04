@@ -189,7 +189,8 @@ export interface FormattedTrack {
   album?: string,
   url: string,
   image?: string,
-  preview?: string
+  preview?: string,
+  spotify?: string
 }
 
 export interface FormattedTrackWithListenTime extends FormattedTrack {
