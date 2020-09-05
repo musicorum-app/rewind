@@ -63,16 +63,17 @@ const DownIcon = styled(DownNavigationIcon)`
 const SlideController: React.FC<{
   showBottomIcon?: boolean,
   onClick?: () => void,
+  onClickBack?: () => void,
   stage?: number
-}> = ({showBottomIcon, stage, onClick}) => {
+}> = ({showBottomIcon, stage, onClick, onClickBack}) => {
 
   return <div>
     <Controller>
-      <Navigation />
+      <Navigation onClick={onClickBack} />
       <NavigationText>
         {(stage || 0) + 1} / 6
       </NavigationText>
-      <NavigationDown />
+      <NavigationDown onClick={ showBottomIcon ? onClick : () => {}} />
     </Controller>
     {
       <DownIcon show={showBottomIcon} onClick={onClick} />

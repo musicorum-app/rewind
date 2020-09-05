@@ -118,6 +118,13 @@ const ScrobbleCount: React.FC<{
         .map((v, i) => v + (i + 1))
 
       const tl = new TimelineMax()
+        .to('#scrobbleWrapper', {
+          top: '0vh',
+          duration: 0
+        })
+        .to('#scrobbleWrapper', {
+          opacity: 1,
+        })
         .to('.carouselNode', {
           opacity: 1,
           duration: 0.5
@@ -168,8 +175,12 @@ const ScrobbleCount: React.FC<{
         .to('#scrobbleWrapper', {
           top: '100vh',
           duration: 0,
-          onComplete: resolve
+          onComplete: () => {
+            resolve()
+            setShow(false)
+          }
         })
+
     })
   }
 

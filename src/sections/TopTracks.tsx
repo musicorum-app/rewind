@@ -164,6 +164,12 @@ const TopTracks: React.FC<{
         .to('#topTracksSection', {
           opacity: 1
         }, 0)
+        .to({}, {
+          duration: 3,
+          onComplete: () => {
+            if (onEnd) onEnd()
+          }
+        })
     }
   }, [show])
 
@@ -234,13 +240,24 @@ const TopTracks: React.FC<{
 
   const animateEnd = () => {
     return new Promise(resolve => {
-      new TimelineMax().to('#topTracksSection', {
-        opacity: 0
+      new TimelineMax().to('.topTracksItem', {
+        opacity: 0,
+        scale: .8,
+        stagger: .1
       })
+        .to('#topTracksSection', {
+          opacity: 0
+        })
         .to('#topTracksSection', {
           top: '100vh',
           duration: 0,
-          onComplete: resolve
+          onComplete: () => {
+            if (audio) audio.pause()
+            setAudio(null)
+
+            resolve()
+            setShow(false)
+          }
         })
     })
   }

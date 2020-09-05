@@ -67,6 +67,7 @@ const BeginningSection: React.FC<{
         opacity: 0
       }, {
         opacity: 1,
+        scale: 1,
         duration: 0
       })
       .fromTo('#beginningContent', {
@@ -91,7 +92,9 @@ const BeginningSection: React.FC<{
         scale: .8,
         opacity: 0,
         duration: .6,
-        onComplete: resolve
+        onComplete: () => {
+          resolve()
+        }
       })
         .to('#beginningContent', {
           top: '100vh',

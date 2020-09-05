@@ -24,3 +24,13 @@
     background: #FD0F57;
     color: white;
 }
+
+
+@keyframes heart-animation {
+    0% {
+        background-position-y: 0%;
+    }
+    100% {
+        background-position-y: 100%;
+    }
+}

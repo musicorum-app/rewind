@@ -204,7 +204,7 @@ const TopArtists: React.FC<{
           }}/>
         </ImageWraper>
         <ScrobbleCount>
-          <h3>{hoveredArtist.playcount.toLocaleString()}</h3>
+          <h3>{Number(hoveredArtist.playcount).toLocaleString()}</h3>
           scrobbles
         </ScrobbleCount>
 
