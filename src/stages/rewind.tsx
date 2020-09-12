@@ -9,6 +9,7 @@ import TopArtists from "../sections/TopArtists";
 import TopAlbums from "../sections/TopAlbums";
 import TopTracks from "../sections/TopTracks";
 import FavoriteTracks from "../sections/FavoriteTracks";
+import TopTags from "../sections/TopTags";
 
 interface MonthState {
   actual: MonthData,
@@ -33,6 +34,7 @@ const RewindStage: React.FC<{
   const topAlbumsCountRef = useRef(null)
   const topTracksCountRef = useRef(null)
   const favoriteTracksRef = useRef(null)
+  const topTagsRef = useRef(null)
 
 
   useEffect(() => {
@@ -48,7 +50,7 @@ const RewindStage: React.FC<{
     splashRef.current.start()
     // @ts-ignore
     // topTracksCountRef.current.start()
-    // setTimeout(() => favoriteTracksRef.current.start(), 600)
+    // setTimeout(() => topTagsRef.current.start(), 600)
   }
 
   const handleSplashEnd = () => {
@@ -128,6 +130,11 @@ const RewindStage: React.FC<{
       topTracksCountRef.current.animateEnd()
         // @ts-ignore
         .then(() => favoriteTracksRef.current.start())
+    } else if (stage === 6 && isNext) {
+      // @ts-ignore
+      favoriteTracksRef.current.animateEnd()
+        // @ts-ignore
+        .then(() => topTagsRef.current.start())
     }
   }
 
@@ -146,6 +153,7 @@ const RewindStage: React.FC<{
     <TopAlbums data={data} ref={topAlbumsCountRef} onEnd={handleStageEnd}/>
     <TopTracks data={data} ref={topTracksCountRef} onEnd={handleStageEnd}/>
     <FavoriteTracks data={data} ref={favoriteTracksRef} onEnd={handleStageEnd}/>
+    <TopTags data={data} ref={topTagsRef} onEnd={handleStageEnd}/>
 
     <SlideController
       stage={stage}

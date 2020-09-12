@@ -164,18 +164,18 @@ const FavoriteTracks: React.FC<{
   const animateEnd = () => {
     return new Promise(resolve => {
       const tl = new TimelineMax()
-      // tl.to('#beginningContent', {
-      //   scale: .8,
-      //   opacity: 0,
-      //   duration: .6,
-      //   onComplete: () => {
-      //     resolve()
-      //   }
-      // })
-      //   .to('#beginningContent', {
-      //     top: '100vh',
-      //     duration: 0
-      //   })
+      tl.to('#favoriteSection', {
+        scale: .8,
+        opacity: 0,
+        duration: .6,
+        onComplete: () => {
+          resolve()
+        }
+      })
+        .to('#favoriteSection', {
+          top: '100vh',
+          duration: 0
+        })
       console.log('Favorites end')
     })
   }

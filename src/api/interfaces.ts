@@ -190,7 +190,8 @@ export interface FormattedTrack {
   url: string,
   image?: string,
   preview?: string,
-  spotify?: string
+  spotify?: string,
+  tags: string[]
 }
 
 export interface FormattedTrackWithListenTime extends FormattedTrack {
@@ -230,16 +231,9 @@ export interface SpotifyArtist {
   images: SpotifyImage[]
 }
 
-export interface SpotifyTrack {
-  id: string,
-  uri: string,
-  name: string,
-  album: {
-    name: string,
-    images: SpotifyImage[]
-  },
-  duration: number,
-  popularity: number
+export interface TopTag {
+  tag: string,
+  count: number
 }
 
 export interface RewindData {
@@ -251,7 +245,8 @@ export interface RewindData {
   topTracks: FormattedTrack[],
   lovedTracks: FormattedLovedTrack[],
   // months: MonthsData,
-  spotifyData?: SpotifyArtistBase[]
+  spotifyData?: SpotifyArtistBase[],
+  topTags: TopTag[]
 }
 
 export interface SpotifyArtistBase {

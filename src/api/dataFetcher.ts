@@ -19,7 +19,7 @@ import {
   ListenedTrack,
   SpotifyArtistBase,
   FormattedArtist,
-  FormattedAlbum
+  FormattedAlbum, TopTag
 } from "./interfaces";
 import API from "./index";
 import {chunks as chunkArray} from '@reactgular/chunks'
@@ -87,7 +87,7 @@ const dataFetcher = async (
       (r: any[], pgr: Function) =>
         fetchTrackInfos(userData.name, r, pgr),
       'Fetching more information on your most played songs...',
-      20
+      100
     ]
   ]
 
@@ -128,6 +128,7 @@ const dataFetcher = async (
   const artists = groupArtists(result[2])
   const albums = groupAlbums(result[3])
   const firstTrack: ListenedTrack = result[1].track[1] || result[1].track[0]
+  const topTracks = await formatTracks(result[9])
   console.log(firstTrack)
   const scrobbles = Number(result[0]['@attr']['total'])
   return {
@@ -138,7 +139,8 @@ const dataFetcher = async (
       artist: firstTrack.artist['#text'],
       album: firstTrack.album['#text'],
       image: firstTrack.image[3]['#text'],
-      listenedAt: new Date(parseInt(firstTrack.date.uts) * 1000)
+      listenedAt: new Date(parseInt(firstTrack.date.uts) * 1000),
+      tags: []
     },
     lovedTracks: result[8].map((t: LovedTrack) => formatLovedTrack(t)),
     stats: {
@@ -149,9 +151,10 @@ const dataFetcher = async (
     },
     topAlbums: await formatAlbums(result[6].album),
     topArtists: topArtists,
-    topTracks: await formatTracks(result[9]),
+    topTracks,
     // months: mergeSpotifyToMonths(result[4], toFetch),
-    spotifyData: getShuffledArray(spotifyArtists)
+    spotifyData: getShuffledArray(spotifyArtists),
+    topTags: formatTags(topTracks).sort((a, b) => b.count - a.count)
   }
 }
 
@@ -409,7 +412,7 @@ const fetchTrackInfos = async (user: string, r: any[], pgr: Function): Promise<T
   const tracks: WeeklyTrack[] = r[7].track
   const trackInfos: TrackInfo[] = []
 
-  const chunks = chunkArray(tracks.slice(0, 20), 4)
+  const chunks = chunkArray(tracks.slice(0, 100), 4)
 
   for (const chunk of chunks) {
     const res = await Promise.all(chunk.map(async t =>
@@ -431,7 +434,8 @@ const formatTrack = (track: TrackInfo): FormattedTrack => {
     album: track?.album?.title,
     artist: track.artist.name,
     url: track.url,
-    image: track?.album?.image[3]["#text"]
+    image: track?.album?.image[3]["#text"],
+    tags: track.toptags.tag.map(t => t.name)
   }
 }
 
@@ -440,7 +444,8 @@ const formatLovedTrack = (track: LovedTrack): FormattedLovedTrack => {
     name: track.name,
     artist: track.artist.name,
     url: track.url,
-    lovedAt: new Date(parseInt(track.date.uts) * 1000)
+    lovedAt: new Date(parseInt(track.date.uts) * 1000),
+    tags: []
   }
 }
 
@@ -472,7 +477,6 @@ const fetchArtistsFromAPI = async (artists: Map<string, SpotifyArtistBase>) => {
   }
 }
 
-
 const formatAlbums = async (albums: WeeklyAlbum[]): Promise<FormattedAlbum[]> => {
   const formatted: FormattedAlbum[] = albums.map(album => ({
     name: album.name,
@@ -497,7 +501,8 @@ const formatTracks = async (tracks: TrackInfo[]): Promise<FormattedTrack[]> => {
     album: track.album?.title,
     artist: track.artist.name,
     image: track.album?.image[3]?.["#text"],
-    url: track.url
+    url: track.url,
+    tags: track.toptags.tag.map(t => t.name)
   }))
 
   const toFetch = formatted.slice(0, 20)
@@ -515,14 +520,25 @@ const formatTracks = async (tracks: TrackInfo[]): Promise<FormattedTrack[]> => {
   })
 }
 
-// const formatAlbum = (album: WeeklyAlbum): FormattedAlbum => {
-//   return {
-//     name: album.name,
-//     artist: album.artist["#text"],
-//     playCount: Number(album.playcount),
-//     url: album.url,
-//     image: album.
-//   }
-// }
+const formatTags = (tracks: FormattedTrack[]): TopTag[] => {
+  const tags = new Map<string, number>()
+
+  for (let track of tracks) {
+    for (let tag of track.tags) {
+      tags.set(tag, (tags.get(tag) || 0) + 1)
+    }
+  }
+
+  console.log(tags)
+
+  const finalTags: TopTag[] = []
+
+  tags.forEach((value, key) => finalTags.push({
+    tag: key,
+    count: value
+  }))
+
+  return finalTags
+}
 
 export default dataFetcher
