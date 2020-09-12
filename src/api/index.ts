@@ -6,7 +6,7 @@ import {
   WeeklyArtistChart,
   WeeklyTrackChart
 } from "./interfaces";
-import {MAX_TRIES} from "./Constants";
+import {MAX_TRIES} from "../Constants";
 
 const LATFM_API = 'https://ws.audioscrobbler.com/2.0/'
 const LASTFM_KEY = '0ae2a02cb6ec0686e560b365074020b3'

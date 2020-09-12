@@ -8,7 +8,7 @@ import StartGraphic from './assets/start.svg'
 import Box from "@material-ui/core/Box";
 import API from "./api";
 import {RewindData, UserProfile} from "./api/interfaces";
-import {DEFAULT_AVATAR} from "./api/Constants";
+import {DEFAULT_AVATAR} from "./Constants";
 import Typography from "@material-ui/core/Typography";
 import moment from 'moment'
 import LoadingStage from "./stages/loading";

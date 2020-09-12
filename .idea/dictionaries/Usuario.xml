@@ -2,7 +2,9 @@
   <dictionary name="Usuario">
     <words>
       <w>lastfm</w>
+      <w>scrobble</w>
       <w>scrobbles</w>
+      <w>scrobbling</w>
     </words>
   </dictionary>
 </component>

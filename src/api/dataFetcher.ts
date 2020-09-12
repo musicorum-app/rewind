@@ -19,7 +19,7 @@ import {
   ListenedTrack,
   SpotifyArtistBase,
   FormattedArtist,
-  FormattedAlbum
+  FormattedAlbum, TopTag
 } from "./interfaces";
 import API from "./index";
 import {chunks as chunkArray} from '@reactgular/chunks'
@@ -29,8 +29,9 @@ import MusicorumAPI from "./MusicorumAPI";
 import {userInfo} from "os";
 
 const year = 2020
-const startTime = new Date(year, 0, 0, 0, 0).getTime() / 1000
-const endTime = new Date(year + 1, 0, 0, 0, 0).getTime() / 1000
+const offset = new Date().getTimezoneOffset()
+const startTime = (new Date(year, 0, 0, 0, 0).getTime() / 1000) + offset * 60
+const endTime = (new Date(year + 1, 0, 0, 0, 0).getTime() / 1000) + offset * 60
 
 const dataFetcher = async (
   userData: UserProfile,
@@ -59,9 +60,8 @@ const dataFetcher = async (
       28
     ],
     [
-      (r: any[], pgr: Function) => fetchMonths(userData, r, pgr),
-      'Snooping around your months...',
-      50
+      () => console.log('DEPRECATED'),
+      'Snooping around your months...'
     ],
     [
       () =>
@@ -87,7 +87,7 @@ const dataFetcher = async (
       (r: any[], pgr: Function) =>
         fetchTrackInfos(userData.name, r, pgr),
       'Fetching more information on your most played songs...',
-      50
+      100
     ]
   ]
 
@@ -113,7 +113,7 @@ const dataFetcher = async (
   const toFetch = new Map<string, SpotifyArtistBase>()
 
   addToMap(result[5].artist.slice(0, 25).map((a: ArtistBase) => a.name), toFetch)
-  addMonthsArtistsToMap(result[4], toFetch)
+  // addMonthsArtistsToMap(result[4], toFetch)
   await fetchArtistsFromAPI(toFetch)
   console.log(toFetch)
 
@@ -128,6 +128,7 @@ const dataFetcher = async (
   const artists = groupArtists(result[2])
   const albums = groupAlbums(result[3])
   const firstTrack: ListenedTrack = result[1].track[1] || result[1].track[0]
+  const topTracks = await formatTracks(result[9])
   console.log(firstTrack)
   const scrobbles = Number(result[0]['@attr']['total'])
   return {
@@ -138,20 +139,22 @@ const dataFetcher = async (
       artist: firstTrack.artist['#text'],
       album: firstTrack.album['#text'],
       image: firstTrack.image[3]['#text'],
-      listenedAt: new Date(parseInt(firstTrack.date.uts) * 1000)
+      listenedAt: new Date(parseInt(firstTrack.date.uts) * 1000),
+      tags: []
     },
     lovedTracks: result[8].map((t: LovedTrack) => formatLovedTrack(t)),
     stats: {
       scrobbles: scrobbles,
-      playTime: calculatePlayTime(result[7], result[9], scrobbles),
+      playTime: 2,
       albums: albums.length,
       artists: artists.length
     },
-    topAlbums: result[6].album,
+    topAlbums: await formatAlbums(result[6].album),
     topArtists: topArtists,
-    topTracks: result[9].map((t: TrackInfo) => formatTrack(t)),
-    months: mergeSpotifyToMonths(result[4], toFetch),
-    spotifyData: getShuffledArray(spotifyArtists)
+    topTracks,
+    // months: mergeSpotifyToMonths(result[4], toFetch),
+    spotifyData: getShuffledArray(spotifyArtists),
+    topTags: formatTags(topTracks).sort((a, b) => b.count - a.count)
   }
 }
 
@@ -409,7 +412,7 @@ const fetchTrackInfos = async (user: string, r: any[], pgr: Function): Promise<T
   const tracks: WeeklyTrack[] = r[7].track
   const trackInfos: TrackInfo[] = []
 
-  const chunks = chunkArray(tracks, 4)
+  const chunks = chunkArray(tracks.slice(0, 100), 4)
 
   for (const chunk of chunks) {
     const res = await Promise.all(chunk.map(async t =>
@@ -431,7 +434,8 @@ const formatTrack = (track: TrackInfo): FormattedTrack => {
     album: track?.album?.title,
     artist: track.artist.name,
     url: track.url,
-    image: track?.album?.image[3]["#text"]
+    image: track?.album?.image[3]["#text"],
+    tags: track.toptags.tag.map(t => t.name)
   }
 }
 
@@ -440,7 +444,8 @@ const formatLovedTrack = (track: LovedTrack): FormattedLovedTrack => {
     name: track.name,
     artist: track.artist.name,
     url: track.url,
-    lovedAt: new Date(parseInt(track.date.uts) * 1000)
+    lovedAt: new Date(parseInt(track.date.uts) * 1000),
+    tags: []
   }
 }
 
@@ -472,27 +477,68 @@ const fetchArtistsFromAPI = async (artists: Map<string, SpotifyArtistBase>) => {
   }
 }
 
-const mergeSpotifyToMonths = (months: MonthsData, map: Map<string, SpotifyArtistBase>): MonthsData => {
-  const task = (months: MonthData[]): MonthData[] => {
-    return months.map((m: MonthData) => ({
-      artists: m.artists.map(a => ({...a, spotify: map.get(a.name)})),
-      scrobbles: m.scrobbles
-    }))
-  }
-  return {
-    actual: task(months.actual),
-    last: task(months.last),
-  }
+const formatAlbums = async (albums: WeeklyAlbum[]): Promise<FormattedAlbum[]> => {
+  const formatted: FormattedAlbum[] = albums.map(album => ({
+    name: album.name,
+    url: album.url,
+    artist: album.artist["#text"],
+    playCount: Number(album.playcount)
+  }))
+
+  const toFetch = formatted.slice(0, 9)
+  const result = await MusicorumAPI.fetchAlbumsMetadata(toFetch)
+
+  return formatted.map((album, i) => {
+    if (i > 9) return album
+    if (result[i] && result[i].cover) album.image = result[i].cover
+    return album
+  })
 }
 
-// const formatAlbum = (album: WeeklyAlbum): FormattedAlbum => {
-//   return {
-//     name: album.name,
-//     artist: album.artist["#text"],
-//     playCount: Number(album.playcount),
-//     url: album.url,
-//     image: album.
-//   }
-// }
+const formatTracks = async (tracks: TrackInfo[]): Promise<FormattedTrack[]> => {
+  const formatted: FormattedTrack[] = tracks.map(track => ({
+    name: track.name,
+    album: track.album?.title,
+    artist: track.artist.name,
+    image: track.album?.image[3]?.["#text"],
+    url: track.url,
+    tags: track.toptags.tag.map(t => t.name)
+  }))
+
+  const toFetch = formatted.slice(0, 20)
+  const result = await MusicorumAPI.fetchTracksMetadata(toFetch)
+
+  return formatted.map((track, i) => {
+    if (i > 20) return track
+    if (result[i]) {
+      if (result[i].cover) track.image = track.image || result[i].cover
+      if (result[i].preview) track.preview = result[i].preview
+      track.spotify = result[i].id
+      // track.name = result[i].name
+    }
+    return track
+  })
+}
+
+const formatTags = (tracks: FormattedTrack[]): TopTag[] => {
+  const tags = new Map<string, number>()
+
+  for (let track of tracks) {
+    for (let tag of track.tags) {
+      tags.set(tag, (tags.get(tag) || 0) + 1)
+    }
+  }
+
+  console.log(tags)
+
+  const finalTags: TopTag[] = []
+
+  tags.forEach((value, key) => finalTags.push({
+    tag: key,
+    count: value
+  }))
+
+  return finalTags
+}
 
 export default dataFetcher

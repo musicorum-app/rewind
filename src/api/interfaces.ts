@@ -57,7 +57,7 @@ export interface WeeklyAlbumChart {
 
 export interface TrackBase {
   name: string,
-  url: string
+  url: string,
 }
 
 export interface ListenedTrack extends TrackBase {
@@ -101,6 +101,8 @@ export interface LovedTracksResponse {
 export interface WeeklyTrack extends TrackBase {
   playcount: string | number,
   mbid: string,
+  album?: string,
+  image: ImagesObject,
   artist: {
     '#text': string
   }
@@ -186,7 +188,10 @@ export interface FormattedTrack {
   artist: string,
   album?: string,
   url: string,
-  image?: string
+  image?: string,
+  preview?: string,
+  spotify?: string,
+  tags: string[]
 }
 
 export interface FormattedTrackWithListenTime extends FormattedTrack {
@@ -226,16 +231,9 @@ export interface SpotifyArtist {
   images: SpotifyImage[]
 }
 
-export interface SpotifyTrack {
-  id: string,
-  uri: string,
-  name: string,
-  album: {
-    name: string,
-    images: SpotifyImage[]
-  },
-  duration: number,
-  popularity: number
+export interface TopTag {
+  tag: string,
+  count: number
 }
 
 export interface RewindData {
@@ -246,8 +244,9 @@ export interface RewindData {
   topAlbums: FormattedAlbum[],
   topTracks: FormattedTrack[],
   lovedTracks: FormattedLovedTrack[],
-  months: MonthsData,
-  spotifyData?: SpotifyArtistBase[]
+  // months: MonthsData,
+  spotifyData?: SpotifyArtistBase[],
+  topTags: TopTag[]
 }
 
 export interface SpotifyArtistBase {
