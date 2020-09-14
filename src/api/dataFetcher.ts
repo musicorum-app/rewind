@@ -65,7 +65,7 @@ const dataFetcher = async (
     ],
     [
       () =>
-        API.userGetArtistChart(userData.name, startTime, endTime, 50),
+        API.userGetArtistChart(userData.name, startTime, endTime, 100),
       'Taking a look at your most listened artists of the year...'
     ],
     [
@@ -87,7 +87,7 @@ const dataFetcher = async (
       (r: any[], pgr: Function) =>
         fetchTrackInfos(userData.name, r, pgr),
       'Fetching more information on your most played songs...',
-      100
+      50
     ]
   ]
 
@@ -112,7 +112,7 @@ const dataFetcher = async (
 
   const toFetch = new Map<string, SpotifyArtistBase>()
 
-  addToMap(result[5].artist.slice(0, 25).map((a: ArtistBase) => a.name), toFetch)
+  addToMap(result[5].artist.slice(0, 100).map((a: ArtistBase) => a.name), toFetch)
   // addMonthsArtistsToMap(result[4], toFetch)
   await fetchArtistsFromAPI(toFetch)
   console.log(toFetch)
@@ -153,8 +153,10 @@ const dataFetcher = async (
     topArtists: topArtists,
     topTracks,
     // months: mergeSpotifyToMonths(result[4], toFetch),
-    spotifyData: getShuffledArray(spotifyArtists),
-    topTags: formatTags(topTracks).sort((a, b) => b.count - a.count)
+    spotifyData: getShuffledArray(spotifyArtists)
+      .filter(a => a),
+    topTags: formatTags(topTracks)
+      .sort((a, b) => b.count - a.count)
   }
 }
 
@@ -463,7 +465,11 @@ const fetchArtistsFromAPI = async (artists: Map<string, SpotifyArtistBase>) => {
   const values: string[] = []
   artists.forEach((_, k) => values.push(k))
   try {
-    const res = await MusicorumAPI.fetchArtistsMetadata(values)
+    const [res1, res2] = await Promise.all([
+      MusicorumAPI.fetchArtistsMetadata(values.slice(0, 49)),
+      MusicorumAPI.fetchArtistsMetadata(values.slice(50, 99))
+    ])
+    const res = [...res1, ...res2]
     for (let i = 0; i < res.length; i++) {
       const item = res[i]
       if (item) {

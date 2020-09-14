@@ -29,7 +29,7 @@ interface TrackResponse {
 
 export default class API {
   static async fetchArtistsMetadata(artists: string[]): Promise<Nullable<SpotifyArtistBase>[]> {
-    return fetch(RESOURCE_API_URL + 'fetch/artists', {
+    return fetch(API_URL + 'rewind/artists', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

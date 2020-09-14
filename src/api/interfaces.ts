@@ -251,7 +251,9 @@ export interface RewindData {
 
 export interface SpotifyArtistBase {
   name: string,
-  hash: string,
-  url: string,
-  spotify: string
+  popularity: number,
+  image: string
+  // hash: string,
+  // url: string,
+  // spotify: string
 }

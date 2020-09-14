@@ -192,7 +192,10 @@ const TopTags: React.FC<{
         }, 3.4)
         .from('.topTagsNotice', {
           opacity: 0
-        })
+        }, 4.2)
+        .from('#topTagsSectionHeader', {
+          opacity: 0
+        }, 4.2)
 
       tl
         .to({}, {
@@ -215,7 +218,7 @@ const TopTags: React.FC<{
         .to(['.topTagsTextNode', '.topTagsPercentNode', '.topTagsProgressBarNode'], {
           x: -40,
           opacity: 0,
-          stagger: .02
+          stagger: .07
         })
         .to('#topTagsSection', {
           opacity: 0
@@ -246,15 +249,14 @@ const TopTags: React.FC<{
     animateEnd
   }))
 
-  console.log(data.topTags, data.topTags.slice(0, 5))
-
-
   return show ? <Section center>
     <TopTagsSection id="topTagsSection">
       <ParallaxWrapper>
-        <Header title="TOP TAGS">
-          These are your most listened tags, A.K.A. genres
-        </Header>
+        <div id="topTagsSectionHeader">
+          <Header title="TOP TAGS">
+            These are your most listened tags, A.K.A. genres
+          </Header>
+        </div>
         <AnimationWrapperLeft>
           {
             tagsLeft.map(({tag}, index) => <AnimationText
