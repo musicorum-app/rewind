@@ -183,6 +183,12 @@ export interface GeneralStats {
   artists: number
 }
 
+export interface TrackAnalysis {
+  tempo: number,
+  danceability: number,
+  valence: number
+}
+
 export interface FormattedTrack {
   name: string,
   artist: string,
@@ -191,7 +197,8 @@ export interface FormattedTrack {
   image?: string,
   preview?: string,
   spotify?: string,
-  tags: string[]
+  tags: string[],
+  analysis?: TrackAnalysis
 }
 
 export interface FormattedTrackWithListenTime extends FormattedTrack {

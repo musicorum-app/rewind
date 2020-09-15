@@ -156,14 +156,11 @@ const TopArtists: React.FC<{
           opacity: 0,
           ease: 'expo.out',
           duration: 3,
-          stagger: .1
-        }, 0)
-        .to({}, {
-          duration: 1,
+          stagger: .1,
           onComplete: () => {
             if (onEnd) onEnd()
           }
-        })
+        }, 0)
     }
   }, [show])
 

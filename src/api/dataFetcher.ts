@@ -520,6 +520,7 @@ const formatTracks = async (tracks: TrackInfo[]): Promise<FormattedTrack[]> => {
       if (result[i].cover) track.image = track.image || result[i].cover
       if (result[i].preview) track.preview = result[i].preview
       track.spotify = result[i].id
+      track.analysis = result[i].analysis
       // track.name = result[i].name
     }
     return track

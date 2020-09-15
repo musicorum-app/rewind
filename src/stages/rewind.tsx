@@ -49,10 +49,10 @@ const RewindStage: React.FC<{
 
   const start = async () => {
     // @ts-ignore
-    // splashRef.current.start()
+    splashRef.current.start()
     // @ts-ignore
     // topTracksCountRef.current.start()
-    setTimeout(() => mainstreamRef.current.start(), 600)
+    // setTimeout(() => mainstreamRef.current.start(), 600)
   }
 
   const handleSplashEnd = () => {
@@ -142,6 +142,11 @@ const RewindStage: React.FC<{
       topTagsRef.current.animateEnd()
         // @ts-ignore
         .then(() => mainstreamRef.current.start())
+    } else if (stage === 8 && isNext) {
+      // @ts-ignore
+      mainstreamRef.current.animateEnd()
+        // @ts-ignore
+        .then(() => scrobbleCountRef.current.start())
     }
   }
 

@@ -1,5 +1,5 @@
 import {API_URL, RESOURCE_API_URL} from "../Constants";
-import {Nullable, SpotifyArtistBase} from "./interfaces";
+import {Nullable, SpotifyArtistBase, TrackAnalysis} from "./interfaces";
 
 interface AlbumBase {
   name: string,
@@ -24,7 +24,8 @@ interface TrackResponse {
   artist: string,
   album: string,
   cover?: string,
-  preview?: string
+  preview?: string,
+  analysis: TrackAnalysis
 }
 
 export default class API {

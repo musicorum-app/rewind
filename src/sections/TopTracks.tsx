@@ -165,7 +165,7 @@ const TopTracks: React.FC<{
           opacity: 1
         }, 0)
         .to({}, {
-          duration: 3,
+          duration: 2,
           onComplete: () => {
             if (onEnd) onEnd()
           }
@@ -243,7 +243,7 @@ const TopTracks: React.FC<{
       new TimelineMax().to('.topTracksItem', {
         opacity: 0,
         scale: .8,
-        stagger: .1
+        stagger: .08
       })
         .to('#topTracksSection', {
           opacity: 0
