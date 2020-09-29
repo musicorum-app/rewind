@@ -19,10 +19,10 @@ export interface ArtistBase {
 }
 
 export interface WeeklyArtist extends ArtistBase {
- playcount: string | number
+  playcount: string | number
 }
 
-export interface WeeklyArtistFormatted extends WeeklyArtist{
+export interface WeeklyArtistFormatted extends WeeklyArtist {
   spotify?: SpotifyArtistBase
 }
 
@@ -114,6 +114,7 @@ export interface TrackInfo {
   duration: string,
   listeners: string,
   playcount: string,
+  userplaycount?: string,
   artist: {
     name: string,
     url: string
@@ -184,9 +185,12 @@ export interface GeneralStats {
 }
 
 export interface TrackAnalysis {
-  tempo: number,
+  energy: number,
   danceability: number,
-  valence: number
+  speechiness: number,
+  instrumentalness: number,
+  valence: number,
+  tempo: number
 }
 
 export interface FormattedTrack {
@@ -198,7 +202,8 @@ export interface FormattedTrack {
   preview?: string,
   spotify?: string,
   tags: string[],
-  analysis?: TrackAnalysis
+  analysis?: TrackAnalysis,
+  playCount?: number
 }
 
 export interface FormattedTrackWithListenTime extends FormattedTrack {

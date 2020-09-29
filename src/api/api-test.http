@@ -1,0 +1,109 @@
+POST https://resource.musicorumapp.com/resource/artists?popularity=true
+Content-Type: application/json
+
+{
+  "artists": [
+    "lana del rey",
+    "melanie martinez",
+    "lady gaga",
+    "kali uchis",
+    "jorja smith"
+  ]
+}
+
+###
+
+POST https://resource.musicorumapp.com/resource/tracks?preview=true&analysis=true
+Content-Type: application/json
+
+{
+  "tracks": [
+    {
+      "name": "Dead to Me",
+      "artist": "Kali Uchis"
+    },
+    {
+      "name": "Don't Start Now",
+      "artist": "Dua Lipa"
+    },
+    {
+      "name": "Juice",
+      "artist": "Lizzo"
+    },
+    {
+      "name": "disco tits",
+      "artist": "Tove Lo"
+    },
+    {
+      "name": "Truth Hurts",
+      "artist": "Lizzo"
+    },
+    {
+      "name": "Play With It",
+      "artist": "Tommy Genesis"
+    },
+    {
+      "name": "Wavy (Interlude) (feat. James Fauntleroy)",
+      "artist": "SZA"
+    },
+    {
+      "name": "Your Teeth in My Neck",
+      "artist": "Kali Uchis"
+    },
+    {
+      "name": "Born To Be Alive - Original Mix 79",
+      "artist": "Patrick Hernandez"
+    },
+    {
+      "name": "Cassie (Won't You Be My Doll)",
+      "artist": "Part Time"
+    },
+    {
+      "name": "Fashion!",
+      "artist": "Lady Gaga"
+    },
+    {
+      "name": "Judas",
+      "artist": "Lady Gaga"
+    },
+    {
+      "name": "Tell It to My Heart",
+      "artist": "Taylor Dayne"
+    },
+    {
+      "name": "Anna Wintour",
+      "artist": "Azealia Banks"
+    },
+    {
+      "name": "Luxury",
+      "artist": "Azealia Banks"
+    },
+    {
+      "name": "Supernature",
+      "artist": "Cerrone"
+    },
+    {
+      "name": "Finally",
+      "artist": "Ce Ce Peniston"
+    },
+    {
+      "name": "Cum (feat. Iggy Azalea)",
+      "artist": "Brooke Candy"
+    }
+  ]
+}
+
+###
+
+POST https://resource.musicorumapp.com/resource/tracks?preview=true&analysis=true
+Content-Type: application/json
+
+{
+  "tracks": [
+    {
+      "name": "Tyrant (feat. Jorja Smith)",
+      "album": "isolation",
+      "artist": "kali uchis"
+    }
+  ]
+}

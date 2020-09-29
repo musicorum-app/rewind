@@ -41,7 +41,7 @@ const BorderTextEffect = styled(OutlinedText)`
   transform: translateX(-50%);
 `
 
-const SplashSection: React.FC<{
+const SplashEnd: React.FC<{
   data: RewindData,
   ref?: React.Ref<HTMLDivElement>,
   onEnd?: () => void;
@@ -166,8 +166,8 @@ const SplashSection: React.FC<{
   </Section>
 })
 
-SplashSection.defaultProps = {
+SplashEnd.defaultProps = {
   onEnd: () => {}
 }
 
-export default SplashSection
+export default SplashEnd

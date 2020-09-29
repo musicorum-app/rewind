@@ -31,7 +31,7 @@ const ParallaxWrapper: React.FC<{
 
   const update = (event: React.MouseEvent<HTMLElement>) => {
     const center = [windowSize[0] / 2, windowSize[1] / 2]
-    const position = [event.pageX, event.pageY]
+    const position = [event.pageY, event.pageX]
     const tilt = [
       (position[0] - center[0]) / center[0],
       (position[1] - center[1]) / center[1]

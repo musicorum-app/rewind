@@ -131,7 +131,7 @@ const Mainstream: React.FC<{
         }, {
           scale: 1,
           opacity: 1,
-          duration: 1
+          duration: 0
         })
         .from('#mainstreamSectionBar', {
           width: 0
@@ -218,7 +218,7 @@ const Mainstream: React.FC<{
               }
             </ArtistName>
             <ArtistImage src={ordered[0].image}/>
-            is your most popular artist
+            is your most popular artist, with <b>{ordered[0].popularity}%</b> popularity
           </ArtistSide>
         </LeftSideArtist>
 
@@ -244,7 +244,7 @@ const Mainstream: React.FC<{
               }
             </ArtistName>
             <ArtistImage src={last.image}/>
-            is your least popular artist
+            is your least popular artist, with <b>{last.popularity}%</b> popularity
           </ArtistSide>
         </RightSideArtist>
         <Notice id="mainstreamSectionNotice">

@@ -20,7 +20,9 @@ export function handleAlbumImage(album: FormattedAlbum): string {
 }
 
 export function handleTrackImage(image: string | undefined) {
-  return image || 'https://lastfm.freetls.fastly.net/i/u/600x600/c6f59c1e5e7240a4c0d427abd71f3dbb.jpg'
+  return image
+    ? image.replace('/300x300/', '/600x600/')
+    : 'https://lastfm.freetls.fastly.net/i/u/600x600/c6f59c1e5e7240a4c0d427abd71f3dbb.jpg'
 }
 
 export function getShuffledArray(array: any[]): any[] {
@@ -30,7 +32,7 @@ export function getShuffledArray(array: any[]): any[] {
 }
 
 export function getReversed(arr: any[]): any[] {
-  const clone = [ ...arr ]
+  const clone = [...arr]
   clone.reverse()
   return clone
 }

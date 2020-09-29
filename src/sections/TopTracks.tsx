@@ -132,7 +132,7 @@ const TopTracks: React.FC<{
   ref?: React.Ref<HTMLDivElement>,
   onEnd?: () => void;
 }> = forwardRef(({onEnd, data}, ref) => {
-  const tracks = data.topTracks.slice(0, 16)
+  const tracks = data.topTracks.slice(0, 18)
 
   const [show, setShow] = useState(false)
   const [currentTrack, setCurrentTrack] = useState<number>(0)
@@ -140,15 +140,15 @@ const TopTracks: React.FC<{
   const [windowSize, setWindowSize] = useState<number[]>([0, 0])
   const [audio, setAudio] = useState<Nullable<HTMLAudioElement>>(null)
 
-  useLayoutEffect(() => {
-    function updateSize() {
-      setWindowSize([window.innerWidth, window.innerHeight]);
-    }
-
-    window.addEventListener('resize', updateSize);
-    updateSize();
-    return () => window.removeEventListener('resize', updateSize);
-  }, []);
+  // useLayoutEffect(() => {
+  //   function updateSize() {
+  //     setWindowSize([window.innerWidth, window.innerHeight]);
+  //   }
+  //
+  //   window.addEventListener('resize', updateSize);
+  //   updateSize();
+  //   return () => window.removeEventListener('resize', updateSize);
+  // }, []);
 
   useEffect(() => {
     if (show) {
@@ -231,6 +231,7 @@ const TopTracks: React.FC<{
     }
 
     setCurrentTrack(newOrder)
+    console.log(tracks[newOrder])
 
   }
 
@@ -274,6 +275,7 @@ const TopTracks: React.FC<{
     const track = tracks[currentTrack]
     if (!track) console.error('Track not found!')
     if (!track.preview) console.error('Preview not found!')
+    console.log(track.preview)
 
     // Pause
     if (previewPlaying) {
@@ -317,6 +319,10 @@ const TopTracks: React.FC<{
             {tracks[currentTrack].name}
           </TrackDataTitle>
           {tracks[currentTrack].artist}
+          <br />
+          <b>
+            {tracks[currentTrack].playCount} scrobbles
+          </b>
           <TrackPreview>
             {
               tracks[currentTrack].preview ? <PlayButton

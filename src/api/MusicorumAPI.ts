@@ -1,6 +1,8 @@
 import {API_URL, RESOURCE_API_URL} from "../Constants";
 import {Nullable, SpotifyArtistBase, TrackAnalysis} from "./interfaces";
 
+const EXCLUDE_WORDS = ['instrumental', 'single', 'explicited', 'explicit', 'album']
+
 interface AlbumBase {
   name: string,
   artist: string
@@ -19,18 +21,20 @@ interface TrackBase {
 }
 
 interface TrackResponse {
-  id: string,
+  hash: string,
   name: string,
   artist: string,
   album: string,
-  cover?: string,
+  cover: string,
+  spotify: string,
+  duration: number,
   preview?: string,
   analysis: TrackAnalysis
 }
 
 export default class API {
   static async fetchArtistsMetadata(artists: string[]): Promise<Nullable<SpotifyArtistBase>[]> {
-    return fetch(API_URL + 'rewind/artists', {
+    return fetch(RESOURCE_API_URL + 'resource/artists?popularity=true', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -40,7 +44,7 @@ export default class API {
   }
 
   static async fetchAlbumsMetadata(albums: AlbumBase[]): Promise<AlbumResponse[]> {
-    return fetch(RESOURCE_API_URL + 'fetch/albums', {
+    return fetch(RESOURCE_API_URL + 'resource/albums', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -51,19 +55,39 @@ export default class API {
 
   static async fetchTracksMetadata(tracks: TrackBase[]): Promise<TrackResponse[]> {
     const albumObj = (track: TrackBase) => track.album ? {
-      album: encodeURIComponent(track.album)
+      album: this.cleanAlbum(track.album)
     } : {}
     tracks = tracks.map(t => ({
-      name: encodeURIComponent(t.name),
-      artist: encodeURIComponent(t.artist),
+      name: t.name,
+      artist: t.artist,
       ...albumObj(t)
     }))
-    return fetch(API_URL + 'rewind/tracks', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({tracks})
-    }).then(r => r.json())
+    try {
+      const res = await fetch(RESOURCE_API_URL + 'resource/tracks?preview=true&analysis=true', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({tracks})
+      }).then(r => r.json())
+      if (Array.isArray(res)) return res
+      else throw new Error('Response not an array:' + res)
+    } catch (e) {
+      console.error('Error while fetching tracks metadata', e)
+      return []
+    }
+  }
+
+  static cleanAlbum(album: string): string {
+    let str = album.toLowerCase()
+    for (let word of EXCLUDE_WORDS) {
+      if (str.includes(word)) {
+        str = str
+          .replace(` - ${word}`, '')
+          .replace(` [${word}]`, '')
+          .replace(` (${word})`, '')
+      }
+    }
+    return str
   }
 }

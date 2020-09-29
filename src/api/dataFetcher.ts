@@ -23,15 +23,13 @@ import {
 } from "./interfaces";
 import API from "./index";
 import {chunks as chunkArray} from '@reactgular/chunks'
-import BezierEasing from 'bezier-easing'
 import {addToMap, getShuffledArray} from "../utils";
 import MusicorumAPI from "./MusicorumAPI";
-import {userInfo} from "os";
 
 const year = 2020
-const offset = new Date().getTimezoneOffset()
-const startTime = (new Date(year, 0, 0, 0, 0).getTime() / 1000) + offset * 60
-const endTime = (new Date(year + 1, 0, 0, 0, 0).getTime() / 1000) + offset * 60
+const offset = new Date().getTimezoneOffset() * -60
+const startTime = (new Date(year, 0, 0, 0, 0).getTime() / 1000) + offset
+const endTime = (new Date(year + 1, 0, 0, 0, 0).getTime() / 1000) + offset
 
 const dataFetcher = async (
   userData: UserProfile,
@@ -51,13 +49,11 @@ const dataFetcher = async (
     ],
     [
       (r: any[], pgr: Function) => fetchArtists(userData.name, r, pgr),
-      'Fetching all your artists from 2020...',
-      28
+      'Fetching all your artists from 2020...'
     ],
     [
       (r: any[], pgr: Function) => fetchAlbums(userData.name, r, pgr),
-      'Judging your albums...',
-      28
+      'Judging your albums...'
     ],
     [
       () => console.log('DEPRECATED'),
@@ -75,7 +71,7 @@ const dataFetcher = async (
     ],
     [
       () =>
-        API.userGetTrackChart(userData.name, startTime, endTime, 50),
+        API.userGetTrackChart(userData.name, startTime, endTime, 150),
       'Taking a look at your most listened tracks of the year...'
     ],
     [
@@ -87,7 +83,7 @@ const dataFetcher = async (
       (r: any[], pgr: Function) =>
         fetchTrackInfos(userData.name, r, pgr),
       'Fetching more information on your most played songs...',
-      50
+      150
     ]
   ]
 
@@ -198,43 +194,42 @@ const calculatePlayTime = (trackChart: WeeklyTrackChart, tracks: TrackInfo[], to
 }
 
 const fetchArtists = async (user: string, result: any[], pgr: Function): Promise<ArtistBase[]> => {
-  const secondsInTwoWeeks = 14 * 24 * 60 * 60
-  const weeks = 13
+  // const secondsInTwoWeeks = 14 * 24 * 60 * 60
+  // const weeks = 13
+  //
+  // let artists = []
+  // const resolve = (res: WeeklyArtistChart) => {
+  //   pgr()
+  //   return res.artist
+  // }
+  // let lastTimestamp = startTime - secondsInTwoWeeks
+  // for (let i = 0; i < weeks; i++) {
+  //   if (lastTimestamp + secondsInTwoWeeks > endTime || lastTimestamp + (secondsInTwoWeeks * 2) > endTime)
+  //     break
+  //   const from = lastTimestamp + secondsInTwoWeeks
+  //   const to = from + secondsInTwoWeeks
+  //   const res = await Promise.all([
+  //     API.userGetArtistChart(user, from, to, 1000)
+  //       .then(resolve),
+  //     API.userGetArtistChart(user,
+  //       // i === 12 ? from + secondsInTwoWeeks : from + secondsInTwoWeeks,
+  //       // i === 12 ? from + secondsInTwoWeeks + 176400 : to + secondsInTwoWeeks,
+  //       to,
+  //       to + secondsInTwoWeeks,
+  //       900)
+  //       .then(resolve)
+  //   ])
+  //   lastTimestamp += secondsInTwoWeeks * 2
+  //   artists.push(...res[0])
+  //   artists.push(...res[1])
+  // }
 
-  let artists = []
-  const resolve = (res: WeeklyArtistChart) => {
-    pgr()
-    return res.artist
-  }
-  let lastTimestamp = startTime - secondsInTwoWeeks
-  for (let i = 0; i < weeks; i++) {
-    if (lastTimestamp + secondsInTwoWeeks > endTime || lastTimestamp + (secondsInTwoWeeks * 2) > endTime)
-      break
-    const from = lastTimestamp + secondsInTwoWeeks
-    const to = from + secondsInTwoWeeks
-    const res = await Promise.all([
-      API.userGetArtistChart(user, from, to, 1000)
-        .then(resolve),
-      API.userGetArtistChart(user,
-        // i === 12 ? from + secondsInTwoWeeks : from + secondsInTwoWeeks,
-        // i === 12 ? from + secondsInTwoWeeks + 176400 : to + secondsInTwoWeeks,
-        to,
-        to + secondsInTwoWeeks,
-        900)
-        .then(resolve)
-    ])
-    lastTimestamp += secondsInTwoWeeks * 2
-    artists.push(...res[0])
-    artists.push(...res[1])
-  }
-
-  artists.push(...await API.userGetArtistChart(user,
-    lastTimestamp + secondsInTwoWeeks,
+  const artists = await API.userGetArtistChart(user,
+    startTime,
     endTime,
     300)
-    .then(resolve))
 
-  return artists.map((a: ArtistBase) => ({
+  return artists.artist.map((a: ArtistBase) => ({
     name: a.name,
     playcount: Number(a.playcount),
     url: a.url
@@ -266,47 +261,52 @@ const groupArtists = (artists: WeeklyArtist[]): WeeklyArtist[] => {
 }
 
 const fetchAlbums = async (user: string, result: any[], pgr: Function): Promise<AlbumBase[]> => {
-  const secondsInTwoWeeks = 14 * 24 * 60 * 60
-  const weeks = 14
+  // const secondsInTwoWeeks = 14 * 24 * 60 * 60
+  // const weeks = 14
+  //
+  // const albums = []
+  // const debug = []
+  // const resolve = (res: WeeklyAlbumChart) => {
+  //   pgr()
+  //   return res.album
+  // }
+  // let lastTimestamp = startTime - secondsInTwoWeeks
+  // for (let i = 0; i < weeks; i++) {
+  //   if (lastTimestamp + secondsInTwoWeeks > endTime || lastTimestamp + (secondsInTwoWeeks * 2) > endTime)
+  //     break
+  //   const from = lastTimestamp + secondsInTwoWeeks
+  //   const to = from + secondsInTwoWeeks
+  //   const res = await Promise.all([
+  //     API.userGetAlbumChart(user, from, to, 1000)
+  //       .then(resolve),
+  //     API.userGetAlbumChart(user,
+  //       // i === 12 ? from + secondsInTwoWeeks : from + secondsInTwoWeeks,
+  //       // i === 12 ? from + secondsInTwoWeeks + 176400 : to + secondsInTwoWeeks,
+  //       to,
+  //       to + secondsInTwoWeeks,
+  //       900)
+  //       .then(resolve)
+  //   ])
+  //   lastTimestamp += secondsInTwoWeeks * 2
+  //   debug.push(res)
+  //   albums.push(...res[0])
+  //   albums.push(...res[1])
+  // }
+  //
+  // console.log(debug);
+  //
+  // albums.push(...await API.userGetAlbumChart(user,
+  //   lastTimestamp + secondsInTwoWeeks,
+  //   endTime,
+  //   300)
+  //   .then(resolve))
 
-  const albums = []
-  const debug = []
-  const resolve = (res: WeeklyAlbumChart) => {
-    pgr()
-    return res.album
-  }
-  let lastTimestamp = startTime - secondsInTwoWeeks
-  for (let i = 0; i < weeks; i++) {
-    if (lastTimestamp + secondsInTwoWeeks > endTime || lastTimestamp + (secondsInTwoWeeks * 2) > endTime)
-      break
-    const from = lastTimestamp + secondsInTwoWeeks
-    const to = from + secondsInTwoWeeks
-    const res = await Promise.all([
-      API.userGetAlbumChart(user, from, to, 1000)
-        .then(resolve),
-      API.userGetAlbumChart(user,
-        // i === 12 ? from + secondsInTwoWeeks : from + secondsInTwoWeeks,
-        // i === 12 ? from + secondsInTwoWeeks + 176400 : to + secondsInTwoWeeks,
-        to,
-        to + secondsInTwoWeeks,
-        900)
-        .then(resolve)
-    ])
-    lastTimestamp += secondsInTwoWeeks * 2
-    debug.push(res)
-    albums.push(...res[0])
-    albums.push(...res[1])
-  }
-
-  console.log(debug);
-
-  albums.push(...await API.userGetAlbumChart(user,
-    lastTimestamp + secondsInTwoWeeks,
+  const albums = await API.userGetAlbumChart(user,
+    startTime,
     endTime,
     300)
-    .then(resolve))
 
-  return albums.map((a: WeeklyAlbum) => ({
+  return albums.album.map((a: WeeklyAlbum) => ({
     name: a.name,
     playcount: Number(a.playcount),
     url: a.url,
@@ -430,17 +430,6 @@ const fetchTrackInfos = async (user: string, r: any[], pgr: Function): Promise<T
   return trackInfos
 }
 
-const formatTrack = (track: TrackInfo): FormattedTrack => {
-  return {
-    name: track.name,
-    album: track?.album?.title,
-    artist: track.artist.name,
-    url: track.url,
-    image: track?.album?.image[3]["#text"],
-    tags: track.toptags.tag.map(t => t.name)
-  }
-}
-
 const formatLovedTrack = (track: LovedTrack): FormattedLovedTrack => {
   return {
     name: track.name,
@@ -465,11 +454,7 @@ const fetchArtistsFromAPI = async (artists: Map<string, SpotifyArtistBase>) => {
   const values: string[] = []
   artists.forEach((_, k) => values.push(k))
   try {
-    const [res1, res2] = await Promise.all([
-      MusicorumAPI.fetchArtistsMetadata(values.slice(0, 49)),
-      MusicorumAPI.fetchArtistsMetadata(values.slice(50, 99))
-    ])
-    const res = [...res1, ...res2]
+    const res = await MusicorumAPI.fetchArtistsMetadata(values.slice(0, 100))
     for (let i = 0; i < res.length; i++) {
       const item = res[i]
       if (item) {
@@ -508,18 +493,18 @@ const formatTracks = async (tracks: TrackInfo[]): Promise<FormattedTrack[]> => {
     artist: track.artist.name,
     image: track.album?.image[3]?.["#text"],
     url: track.url,
-    tags: track.toptags.tag.map(t => t.name)
+    tags: track.toptags.tag.map(t => t.name),
+    playCount: parseInt(track.userplaycount || '0')
   }))
 
-  const toFetch = formatted.slice(0, 20)
-  const result = await MusicorumAPI.fetchTracksMetadata(toFetch)
+
+  const result = await MusicorumAPI.fetchTracksMetadata(formatted.slice(0, 150))
 
   return formatted.map((track, i) => {
-    if (i > 20) return track
     if (result[i]) {
       if (result[i].cover) track.image = track.image || result[i].cover
       if (result[i].preview) track.preview = result[i].preview
-      track.spotify = result[i].id
+      track.spotify = result[i].spotify
       track.analysis = result[i].analysis
       // track.name = result[i].name
     }

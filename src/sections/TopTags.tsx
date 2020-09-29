@@ -314,7 +314,7 @@ const TopTags: React.FC<{
           </TopTagsBars>
         </TopTagsContent>
         <Notice className="topTagsNotice">
-          This chart is based on your top 100 tracks, and then isolating the first 6.
+          This chart is based on your top 150 tracks, and then isolating the first 6.
         </Notice>
       </ParallaxWrapper>
     </TopTagsSection>

@@ -11,6 +11,7 @@ import TopTracks from "../sections/TopTracks";
 import FavoriteTracks from "../sections/FavoriteTracks";
 import TopTags from "../sections/TopTags";
 import Mainstream from "../sections/Mainstream";
+import Analysis from "../sections/Analysis";
 
 interface MonthState {
   actual: MonthData,
@@ -37,6 +38,8 @@ const RewindStage: React.FC<{
   const favoriteTracksRef = useRef(null)
   const topTagsRef = useRef(null)
   const mainstreamRef = useRef(null)
+  const analysisRef = useRef(null)
+  const splashEnd = useRef(null)
 
 
   useEffect(() => {
@@ -52,7 +55,7 @@ const RewindStage: React.FC<{
     splashRef.current.start()
     // @ts-ignore
     // topTracksCountRef.current.start()
-    // setTimeout(() => mainstreamRef.current.start(), 600)
+    // setTimeout(() => analysisRef.current.start(), 200)
   }
 
   const handleSplashEnd = () => {
@@ -66,6 +69,8 @@ const RewindStage: React.FC<{
   }
 
   const handleNextSlideClick = () => {
+    // @ts-ignore
+    // analysisRef?.current?.animateEnd()
     if (canChangeSlide) {
       setCanChangeSlide(false)
       setShowDownButton(false)
@@ -87,9 +92,6 @@ const RewindStage: React.FC<{
 
   const updateStages = (stage: number, isNext: boolean) => {
     // @ts-ignore
-    // return topArtistsCountRef.current.animateEnd()
-    console.log(stage, isNext)
-
     if (stage === 0) {
       // @ts-ignore
       scrobbleCountRef.current.animateEnd()
@@ -114,8 +116,6 @@ const RewindStage: React.FC<{
           // @ts-ignore
           .then(() => topArtistsCountRef.current.start())
       } else {
-        console.log('going back huh')
-
       }
     } else if (stage === 3 && isNext) {
       // @ts-ignore
@@ -146,7 +146,12 @@ const RewindStage: React.FC<{
       // @ts-ignore
       mainstreamRef.current.animateEnd()
         // @ts-ignore
-        .then(() => scrobbleCountRef.current.start())
+        .then(() => analysisRef.current.start())
+    } else if (stage === 9 && isNext) {
+      // @ts-ignore
+      analysisRef.current.animateEnd()
+        // @ts-ignore
+        .then(() => topTagsRef.current.start())
     }
   }
 
@@ -167,6 +172,7 @@ const RewindStage: React.FC<{
     <FavoriteTracks data={data} ref={favoriteTracksRef} onEnd={handleStageEnd}/>
     <TopTags data={data} ref={topTagsRef} onEnd={handleStageEnd}/>
     <Mainstream data={data} ref={mainstreamRef} onEnd={handleStageEnd} />
+    <Analysis data={data} ref={analysisRef} onEnd={handleStageEnd} />
 
     <SlideController
       stage={stage}
