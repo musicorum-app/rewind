@@ -269,3 +269,10 @@ export interface SpotifyArtistBase {
   // url: string,
   // spotify: string
 }
+
+
+
+export interface Section {
+  animateEnd: () => Promise<void>
+  start: () => void
+}

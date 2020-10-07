@@ -27,8 +27,8 @@ import {addToMap, getShuffledArray} from "../utils";
 import MusicorumAPI from "./MusicorumAPI";
 
 const year = 2020
-const offset = new Date().getTimezoneOffset() * -60
-const startTime = (new Date(year, 0, 0, 0, 0).getTime() / 1000) + offset
+const offset = 0
+const startTime = (new Date(year, 0, 1, 0, 0).getTime() / 1000) + offset
 const endTime = (new Date(year + 1, 0, 0, 0, 0).getTime() / 1000) + offset
 
 const dataFetcher = async (
@@ -83,7 +83,7 @@ const dataFetcher = async (
       (r: any[], pgr: Function) =>
         fetchTrackInfos(userData.name, r, pgr),
       'Fetching more information on your most played songs...',
-      150
+      100
     ]
   ]
 
@@ -105,6 +105,8 @@ const dataFetcher = async (
     nextStep()
     result.push(await f[0](result, nextStep))
   }
+
+  onProgress(null, 'Cross matching data... This may take a while. Please be patient.')
 
   const toFetch = new Map<string, SpotifyArtistBase>()
 

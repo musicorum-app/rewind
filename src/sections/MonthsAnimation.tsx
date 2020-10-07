@@ -93,7 +93,8 @@ const MonthsAnimation: React.FC<{
 
   // @ts-ignore
   useImperativeHandle(ref, () => ({
-    start
+    start,
+    animateEnd: async () => {}
   }))
 
   const listenedMonth = months[new Date(data.firstTrack.listenedAt).getMonth()]

@@ -34,7 +34,7 @@ interface TrackResponse {
 
 export default class API {
   static async fetchArtistsMetadata(artists: string[]): Promise<Nullable<SpotifyArtistBase>[]> {
-    return fetch(RESOURCE_API_URL + 'resource/artists?popularity=true', {
+    return fetch(RESOURCE_API_URL + 'find/artists?popularity=true', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -44,7 +44,7 @@ export default class API {
   }
 
   static async fetchAlbumsMetadata(albums: AlbumBase[]): Promise<AlbumResponse[]> {
-    return fetch(RESOURCE_API_URL + 'resource/albums', {
+    return fetch(RESOURCE_API_URL + 'find/albums', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -63,7 +63,7 @@ export default class API {
       ...albumObj(t)
     }))
     try {
-      const res = await fetch(RESOURCE_API_URL + 'resource/tracks?preview=true&analysis=true', {
+      const res = await fetch(RESOURCE_API_URL + 'find/tracks?preview=true&analysis=true', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

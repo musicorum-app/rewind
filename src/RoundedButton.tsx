@@ -19,18 +19,30 @@ const RoundedButton: React.FC<{
   onClick: MouseEventHandler<any>,
   fullWidth?: boolean,
   outlined?: boolean,
-  color?: "primary" | "secondary"
-}> = ({children, onClick, fullWidth, outlined, color}) => {
+  color?: "primary" | "secondary",
+  size?: "small" | "medium" | "large",
+  style?: React.CSSProperties
+}> = ({
+        children,
+        onClick,
+        fullWidth,
+        outlined,
+        color,
+        size,
+        style
+      }) => {
   outlined = outlined || false
   return <Button
     onClick={onClick}
     fullWidth={fullWidth}
     style={{
       borderRadius: 50,
-      ...(!outlined ? {color: '#000'} : {})
+      ...(!outlined ? {color: '#000'} : {}),
+      ...(style || {})
     }}
     variant={outlined ? 'outlined' : 'contained'}
     color={color}
+    size={size || "medium"}
   >
     {children}
   </Button>

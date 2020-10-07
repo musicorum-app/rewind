@@ -33,11 +33,11 @@ const ParallaxWrapper: React.FC<{
     const center = [windowSize[0] / 2, windowSize[1] / 2]
     const position = [event.pageY, event.pageX]
     const tilt = [
-      (position[0] - center[0]) / center[0],
-      (position[1] - center[1]) / center[1]
+      (position[0] - (center[0] * 2)) / center[0],
+      (position[1] - (center[1])) / center[1]
     ]
     const radius = Math.sqrt(Math.pow(tilt[0], 2) + Math.pow(tilt[1], 2))
-    const degree = radius * 6
+    const degree = radius * 3
     gsap.to('.parallax', {
       transform: `rotate3d(${tilt[0]}, ${tilt[1]}, 0, ${degree}deg)`
     })
