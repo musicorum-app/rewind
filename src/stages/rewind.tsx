@@ -13,6 +13,9 @@ import Mainstream from "../sections/Mainstream";
 import Analysis from "../sections/Analysis";
 import useSectionController from "../hooks/sectionController";
 import AlbumMeme from "../sections/AlbumMeme";
+import SplashEnd from "../sections/SplashEnd";
+import {Simulate} from "react-dom/test-utils";
+import PlaylistSection from "../sections/PlaylistSection";
 
 interface MonthState {
   actual: MonthData,
@@ -44,6 +47,7 @@ const RewindStage: React.FC<{
   const mainstreamRef = useRef(null)
   const analysisRef = useRef(null)
   const splashEnd = useRef(null)
+  const playlistRef = useRef(null)
 
 
   useEffect(() => {
@@ -60,7 +64,8 @@ const RewindStage: React.FC<{
       topTagsRef,
       mainstreamRef,
       analysisRef,
-      splashEnd
+      splashEnd,
+      playlistRef
     ]
 
     setSections(refs.map(r => (r.current as unknown as Section)))
@@ -69,8 +74,8 @@ const RewindStage: React.FC<{
 
   useEffect(() => {
     if (started) {
-      (splashRef.current as unknown as Section).start()
-      // (albumMemeRef.current as unknown as Section).start()
+      // (splashRef.current as unknown as Section).start()
+      (playlistRef.current as unknown as Section).start()
     }
   }, [started])
 
@@ -123,6 +128,8 @@ const RewindStage: React.FC<{
     <TopTags data={data} ref={topTagsRef} onEnd={handleStageEnd}/>
     <Mainstream data={data} ref={mainstreamRef} onEnd={handleStageEnd}/>
     <Analysis data={data} ref={analysisRef} onEnd={handleStageEnd}/>
+    <SplashEnd data={data} ref={splashEnd} onEnd={handleStageEnd} />
+    <PlaylistSection data={data} ref={playlistRef} onEnd={handleStageEnd} />
 
     <SlideController
       stage={currentSection}

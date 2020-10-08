@@ -232,7 +232,7 @@ const Mainstream: React.FC<{
             <ProgressBarInside percent={average}/>
           </ProgressBar>
           <span id="mainstreamSectionSubtext">
-            is how much mainstream you are*
+            is how much mainstream you were *
           </span>
         </MainstreamPercent>
 

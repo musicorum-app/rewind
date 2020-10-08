@@ -212,8 +212,6 @@ const Analysis: React.FC<{
     animateEnd
   }))
 
-  console.log(analysis)
-
   const size = 120
 
   const fragments = (analysis?.average + '%').split('')
@@ -250,11 +248,11 @@ const Analysis: React.FC<{
         }
 
         <ValenceText className="analysisFinalText endText">
-          is how positive your songs were
+          is how positive your songs were *
         </ValenceText>
 
         <Notice className="analysisFinalText endText">
-          * Based on an average of your top 150 tracks' valence analysis from Spotify
+          * Based on an average of your top 100 tracks' valence analysis from Spotify
         </Notice>
       </ParallaxWrapper>
     </Content>
