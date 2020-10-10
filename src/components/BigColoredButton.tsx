@@ -23,7 +23,10 @@ const BigColoredButton: React.FC<{
   style?: React.CSSProperties
   icon?: React.ReactNode,
   textColor?: string,
-  disabled?: boolean
+  disabled?: boolean,
+  href?: string,
+  target?: string,
+  prps?: any
 }> = ({
         children,
         onClick,
@@ -32,7 +35,10 @@ const BigColoredButton: React.FC<{
         style,
         icon,
         textColor,
-        disabled
+        disabled,
+        href,
+        target,
+        prps
       }) => {
   const {button} = useStyles(color || THEME_COLOR, textColor)()
 
@@ -54,6 +60,8 @@ const BigColoredButton: React.FC<{
       ...(style || {})
     }}
     variant={'contained'}
+    href={href}
+    {...prps}
   >
     {children}
   </Button>

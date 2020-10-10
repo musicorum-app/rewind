@@ -27,6 +27,7 @@ interface TrackResponse {
   album: string,
   cover: string,
   spotify: string,
+  deezer: string,
   duration: number,
   preview?: string,
   analysis: TrackAnalysis
@@ -101,7 +102,7 @@ export default class API {
         presentation: '2020_REWIND',
         user: user.name,
         user_image: user.image[3]["#text"] || 'https://lastfm.freetls.fastly.net/i/u/300x300/818148bf682d429dc215c1705eb27b98.jpg',
-        items: tracks.slice(0, 50).map(t => ({
+        items: tracks.slice(0, 100).map(t => ({
           name: t.name,
           artist: t.artist,
           url: t.url

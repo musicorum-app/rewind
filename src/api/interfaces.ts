@@ -1,3 +1,5 @@
+import {PlaylistResponse} from "./MusicorumAPI";
+
 export type Nullable<T> = T | null
 
 export interface LastfmDate {
@@ -201,6 +203,7 @@ export interface FormattedTrack {
   image?: string,
   preview?: string,
   spotify?: string,
+  deezer?: string,
   tags: string[],
   analysis?: TrackAnalysis,
   playCount?: number
@@ -276,3 +279,40 @@ export interface Section {
   animateEnd: () => Promise<void>
   start: () => void
 }
+
+
+
+export interface DialogData {
+  type: string,
+  data: string,
+  missing?: number,
+  musicorumPlaylist?: PlaylistResponse
+}
+
+export interface Playlists {
+  musicorum?: DialogData,
+  spotify?: DialogData,
+  deezer?: DialogData
+}
+
+export interface ServiceUserAccount {
+  id: string,
+  username: string,
+  name: string,
+  image: string
+}
+
+export interface ServiceAccount {
+  user: ServiceUserAccount,
+  token: string
+}
+
+export interface ServicesAuth {
+  spotify?: ServiceAccount,
+  deezer?: ServiceAccount
+}
+
+export interface WindowType extends Window {
+  connect: (token: string, user: ServiceUserAccount) => void
+}
+

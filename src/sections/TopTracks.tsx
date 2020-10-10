@@ -1,4 +1,4 @@
-import React, {forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useState} from "react";
+import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import Section from "../components/Section";
 import {Nullable, RewindData} from "../api/interfaces";
 import styled from "styled-components";
@@ -11,11 +11,15 @@ import {ReactComponent as PlayIcon} from '../assets/playIcon.svg'
 import {ReactComponent as PauseIcon} from '../assets/pauseIcon.svg'
 import {THEME_COLOR} from "../Constants";
 import {handleTrackImage} from "../utils";
+import {useMediaQuery} from "@material-ui/core";
+import Box from "@material-ui/core/Box";
 
 gsap.registerPlugin(CustomEase)
 
-// TODO: change by props based on window size
+const mediaQueryBreak = 700
+
 const imageSize = 480
+const imageSizeSmall = 240
 
 const TopTracksSection = styled.div`
   position: absolute;
@@ -38,6 +42,10 @@ const TrackItem = styled.div`
 const TrackCover = styled.img`
   border-radius: 4px;
   width: ${imageSize}px;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    width: ${imageSizeSmall}px;
+  }
 `
 
 const TrackData = styled.div`
@@ -49,6 +57,11 @@ const TrackData = styled.div`
   text-align: center;
   width: ${imageSize}px;
   font-size: 18px;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    width: 90vw;
+    transform: translateX(-50%) translateY(${imageSizeSmall / 2}px) translateZ(-20px);
+  }
 `
 
 const TrackDataTitle = styled.span`
@@ -56,6 +69,13 @@ const TrackDataTitle = styled.span`
   font-weight: 900;
   font-size: 26px;
   color: ${THEME_COLOR};
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    font-size: 19px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `
 
 interface NavigationArrowProps {
@@ -67,7 +87,7 @@ const RightNavigationArrow = styled.div`
   top: 50vh;
   right: 26px;
   transform: translateY(-50%) translateZ(25px);
-  opacity: ${(p: NavigationArrowProps) => p.available ? .6 : 0};
+  opacity: ${(p: NavigationArrowProps) => p.available ? .6 : 0.17};
   transition: opacity 0.5s;
   padding: 0px 20px;
   
@@ -79,12 +99,28 @@ const RightNavigationArrow = styled.div`
   & > svg {
     width: 60px;
   }
+  
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    transform: translateY(-50%) translateZ(0);
+    right: 0;
+  
+    & > svg {
+      width: 50px;
+    }
+  }
 `
 
 const LeftNavigationArrow = styled(RightNavigationArrow)`
   right: auto;
   left: 26px;
   transform: translateY(-50%) translateZ(25px) rotateZ(180deg);
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    transform: translateY(-50%) translateZ(0) rotateZ(180deg);
+    right: auto;
+    left: 1px;
+  }
 `
 
 const TrackPreview = styled.div`
@@ -118,14 +154,6 @@ const centerImageParams: gsap.TweenVars = {
   scale: 1
 }
 
-const borderImageParams: gsap.TweenVars = {
-  translateX: '-50%',
-  translateY: '-50%',
-  translateZ: -280,
-  filter: 'brightness(.3)',
-  scale: .92,
-  left: '100vw'
-}
 
 const TopTracks: React.FC<{
   data: RewindData,
@@ -134,11 +162,28 @@ const TopTracks: React.FC<{
 }> = forwardRef(({onEnd, data}, ref) => {
   const tracks = data.topTracks.slice(0, 18)
 
+  const smol = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
   const [show, setShow] = useState(false)
   const [currentTrack, setCurrentTrack] = useState<number>(0)
   const [previewPlaying, setPreviewPlaying] = useState(false)
-  const [windowSize, setWindowSize] = useState<number[]>([0, 0])
-  const [audio, setAudio] = useState<Nullable<HTMLAudioElement>>(null)
+  const [canPlay, setCanPlay] = useState(false)
+
+  const [audio, _setAudio] = useState<Nullable<HTMLAudioElement>>(null)
+
+  const audioState = useRef(audio)
+  const setAudio = (data: Nullable<HTMLAudioElement>) => {
+    audioState.current = data
+    _setAudio(data)
+  }
+
+  const borderImageParams: gsap.TweenVars = {
+    translateX: smol ? '-20%' : '-50%',
+    translateY: '-50%',
+    translateZ: smol ? -100 : -280,
+    filter: 'brightness(.3)',
+    scale: smol ? .7 : .92,
+    left: '100vw'
+  }
 
   // useLayoutEffect(() => {
   //   function updateSize() {
@@ -162,7 +207,8 @@ const TopTracks: React.FC<{
           duration: 0
         }, 0)
         .to('#topTracksSection', {
-          opacity: 1
+          opacity: 1,
+          onComplete: () => setCanPlay(true)
         }, 0)
         .to({}, {
           duration: 2,
@@ -210,6 +256,7 @@ const TopTracks: React.FC<{
     gsap.to(`#topTracksItem-${newOrder - 1}`, {
       ...borderImageParams,
       left: '0vw',
+      translateX: smol ? '-80%' : '-50%',
     })
 
     if (newOrder <= tracks.length - 1) {
@@ -241,10 +288,11 @@ const TopTracks: React.FC<{
 
   const animateEnd = () => {
     return new Promise(resolve => {
+      setCanPlay(false)
       new TimelineMax().to('.topTracksItem', {
         opacity: 0,
         scale: .8,
-        stagger: .08
+        stagger: .05,
       })
         .to('#topTracksSection', {
           opacity: 0
@@ -253,8 +301,9 @@ const TopTracks: React.FC<{
           top: '100vh',
           duration: 0,
           onComplete: () => {
-            if (audio) audio.pause()
+            audioState?.current?.pause()
             setAudio(null)
+            setPreviewPlaying(false)
 
             resolve()
             setShow(false)
@@ -272,6 +321,7 @@ const TopTracks: React.FC<{
   // console.log(tracks)
 
   const handlePreviewButtonClick = () => {
+    if (!canPlay) return
     const track = tracks[currentTrack]
     if (!track) console.error('Track not found!')
     if (!track.preview) console.error('Preview not found!')
@@ -294,7 +344,6 @@ const TopTracks: React.FC<{
         })
       } else {
         audio.src = track.preview || ''
-
       }
     }
 
@@ -318,10 +367,14 @@ const TopTracks: React.FC<{
           <TrackDataTitle>
             {tracks[currentTrack].name}
           </TrackDataTitle>
-          {tracks[currentTrack].artist}
-          <br />
+          <Box fontSize={smol ? 14 : 22}>
+            {tracks[currentTrack].artist}
+          </Box>
+
           <b>
-            {tracks[currentTrack].playCount} scrobbles
+            <Box fontSize={smol ? 12 : 20}>
+              {tracks[currentTrack].playCount} scrobbles
+            </Box>
           </b>
           <TrackPreview>
             {

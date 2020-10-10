@@ -1,6 +1,7 @@
 import styled from "styled-components";
-import React, {forwardRef, MouseEventHandler, useLayoutEffect, useState} from "react";
+import React, {forwardRef, useLayoutEffect, useState} from "react";
 import {gsap} from 'gsap';
+import {useMediaQuery} from "@material-ui/core";
 
 const Wrapper = styled.div`
   perspective: 2500px;
@@ -17,8 +18,9 @@ const Parallax = styled.div`
 
 const ParallaxWrapper: React.FC<{
   ref?: React.Ref<HTMLDivElement>,
-}> = forwardRef(({children}, ref) => {
+}> = forwardRef(({children}) => {
   const [windowSize, setWindowSize] = useState<number[]>([0, 0])
+  const smol = useMediaQuery(`(max-width: 800px)`)
 
   useLayoutEffect(() => {
     function updateSize() {
@@ -30,6 +32,7 @@ const ParallaxWrapper: React.FC<{
   }, []);
 
   const update = (event: React.MouseEvent<HTMLElement>) => {
+    if (smol) return
     const center = [windowSize[0] / 2, windowSize[1] / 2]
     const position = [event.pageY, event.pageX]
     const tilt = [

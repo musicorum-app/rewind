@@ -1,8 +1,7 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import Section from "../components/Section";
-import {Typography, Box} from "@material-ui/core";
+import {Typography} from "@material-ui/core";
 import {RewindData} from "../api/interfaces";
-import logo from '../assets/logo.svg'
 import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
@@ -19,10 +18,6 @@ const SectionWrapper = styled.div`
   text-align: center;
   position: absolute;
   top: 200vh;
-`
-
-const LogoImage = styled.img`
-  width: 180px;
 `
 
 const createTransform = (z: number) => `translateX(-50%) translateY(-50%) translateZ(${z}px)`
@@ -44,7 +39,7 @@ const OutlinedText = styled(Text)`
 `
 
 const BorderTextEffect = styled(OutlinedText)`
--webkit-text-stroke: 2px transparent;
+  -webkit-text-stroke: 2px transparent;
   color: transparent;
   line-height: 0px;  
   text-align: center;
@@ -177,10 +172,13 @@ const SplashEnd: React.FC<{
         scale: .8,
         opacity: 0,
         duration: .6,
-        onComplete: () => {
-          resolve()
-        }
       })
+        .to({}, {
+          duration: .3,
+          onComplete: () => {
+            resolve()
+          }
+        }, 0)
         .to('#splashEndSection', {
           top: '200vh',
           duration: 0,

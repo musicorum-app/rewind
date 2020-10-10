@@ -507,6 +507,7 @@ const formatTracks = async (tracks: TrackInfo[]): Promise<FormattedTrack[]> => {
       if (result[i].cover) track.image = track.image || result[i].cover
       if (result[i].preview) track.preview = result[i].preview
       track.spotify = result[i].spotify
+      track.deezer = result[i].deezer
       track.analysis = result[i].analysis
       // track.name = result[i].name
     }

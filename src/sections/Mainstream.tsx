@@ -179,6 +179,7 @@ const Mainstream: React.FC<{
         duration: .6,
         onComplete: () => {
           resolve()
+          setShow(false)
         }
       })
         .to('#mainstreamSection', {

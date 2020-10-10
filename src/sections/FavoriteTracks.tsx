@@ -1,17 +1,13 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import Section from "../components/Section";
-import {Typography, Box} from "@material-ui/core";
 import {RewindData} from "../api/interfaces";
-import logo from '../assets/logo.svg'
 import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
-import Header from "../components/Header";
 import HeartIcon from '../assets/heart.svg'
 import ParallaxWrapper from "../components/ParallaxWrapper";
-import {on} from "cluster";
 import {THEME_COLOR} from "../Constants";
-import {getReversed, handleTrackImage} from "../utils";
+import {getReversed} from "../utils";
 
 gsap.registerPlugin(CustomEase)
 
@@ -170,6 +166,7 @@ const FavoriteTracks: React.FC<{
         duration: .6,
         onComplete: () => {
           resolve()
+          setShow(false)
         }
       })
         .to('#favoriteSection', {

@@ -1,4 +1,4 @@
-import React, {forwardRef} from "react";
+import React from "react";
 import styled from 'styled-components'
 import {THEME_COLOR} from "../Constants";
 import { ReactComponent as NavigationIcon } from '../assets/navigation.svg'
@@ -57,6 +57,10 @@ const DownIcon = styled(DownNavigationIcon)`
   &:hover {
     opacity: ${(props: DownIconProps) => props.show ? '.7' : '0'};
     cursor: ${(props: DownIconProps) => props.show ? 'pointer': ''};;
+  }
+  
+  @media(max-width: 800px) {
+    bottom: 4px;
   }
 `
 

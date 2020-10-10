@@ -1,21 +1,27 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import Section from "../components/Section";
-import {FormattedTrack, Nullable, RewindData, SpotifyArtistBase} from "../api/interfaces";
+import {
+  DialogData,
+  Nullable,
+  Playlists,
+  RewindData,
+  ServiceUserAccount,
+  WindowType
+} from "../api/interfaces";
 import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
 import ParallaxWrapper from "../components/ParallaxWrapper";
 import {Typography} from "@material-ui/core";
-import generatePlaylistCover from "../image";
+import {generatePlaylistCover} from "../image";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import BigColoredButton from "../components/BigColoredButton";
 import {ReactComponent as SpotifyLogo} from '../assets/logos/spotify.svg'
 import {ReactComponent as DeezerLogo} from '../assets/logos/deezer.svg'
 import {ReactComponent as MusicorumLogo} from '../assets/logos/musicorum.svg'
-import MusicorumAPI, {PlaylistResponse} from "../api/MusicorumAPI";
-import {API_URL, AUTH_CALLBACK_URL, PLAYLIST_URL, SPOTIFY_ID} from "../Constants";
-import {Simulate} from "react-dom/test-utils";
+import MusicorumAPI from "../api/MusicorumAPI";
+import {AUTH_CALLBACK_URL, PLAYLIST_URL, SPOTIFY_ID} from "../Constants";
 import {TransitionProps} from "@material-ui/core/transitions";
 import Slide from "@material-ui/core/Slide";
 import Dialog from "@material-ui/core/Dialog";
@@ -23,42 +29,17 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import Link from "@material-ui/core/Link";
+import SpotifyAPI from "../api/SpotifyAPI";
+import PlaylistStrings from '../assets/playlist.json'
+import Snackbar from "@material-ui/core/Snackbar";
+import {Alert} from "@material-ui/lab";
+import DeezerAPI from "../api/DeezerAPI";
 
 gsap.registerPlugin(CustomEase)
 
-interface DialogData {
-  type: string,
-  data: string,
-  musicorumPlaylist?: PlaylistResponse
+function SlideTransition(props: TransitionProps) {
+  return <Slide {...props} direction="down"/>;
 }
-
-interface Playlists {
-  musicorum?: DialogData,
-  spotify?: DialogData,
-  deezer?: DialogData
-}
-
-interface ServiceUserAccount {
-  id: string,
-  username: string,
-  name: string,
-  image: string
-}
-
-interface ServiceAccount {
-  user: ServiceUserAccount,
-  token: string
-}
-
-interface ServicesAuth {
-  spotify?: ServiceAccount,
-  deezer?: ServiceAccount
-}
-
-interface WindowType extends Window {
-  connect: (token: string, user: ServiceUserAccount) => void
-}
-
 
 const Content = styled.div`
   opacity: 0;
@@ -106,46 +87,50 @@ const PlaylistSection: React.FC<{
   const [playlistCover, setPlaylistCover] = useState(data.user.image[3]['#text'])
   const [dialogData, setDialogData] = useState<Nullable<DialogData>>(null)
   const [playlists, setPlaylists] = useState<Playlists>({})
-  const [servicesAuth, setServicesAuth] = useState<ServicesAuth>({})
+  const [showSnackbar, setShowSnackbar] = useState(false)
+  const [snackbar, setSnackbar] = useState<string>('')
 
   useEffect(() => {
     const textEase = CustomEase.create("textEase", "M0,0,C0,0.658,0.084,0.792,0.15,0.846,0.226,0.908,0.272,0.976,1,1")
 
     if (show) {
-      generateImage()
-      const tl = new TimelineMax()
-        .to('#playlistSection', {
-          // opacity: 1,
-          // scale: 1,
-          top: 0,
-          duration: 0
+      generatePlaylistCover(data.user)
+        .then(blob => {
+          setPlaylistCover(URL.createObjectURL(blob))
+          animate()
         })
-        .fromTo('#playlistSection', {
-          opacity: 0,
-          scale: .7
-        }, {
-          scale: 1,
-          opacity: 1,
-          duration: 2,
-          ease: 'expo.out'
-        })
-        .from('.playlistSection', {
-          opacity: 0
-        })
-
-
-      tl.to({}, {
-        duration: .5,
-        onComplete: () => {
-          if (onEnd) onEnd()
-        }
-      })
     }
   }, [show])
 
-  const generateImage = async () => {
-    const url = await generatePlaylistCover(data.user)
-    setPlaylistCover(url)
+  const animate = async () => {
+    console.log('ANIMATING PLAYLIST SECTION')
+    const tl = new TimelineMax()
+      .to('#playlistSection', {
+        // opacity: 1,
+        // scale: 1,
+        top: 0,
+        duration: 0
+      })
+      .fromTo('#playlistSection', {
+        opacity: 0,
+        scale: 1.5
+      }, {
+        scale: 1,
+        opacity: 1,
+        duration: 2,
+        ease: 'expo.out'
+      })
+      .from('.playlistSection', {
+        opacity: 0
+      })
+
+
+    tl.to({}, {
+      duration: .5,
+      onComplete: () => {
+        if (onEnd) onEnd()
+      }
+    })
   }
 
   const animateEnd = () => {
@@ -160,6 +145,7 @@ const PlaylistSection: React.FC<{
           duration: 0,
           onComplete: () => {
             resolve()
+            setShow(false)
           }
         })
 
@@ -183,19 +169,26 @@ const PlaylistSection: React.FC<{
       return setDialogData(playlists.musicorum)
     }
     setLoading(true)
-    const playlist = await MusicorumAPI.savePlaylist(data.user, data.topTracks)
-    console.log(playlist)
-    setLoading(false)
-    const d = {
-      type: 'MUSICORUM',
-      data: PLAYLIST_URL + playlist.id,
-      musicorumPlaylist: playlist
+    try {
+      const playlist = await MusicorumAPI.savePlaylist(data.user, data.topTracks)
+      if (!playlist.name) throw new Error(JSON.stringify(playlist))
+      setLoading(false)
+      const d = {
+        type: 'MUSICORUM',
+        data: PLAYLIST_URL + playlist.id,
+        musicorumPlaylist: playlist
+      }
+      setDialogData(d)
+      setPlaylists({
+        ...playlists,
+        musicorum: d
+      })
+    } catch (e) {
+      console.error(e)
+      setLoading(false)
+      setSnackbar('Could not create a Musicorum playlist :/')
+      setShowSnackbar(true)
     }
-    setDialogData(d)
-    setPlaylists({
-      ...playlists,
-      musicorum: d
-    })
   }
 
   const handleSpotifyLogin = async () => {
@@ -203,25 +196,147 @@ const PlaylistSection: React.FC<{
       response_type: 'token',
       client_id: SPOTIFY_ID,
       scope: 'ugc-image-upload user-read-private playlist-modify-public',
-      redirect_uri: AUTH_CALLBACK_URL + 'spotify'
+      redirect_uri: AUTH_CALLBACK_URL + 'spotify',
+      // show_dialog: 'true'
     })
     const url = 'https://accounts.spotify.com/authorize?' + params.toString()
 
     const win: WindowType = window as unknown as WindowType
     win.connect = (token, user) => {
-      setServicesAuth({
-        ...servicesAuth,
-        spotify: {
-          token,
-          user: user
-        }
-      })
+      saveSpotifyPlaylist(token, user)
     }
-    window.open(url, 'popup', 'width=400, height=600')
+    window.open(url, 'popup', 'width=500, height=800')
   }
 
-  const saveSpotifyPlaylist = async () => {
-    handleSpotifyLogin()
+  const saveSpotifyPlaylist = async (token: string, user: ServiceUserAccount) => {
+    setLoading(true)
+    try {
+      const spotify = new SpotifyAPI(token)
+      const playlistTitle = PlaylistStrings.name
+      const playlistDescription = PlaylistStrings.description.replace('{{user}}', data.user.realname || data.user.name)
+      const playlist = await spotify.createPlaylist(user.id, playlistTitle, playlistDescription)
+
+      const playlistID = playlist.id
+
+
+      const photo: Nullable<string> = await (new Promise(async resolve => {
+        const blob = await generatePlaylistCover(data.user, true)
+        const reader = new FileReader()
+
+        if (!blob) resolve(null)
+        reader.readAsDataURL(blob!)
+        // @ts-ignore
+        reader.onloadend = () => resolve(reader.result)
+      }))
+
+      if (photo) {
+        const imageResponse = await spotify.uploadPlaylistImage(playlistID, photo
+          .replace(/data:image\/(jpeg|png);base64,/g, ''), 'image/jpeg')
+
+        if (imageResponse.status !== 202) console.error(imageResponse)
+      }
+
+      const tracks = data.topTracks
+        .filter(t => !!t)
+        .filter(t => !!t.spotify)
+        .map(t => t.spotify)
+
+      // @ts-ignore
+      await spotify.addTracksToPlaylist(playlistID, tracks)
+
+      console.log(playlist.external_urls.spotify)
+
+      console.log(tracks.length)
+
+
+      setLoading(false)
+      const d = {
+        type: 'SPOTIFY',
+        data: playlistID,
+        missing: 100 - tracks.length
+      }
+      setDialogData(d)
+      setPlaylists({
+        ...playlists,
+        spotify: d
+      })
+    } catch (e) {
+      console.error(e)
+      setLoading(false)
+      setSnackbar('Could not create a Spotify playlist :/')
+      setShowSnackbar(true)
+    }
+  }
+
+  const handleSpotifyPlaylist = async () => {
+    if (playlists.spotify) {
+      setDialogData(playlists.spotify)
+    } else await handleSpotifyLogin()
+  }
+
+
+  const handleDeezerLogin = async () => {
+    const win: WindowType = window as unknown as WindowType
+    win.connect = (token, user) => {
+      saveDeezerPlaylist(token, user)
+    }
+    window.open(DeezerAPI.getAuthURL(), 'popup', 'width=800, height=500')
+  }
+
+  const saveDeezerPlaylist = async (token: string, user: ServiceUserAccount) => {
+    setLoading(true)
+    try {
+      console.log(token)
+      const deezer = new DeezerAPI(token)
+      const playlistTitle = PlaylistStrings.name
+      const playlistDescription = PlaylistStrings.description.replace('{{user}}', data.user.realname || data.user.name)
+      const { id } = await deezer.createPlaylist(playlistTitle, playlistDescription)
+
+      const blob = await generatePlaylistCover(data.user, true)
+      if (blob) {
+        const upload = await deezer.uploadPlaylistImage(id, blob)
+        console.log(upload)
+      }
+
+      const tracks = data.topTracks
+        .filter(t => !!t)
+        .filter(t => !!t.deezer)
+        .map(t => t.deezer)
+
+      // @ts-ignore
+      const resp = await deezer.addTracksToPlaylist(id, tracks)
+
+      if (!resp) throw new Error(resp)
+
+      setLoading(false)
+      const d = {
+        type: 'DEEZER',
+        data: id,
+        missing: 100 - tracks.length
+      }
+      setDialogData(d)
+      setPlaylists({
+        ...playlists,
+        deezer: d
+      })
+    } catch (e) {
+      console.error(e)
+      setLoading(false)
+      setSnackbar('Could not create a Deezer playlist :/')
+      setShowSnackbar(true)
+    }
+  }
+
+  const handleDeezerPlaylist = () => {
+    if (playlists.deezer) {
+      setDialogData(playlists.deezer)
+    } else handleDeezerLogin()
+  }
+
+
+  const handleCloseSnackbar = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') return
+    setShowSnackbar(false)
   }
 
   return show ? <Section>
@@ -249,7 +364,7 @@ const PlaylistSection: React.FC<{
                   }}>
                     <Box my={1}>
                       <BigColoredButton
-                        onClick={saveSpotifyPlaylist}
+                        onClick={handleSpotifyPlaylist}
                         color="#1DB954"
                         disabled={loading}
                         fullWidth
@@ -264,6 +379,7 @@ const PlaylistSection: React.FC<{
 
                     <Box my={1}>
                       <BigColoredButton
+                        onClick={handleDeezerPlaylist}
                         color="#ffffff"
                         disabled={loading}
                         fullWidth
@@ -347,11 +463,90 @@ const PlaylistSection: React.FC<{
                   </Grid>
                 </>
               }
+
+              {
+                dialogData.type === 'SPOTIFY' && <Grid container justify="center">
+                  <Grid item xs={12}>
+                    <Link color="secondary"
+                          target="_blank" rel="noreferrer nofollow"
+                          href={`https://open.spotify.com/playlist/${dialogData.data}`}
+                    >
+                      <b>
+                        https://open.spotify.com/playlist/{dialogData.data}
+                      </b>
+                    </Link>
+                    <br/>
+                    {
+                      dialogData.missing && dialogData.missing > 0 ? <Typography color="textSecondary">
+                        Note: {dialogData.missing} songs are missing.
+                      </Typography> : ''
+                    }
+                    <br/>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <iframe src={`https://open.spotify.com/embed/playlist/${dialogData.data}`}
+                            width="100%" height="400"
+                            frameBorder="0"
+                            allowTransparency={true}
+                            allow="encrypted-media"/>
+                  </Grid>
+                </Grid>
+              }
+
+
+              {
+                dialogData.type === 'DEEZER' && <Grid container justify="center">
+                  <Grid item xs={12}>
+                    <Link color="secondary"
+                          target="_blank" rel="noreferrer nofollow"
+                          href={`https://deezer.com/playlist/${dialogData.data}`}
+                    >
+                      <b>
+                        https://deezer.com/playlist/{dialogData.data}
+                      </b>
+                    </Link>
+                    <br/>
+                    {
+                      dialogData.missing && dialogData.missing > 0 ? <Typography color="textSecondary">
+                        Note: {dialogData.missing} songs are missing.
+                      </Typography> : ''
+                    }
+                    <br/>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <iframe
+                      src={`https://www.deezer.com/plugins/player?format=classic&autoplay=false&playlist=true&width=700&height=400&color=FD0F57&layout=dark&size=medium&type=playlist&id=${dialogData.data}`}
+                      width="100%" height="400"
+                      frameBorder="0"
+                      scrolling="no"
+                      allowTransparency={true}
+                      allow="encrypted-media"/>
+                  </Grid>
+                </Grid>
+              }
             </>
           }
         </DialogContentText>
       </DialogContent>
     </Dialog>
+
+
+    <Snackbar
+      TransitionComponent={SlideTransition}
+      open={showSnackbar}
+      autoHideDuration={10000}
+      onClose={handleCloseSnackbar}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'center'
+      }}
+    >
+      <Alert variant="filled" onClose={handleCloseSnackbar} severity="error">
+        {
+          snackbar
+        }
+      </Alert>
+    </Snackbar>
 
   </Section> : null
 })

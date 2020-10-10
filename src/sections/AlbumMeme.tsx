@@ -1,13 +1,10 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import Section from "../components/Section";
-import {FormattedTrack, Nullable, RewindData, SpotifyArtistBase} from "../api/interfaces";
+import {RewindData} from "../api/interfaces";
 import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
 import ParallaxWrapper from "../components/ParallaxWrapper";
-import {THEME_COLOR} from "../Constants";
-import chroma from "chroma-js";
-import {handleTrackImage} from "../utils";
 import RoundedButton from "../RoundedButton";
 import {Typography} from "@material-ui/core";
 import Link from "@material-ui/core/Link";
@@ -105,6 +102,7 @@ const AlbumMeme: React.FC<{
           duration: 0,
           onComplete: () => {
             resolve()
+            setShow(false)
           }
         })
 

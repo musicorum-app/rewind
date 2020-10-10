@@ -1,8 +1,6 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import Section from "../components/Section";
-import {Typography, Box} from "@material-ui/core";
-import {FormattedArtist, Nullable, RewindData, TopTag} from "../api/interfaces";
-import logo from '../assets/logo.svg'
+import {RewindData, TopTag} from "../api/interfaces";
 import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
@@ -218,7 +216,7 @@ const TopTags: React.FC<{
         .to(['.topTagsTextNode', '.topTagsPercentNode', '.topTagsProgressBarNode'], {
           x: -40,
           opacity: 0,
-          stagger: .07
+          stagger: .01
         })
         .to('#topTagsSection', {
           opacity: 0
@@ -226,7 +224,10 @@ const TopTags: React.FC<{
         .to('#topTagsSection', {
           top: '100vh',
           duration: 0,
-          onComplete: resolve
+          onComplete: () => {
+            resolve()
+            setShow(false)
+          }
         })
     })
   }

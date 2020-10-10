@@ -1,14 +1,16 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import Section from "../components/Section";
-import {Typography, Box} from "@material-ui/core";
 import {RewindData} from "../api/interfaces";
-import logo from '../assets/logo.svg'
 import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
 import ParallaxWrapper from "../components/ParallaxWrapper";
+import {useMediaQuery} from "@material-ui/core";
 
 gsap.registerPlugin(CustomEase)
+
+const mediaQueryBreak = 650
+const smallFontSize = 70
 
 const SectionWrapper = styled.div`
   flex-direction: column;
@@ -24,20 +26,16 @@ const SectionWrapper = styled.div`
   left: 0px;
 `
 
-const CarouselWrapper = styled.div`
-  position: absolute;
-  top: 50vh;
-  transform:  translateX(-50%) translateY(-50%);
-  perspective: 800px;
-`
-
 const Carousel = styled.div`
   transform-style: preserve-3d;
   display: flex;
   flex-direction: column;
   line-height: 124px;
-  transform: translateY(50vh)
+  transform: translateY(50vh);
   
+  @media(max-width: ${mediaQueryBreak}px) {
+    line-height: ${smallFontSize - 5}px;
+  }
 `
 
 const CarouselItem = styled.span`
@@ -50,9 +48,14 @@ const CarouselItem = styled.span`
   left: 50vw;
   background-color: black;
   opacity: 0;
+  backface-visibility: hidden;
   
   &:nth-child(even) {
     color: white;
+  }
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    font-size: ${smallFontSize}px;
   }
 `
 
@@ -64,6 +67,10 @@ const CarouselBox = styled.div`
   height: ${130 * 3}px;
   transform: translateY(-50%) translateZ(300px);
   background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 40%, rgba(245,245,245,0) 60%, rgba(0,0,0,1) 100%);
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    height: ${smallFontSize * 3}px;
+  }
 `
 
 const BottomTextBox = styled.div`
@@ -73,12 +80,22 @@ const BottomTextBox = styled.div`
   transform: translateX(-50%) translateY(80px);
   top: 50vh;
   overflow: hidden;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    font-size: 21px;
+    width: 80%;
+    transform: translateX(-50%) translateY(60px);
+  }
 `
 
 const BottomText = styled.span`
   position: relative;
   opacity: 0;
   //top: -40px
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    width: 100%;
+  }
 `
 
 const ImageBase = styled.img`
@@ -88,18 +105,39 @@ const ImageBase = styled.img`
   border-radius: 4px;
   opacity: 0;
   z-index: -30;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    width: 200px;
+    height: 200px;
+  }
+  
+  @media(max-width: ${mediaQueryBreak / 2}px) {
+    width: 120px;
+    height: 120px;
+  }
 `
 
 const LeftImage = styled(ImageBase)`
   left: 10vw;
   top: calc(87vh - 300px);
   transform: translateZ(-70px);
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    top: 6vh;
+    left: 4vw;
+  }
 `
 
 const RightImage = styled(ImageBase)`
   right: 18vw;
   top: 20vh;
   transform: translateZ(-100px);
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    right: 7vw;
+    top: auto;
+    bottom: 8vh;
+  }
 `
 
 const ScrobbleCount: React.FC<{
@@ -109,9 +147,9 @@ const ScrobbleCount: React.FC<{
 }> = forwardRef(({onEnd, data}, ref) => {
 
   const [show, setShow] = useState(false)
+  const smol = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
 
   useEffect(() => {
-    const outlineEase = CustomEase.create("ease2", "M0,0,C0.084,0.61,-0.014,0.848,0.13,0.924,0.249,0.987,0.374,1,1,1")
     if (show) {
       const nodesToExclude = Array(7)
         .fill('#carouselNode-')
@@ -150,7 +188,7 @@ const ScrobbleCount: React.FC<{
           duration: 0
         }, 3.7)
         .to('.counterBackgroundImage', {
-          opacity: 0.4
+          opacity: 0.34
         }, 3.81)
         .to({}, {
           duration: 1,
@@ -190,10 +228,6 @@ const ScrobbleCount: React.FC<{
     animateEnd
   }))
 
-  const getBound = (i: number): number => {
-    return Math.round(i * (0.3 + i))
-  }
-
   const {scrobbles} = data.stats
 
   const texts = Array(8)
@@ -210,7 +244,7 @@ const ScrobbleCount: React.FC<{
           {
             texts.map((text, i) =>
               <CarouselItem key={i} id={`carouselNode-${i}`} className="carouselNode" style={{
-                transform: `translateX(-50%) translateY(-50%) rotateX(${i * 45}deg) translateZ(148px)`
+                transform: `translateX(-50%) translateY(-50%) rotateX(${i * 45}deg) translateZ(${smol ? 83 : 148}px)`
               }}>
                 {text}
               </CarouselItem>

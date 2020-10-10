@@ -13,6 +13,7 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import RoundedButton from "../RoundedButton";
+import {VERSION} from "../Constants";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -68,7 +69,8 @@ const LoadingStage: React.FC<{
     setRewindData(data)
     localStorage.setItem('cache', JSON.stringify({
       cachedAt: new Date().getTime(),
-      data
+      data,
+      _v: VERSION
     }))
     onComplete(data)
   }

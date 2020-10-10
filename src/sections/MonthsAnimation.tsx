@@ -1,8 +1,6 @@
 import React, {forwardRef, useImperativeHandle} from "react";
 import Section from "../components/Section";
-import {Typography, Box} from "@material-ui/core";
 import {RewindData} from "../api/interfaces";
-import logo from '../assets/logo.svg'
 import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
@@ -11,7 +9,9 @@ gsap.registerPlugin(CustomEase)
 
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
-const cubeSize = 130
+const cubeSize = 120
+const cubeSizeSmall = 58
+const mediaQueryBreak = 700
 
 const Perspective = styled.div`
   perspective: 700px;
@@ -27,22 +27,29 @@ const Perspective = styled.div`
 const Cube = styled.div`
   transform-style: preserve-3d;
   transform-origin: ${cubeSize}px;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    transform-origin: ${cubeSizeSmall}px;
+  }
 `
 
 const Face = styled.div`
   font-weight: 900;
   color: #FD0F57;
-  font-size: 112px;
-  line-height: 130px;
+  font-size: ${cubeSize - 12}px;
+  line-height: ${cubeSize}px;
   position: absolute;
   top: 0px;
   left: 50vw;
   background: black;
   width: 100%;
   text-transform: uppercase;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    line-height: ${cubeSizeSmall}px;
+    font-size: ${cubeSizeSmall - 12}px;
+  }
 `
-
-const transform = `translateZ(${cubeSize / 2}px)`
 
 const FaceEven = styled(Face)`
   color: white;
@@ -50,6 +57,10 @@ const FaceEven = styled(Face)`
 
 const Front = styled(Face)`
   transform: translateX(-50%) translateZ(${cubeSize / 2}px) translateY(-${cubeSize / 2}px);
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    transform: translateX(-50%) translateZ(${cubeSizeSmall / 2}px) translateY(-${cubeSizeSmall / 2}px);
+  }
 `
 
 const Bottom = styled(FaceEven)`
@@ -57,11 +68,19 @@ const Bottom = styled(FaceEven)`
 `
 
 const Back = styled(Face)`
-  transform: rotateX(180deg) translateX(-50%) ${transform} translateY(${cubeSize / 2}px);
+  transform: rotateX(180deg) translateX(-50%) translateZ(${cubeSize / 2}px) translateY(${cubeSize / 2}px);
+   
+  @media(max-width: ${mediaQueryBreak}px) {
+    transform: rotateX(180deg) translateX(-50%) translateZ(${cubeSizeSmall / 2}px) translateY(${cubeSizeSmall / 2}px);
+  }
 `
 
 const Top = styled(FaceEven)`
   transform: rotateX(90deg) translateZ(${cubeSize}px) translateX(-50%);
+   
+  @media(max-width: ${mediaQueryBreak}px) {
+    transform: rotateX(90deg) translateZ(${cubeSizeSmall}px) translateX(-50%);
+  }
 `
 
 const MonthsAnimation: React.FC<{

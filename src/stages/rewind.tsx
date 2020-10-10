@@ -1,4 +1,4 @@
-import React, {forwardRef, UIEventHandler, useEffect, useRef, useState, WheelEventHandler} from "react";
+import React, {forwardRef, useEffect, useRef, useState} from "react";
 import {MonthData, RewindData, Section} from "../api/interfaces";
 import MonthsAnimation from "../sections/MonthsAnimation";
 import SlideController from "../components/SlideController";
@@ -14,23 +14,15 @@ import Analysis from "../sections/Analysis";
 import useSectionController from "../hooks/sectionController";
 import AlbumMeme from "../sections/AlbumMeme";
 import SplashEnd from "../sections/SplashEnd";
-import {Simulate} from "react-dom/test-utils";
 import PlaylistSection from "../sections/PlaylistSection";
+import ImageShare from "../sections/ImageShare";
 
-interface MonthState {
-  actual: MonthData,
-  last: MonthData,
-  index: number
-}
 
 
 const RewindStage: React.FC<{
   data: RewindData,
 }> = forwardRef(({data}) => {
   const [started, setStarted] = useState(false)
-  const [stage, setStage] = useState(0)
-  const [showDownButton, setShowDownButton] = useState(false)
-  const [canChangeSlide, setCanChangeSlide] = useState(false)
   const [sections, setSections] = useState<Section[]>([])
   const [isAnimating, currentSection, prev, next, handleStageEnd] = useSectionController(sections)
 
@@ -48,6 +40,7 @@ const RewindStage: React.FC<{
   const analysisRef = useRef(null)
   const splashEnd = useRef(null)
   const playlistRef = useRef(null)
+  const imageShareRef = useRef(null)
 
 
   useEffect(() => {
@@ -58,14 +51,15 @@ const RewindStage: React.FC<{
       scrobbleCountRef,
       topArtistsCountRef,
       topAlbumsCountRef,
-      albumMemeRef,
+      // albumMemeRef,
       topTracksCountRef,
       favoriteTracksRef,
       topTagsRef,
       mainstreamRef,
       analysisRef,
       splashEnd,
-      playlistRef
+      playlistRef,
+      imageShareRef
     ]
 
     setSections(refs.map(r => (r.current as unknown as Section)))
@@ -74,8 +68,8 @@ const RewindStage: React.FC<{
 
   useEffect(() => {
     if (started) {
-      // (splashRef.current as unknown as Section).start()
-      (playlistRef.current as unknown as Section).start()
+      (splashRef.current as unknown as Section).start()
+      // (topTracksCountRef.current as unknown as Section).start()
     }
   }, [started])
 
@@ -86,26 +80,10 @@ const RewindStage: React.FC<{
   }
 
   const handleNextSlideClick = () => {
-    // @ts-ignore
-    // analysisRef?.current?.animateEnd()
-    // if (canChangeSlide) {
-    //   setCanChangeSlide(false)
-    //   setShowDownButton(false)
-    //   const newStage = stage + 1
-    //   setStage(newStage)
-    //   updateStages(newStage, true)
-    // }
     next()
   }
 
   const handleBackSlideClick = () => {
-    // if (canChangeSlide && stage > 0) {
-    //   setCanChangeSlide(false)
-    //   setShowDownButton(false)
-    //   const newStage = stage - 1
-    //   setStage(newStage)
-    //   updateStages(newStage, false)
-    // }
     prev()
   }
 
@@ -130,6 +108,7 @@ const RewindStage: React.FC<{
     <Analysis data={data} ref={analysisRef} onEnd={handleStageEnd}/>
     <SplashEnd data={data} ref={splashEnd} onEnd={handleStageEnd} />
     <PlaylistSection data={data} ref={playlistRef} onEnd={handleStageEnd} />
+    <ImageShare data={data} ref={imageShareRef} onEnd={handleStageEnd} />
 
     <SlideController
       stage={currentSection}

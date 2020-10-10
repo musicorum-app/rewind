@@ -21,7 +21,8 @@ const RoundedButton: React.FC<{
   outlined?: boolean,
   color?: "primary" | "secondary",
   size?: "small" | "medium" | "large",
-  style?: React.CSSProperties
+  style?: React.CSSProperties,
+  disabled?: boolean
 }> = ({
         children,
         onClick,
@@ -29,7 +30,8 @@ const RoundedButton: React.FC<{
         outlined,
         color,
         size,
-        style
+        style,
+        disabled
       }) => {
   outlined = outlined || false
   return <Button
@@ -43,6 +45,7 @@ const RoundedButton: React.FC<{
     variant={outlined ? 'outlined' : 'contained'}
     color={color}
     size={size || "medium"}
+    disabled={disabled}
   >
     {children}
   </Button>

@@ -2,9 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import * as serviceWorker from './serviceWorker';
 import {CssBaseline, ThemeProvider} from "@material-ui/core";
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import SpotifyCallback from "./callbacks/Spotify";
+import DeezerCallback from "./callbacks/Deezer";
 
 const theme = createMuiTheme({
   palette: {
@@ -44,7 +46,19 @@ ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline/>
-      <App/>
+      <BrowserRouter>
+        <Switch>
+          <Route path="/auth/spotify">
+            <SpotifyCallback/>
+          </Route>
+          <Route path="/auth/deezer"p>
+            <DeezerCallback/>
+          </Route>
+          <Route path="/" exact>
+            <App/>
+          </Route>
+        </Switch>
+      </BrowserRouter>
     </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root')

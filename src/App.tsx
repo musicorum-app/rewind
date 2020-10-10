@@ -8,7 +8,7 @@ import StartGraphic from './assets/start.svg'
 import Box from "@material-ui/core/Box";
 import API from "./api";
 import {RewindData, UserProfile} from "./api/interfaces";
-import {DEFAULT_AVATAR} from "./Constants";
+import {DEFAULT_AVATAR, VERSION} from "./Constants";
 import Typography from "@material-ui/core/Typography";
 import moment from 'moment'
 import LoadingStage from "./stages/loading";
@@ -77,15 +77,19 @@ function App() {
 
   useEffect(() => {
     // doAnimation()
-      document.addEventListener("keypress", e => {
-        if (e.ctrlKey && e.code === 'KeyM') {
-          localStorage.setItem('cache', JSON.stringify(sample))
-          document.location.reload()
-        }
-      });
+    //   document.addEventListener("keypress", e => {
+    //     if (e.ctrlKey && e.code === 'KeyM') {
+    //       localStorage.setItem('cache', JSON.stringify(sample))
+    //       document.location.reload()
+    //     }
+    //   });
 
     try {
-      const data: {} = JSON.parse(localStorage.getItem('cache') as string)
+      const data: any = JSON.parse(localStorage.getItem('cache') as string)
+      if (data._v !== VERSION) {
+        localStorage.removeItem('cache')
+        throw new Error('Version mismatch')
+      }
       // @ts-ignore
       data.data.firstTrack.listenedAt = new Date(data.data.firstTrack.listenedAt)
       // @ts-ignore

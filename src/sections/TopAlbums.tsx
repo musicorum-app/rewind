@@ -1,18 +1,19 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import Section from "../components/Section";
-import {Typography, Box} from "@material-ui/core";
 import {FormattedAlbum, RewindData} from "../api/interfaces";
-import logo from '../assets/logo.svg'
 import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
 import ParallaxWrapper from "../components/ParallaxWrapper";
 import Header from "../components/Header";
-import {handleAlbumImage} from "../utils";
+import {handleAlbumImage, handleArtistImage} from "../utils";
 import {THEME_COLOR} from "../Constants";
-import {on} from "cluster";
+import {useMediaQuery} from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
 
 gsap.registerPlugin(CustomEase)
+
+const mediaQueryBreak = 860
 
 const TopAlbumsSection = styled.div`
   position: absolute;
@@ -38,6 +39,18 @@ const Image = styled.img`
   background-position: center;
   background-repeat: space;
   background-size: cover;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    margin-top: 20px;
+    width: 50vw;
+    height: 50vw;
+    padding: 0;
+  }
+  
+  @media(max-width: ${mediaQueryBreak}px) and (min-height: 680px) {
+    width: 70vw;
+    height: 70vw;
+  }
 `
 
 const AlbumList = styled.div`
@@ -71,11 +84,29 @@ const ListItem = styled.span`
   transition: padding-left .2s;
   &:hover {
     padding-left: 20px;
-    cursor:pointer;
+    cursor:default;
+  }
+  
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 28px;
+    margin-bottom: 6px;
+    &:hover {
+      padding-left: 0;
+    }
+  }
+  
+  @media(max-width: ${mediaQueryBreak}px) and (max-height: 680px) {
+    font-size: 15px;
+    margin-bottom: 3px;
   }
 `
 
 const backgroundImageSize = 240
+const backgroundImageSizeSmall = 120
 
 const ImageBase = styled.img`
   opacity: 0.4;
@@ -84,24 +115,46 @@ const ImageBase = styled.img`
   width: ${backgroundImageSize}px;
   height: ${backgroundImageSize}px;
   background: black;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+     width: ${backgroundImageSizeSmall}px;
+     height: ${backgroundImageSizeSmall}px;
+  }
 `
 
 const TopImage = styled(ImageBase)`
   transform: translateZ(-70px);
   top: 4vh;
   right: calc(25vw - ${backgroundImageSize}px);
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    top: 6vh;
+    right: 70vw;
+  }
 `
 
 const CenterImage = styled(ImageBase)`
   transform: translateZ(-220px);
   top: 30vh;
   right: calc(50vw - ${backgroundImageSize}px);
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    bottom: calc(50vh - ${backgroundImageSizeSmall}px);
+    top: auto;
+    right: 2vw;
+    left: auto;
+  }
 `
 
 const BottomImage = styled(ImageBase)`
   transform: translateZ(-170px);
   bottom: calc(30vh - ${backgroundImageSize}px);
   right: calc(25vw - ${backgroundImageSize}px);
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    bottom: 9vh;
+    right: 65vw;
+  }
 `
 
 const ScrobbleCount = styled.div`
@@ -124,6 +177,7 @@ const TopAlbums: React.FC<{
   onEnd?: () => void;
 }> = forwardRef(({onEnd, data}, ref) => {
 
+  const smol = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
   const [show, setShow] = useState(false)
   const [hoveredAlbum, setHoveredAlbum] = useState<FormattedAlbum>(data.topAlbums[0])
 
@@ -175,7 +229,10 @@ const TopAlbums: React.FC<{
         .to('#topAlbumsSection', {
           top: '100vh',
           duration: 0,
-          onComplete: resolve
+          onComplete: () => {
+            resolve()
+            setShow(false)
+          }
         })
     })
   }
@@ -192,33 +249,65 @@ const TopAlbums: React.FC<{
   return show ? <Section center>
     <TopAlbumsSection id="topAlbumsSection">
       <ParallaxWrapper>
-        <Header title="THE ALBUMS">
+        <Header title="THE ALBUMS" notAbsolute={smol}>
+          {smol ? 'Your most listened albums were' : null}
         </Header>
-        <ImageWraper id="bigImageAlbums">
-          <Image src={handleAlbumImage(hoveredAlbum)} style={{
-            backgroundImage: `url(${handleAlbumImage(hoveredAlbum)})`
-          }} />
-        </ImageWraper>
-        <ScrobbleCount>
-          <h3>{hoveredAlbum.playCount.toLocaleString()}</h3>
-          scrobbles
-        </ScrobbleCount>
 
-        <AlbumList>
-          Your most listened albums were
-          <List>
-            {
-              Albums.map((a, i) => <ListItem
-                hovered={hoveredAlbum === a}
-                onMouseEnter={() => setHoveredAlbum(a)}
-                className="topAlbumsListNode"
-                key={i}
-              >
-                {a.name}
-              </ListItem>)
-            }
-          </List>
-        </AlbumList>
+        {
+          smol ? <>
+
+
+            <Grid container justify="center">
+              <Grid item>
+                <Image id="bigImageAlbums" src={handleAlbumImage(hoveredAlbum)} style={{
+                  backgroundImage: `url(${handleAlbumImage(hoveredAlbum)})`
+                }}/>
+              </Grid>
+              <Grid item xs={10} style={{paddingTop: 28}}>
+                <List>
+                  {
+                    Albums.map((a, i) => <ListItem
+                      hovered={hoveredAlbum === a}
+                      onMouseEnter={() => setHoveredAlbum(a)}
+                      className="topArtistsListNode"
+                      key={i}
+                    >
+                      {a.name}
+                    </ListItem>)
+                  }
+                </List>
+              </Grid>
+            </Grid>
+
+          </> : [
+            <ImageWraper id="bigImageAlbums">
+              <Image src={handleAlbumImage(hoveredAlbum)} style={{
+                backgroundImage: `url(${handleAlbumImage(hoveredAlbum)})`
+              }}/>
+            </ImageWraper>,
+            <ScrobbleCount>
+              <h3>{hoveredAlbum.playCount.toLocaleString()}</h3>
+              scrobbles
+            </ScrobbleCount>,
+
+            <AlbumList>
+              {!smol ? 'Your most listened albums were' : null}
+              <List>
+                {
+                  Albums.map((a, i) => <ListItem
+                    hovered={hoveredAlbum === a}
+                    onMouseEnter={() => setHoveredAlbum(a)}
+                    className="topAlbumsListNode"
+                    key={i}
+                  >
+                    {a.name}
+                  </ListItem>)
+                }
+              </List>
+            </AlbumList>
+          ]
+        }
+
         <TopImage
           className="topAlbumsBackgroundImage"
           src={handleAlbumImage(data.topAlbums[5])}
