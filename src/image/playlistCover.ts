@@ -23,17 +23,17 @@ export default function generatePlaylistCover(user: UserProfile, compressed = fa
       ctx.fillStyle = color
       ctx.fillRect(0, 0, SIZE, BAR_HEIGHT)
 
-      ctx.font = 'italic 115px "Montserrat Black"'
+      ctx.font = '900 italic 115px "Montserrat"'
       ctx.textAlign = 'center'
       ctx.fillText('2020', SIZE / 2, 340)
 
       ctx.fillStyle = 'white'
-      ctx.font = 'italic 40px "Montserrat Black"'
+      ctx.font = '900 italic 40px "Montserrat"'
       ctx.fillText('rewind', SIZE / 2, SIZE - 20)
 
       ctx.fillStyle = 'black'
       ctx.textAlign = 'start'
-      ctx.font = '20px "Montserrat Black"'
+      ctx.font = '900 20px "Montserrat"'
       ctx.fillText(user.name, 12, (BAR_HEIGHT / 2) + 6, SIZE - 60)
 
       const logo = new Image()

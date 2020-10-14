@@ -1,5 +1,5 @@
 import {Nullable, RewindData} from "../api/interfaces";
-import {THEME_COLOR} from "../Constants";
+import {IS_PREVIEW, THEME_COLOR} from "../Constants";
 import {
   exportCanvasToBlob,
   handleArtistImage,
@@ -21,6 +21,8 @@ export default async function generateStoriesShare(data: RewindData, compressed 
 
   ctx.fillStyle = 'black'
   ctx.fillRect(0, 0, WIDTH, HEIGHT)
+
+  if (IS_PREVIEW) ctx.filter = 'blur(6px)'
 
   const HEADER_HEIGHT = 180
   ctx.fillStyle = THEME_COLOR
@@ -129,6 +131,27 @@ export default async function generateStoriesShare(data: RewindData, compressed 
     }
   }
 
+  ctx.font = '600 16px Montserrat'
+  ctx.fillStyle = 'rgba(255, 255, 255, .5)'
+  ctx.save()
+
+  ctx.translate(WIDTH - 18, HEIGHT - 18)
+  ctx.rotate(-0.5 * Math.PI)
+  ctx.textAlign = 'start'
+  ctx.textBaseline = 'bottom'
+  writeText(ctx, 'rewind.musicorumapp.com', WIDTH, 0, 0)
+
+  ctx.restore()
+
+  ctx.filter = 'none'
+
+  if (IS_PREVIEW) {
+    ctx.fillStyle = 'rgba(0, 0, 0, .4)'
+    ctx.fillRect(0, 0, WIDTH, HEIGHT)
+    const preview = await loadImage('https://cdn-2.musicorumapp.com/rewind/rewind_preview_storie.svg')
+
+    ctx.drawImage(preview, WIDTH / 2 - preview.width / 2, HEIGHT / 2 - preview.height / 2)
+  }
 
   return exportCanvasToBlob(canvas, compressed)
 }

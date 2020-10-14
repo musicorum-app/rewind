@@ -195,7 +195,8 @@ const ImageShare: React.FC<{
   // @ts-ignore
   useImperativeHandle(ref, () => ({
     start,
-    animateEnd
+    animateEnd,
+    generateImage: repaint
   }))
 
   return show ? <Section>

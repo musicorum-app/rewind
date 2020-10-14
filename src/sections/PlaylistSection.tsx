@@ -94,11 +94,8 @@ const PlaylistSection: React.FC<{
     const textEase = CustomEase.create("textEase", "M0,0,C0,0.658,0.084,0.792,0.15,0.846,0.226,0.908,0.272,0.976,1,1")
 
     if (show) {
-      generatePlaylistCover(data.user)
-        .then(blob => {
-          setPlaylistCover(URL.createObjectURL(blob))
-          animate()
-        })
+      generateImage()
+      animate()
     }
   }, [show])
 
@@ -153,15 +150,23 @@ const PlaylistSection: React.FC<{
     })
   }
 
+  const generateImage = async () => {
+    generatePlaylistCover(data.user)
+      .then(blob => {
+        setPlaylistCover(URL.createObjectURL(blob))
+      })
+  }
+
   const start = () => {
     console.log('Album meme section')
     setShow(true)
   }
 
-  // @ts-ignore
+// @ts-ignore
   useImperativeHandle(ref, () => ({
     start,
-    animateEnd
+    animateEnd,
+    generateImage
   }))
 
   const saveMusicorumPlaylist = async () => {
@@ -290,7 +295,7 @@ const PlaylistSection: React.FC<{
       const deezer = new DeezerAPI(token)
       const playlistTitle = PlaylistStrings.name
       const playlistDescription = PlaylistStrings.description.replace('{{user}}', data.user.realname || data.user.name)
-      const { id } = await deezer.createPlaylist(playlistTitle, playlistDescription)
+      const {id} = await deezer.createPlaylist(playlistTitle, playlistDescription)
 
       const blob = await generatePlaylistCover(data.user, true)
       if (blob) {

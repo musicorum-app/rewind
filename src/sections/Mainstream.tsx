@@ -7,8 +7,11 @@ import CustomEase from 'gsap/CustomEase'
 import ParallaxWrapper from "../components/ParallaxWrapper";
 import {THEME_COLOR} from "../Constants";
 import chroma from "chroma-js";
+import {useMediaQuery} from "@material-ui/core";
 
 gsap.registerPlugin(CustomEase)
+
+const mediaQueryBreak = 800
 
 const Content = styled.div`
   opacity: 0;
@@ -38,12 +41,25 @@ const RightSideArtist = styled(LeftSideArtist)`
 `
 
 const ArtistSide = styled.div`
-  //transform: translateZ(-200px);
+  @media(max-width: ${mediaQueryBreak}px) {
+    width: 90%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    font-size: 14px;
+  }
 `
 
 const ArtistImage = styled.img`
   width: 100%;
   border-radius: 4px;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    width: 180px;
+  }
 `
 
 const ArtistName = styled.span`
@@ -51,6 +67,14 @@ const ArtistName = styled.span`
   font-size: 24px;
   margin-bottom: 10px;
   font-weight: 800;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    font-size: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 6px;
+  }
 `
 
 const MainstreamPercent = styled.div`
@@ -64,6 +88,18 @@ const MainstreamPercent = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    position: unset;
+    left: unset;
+    top: unset;
+    transform: unset;
+    width: 270px;
+    height: auto;
+    margin: 38px 4px;
+    text-align: center;
+  }
 `
 
 const MainstreamPercentNumberWrapper = styled.div`
@@ -77,6 +113,11 @@ const MainstreamPercentNumber = styled.span`
   position: relative;
   line-height: 80px;
   padding-bottom: 20px;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    font-size: 50px;
+    line-height: 40px;
+  }
 `
 
 const ProgressBar = styled.div`
@@ -84,6 +125,9 @@ const ProgressBar = styled.div`
   height: 16px;
   width: 100%;
   margin-bottom: 10px;
+  @media(max-width: ${mediaQueryBreak}px) {
+  height: 8px;
+  }
 `
 
 interface ProgressBarInsideProps {
@@ -101,6 +145,29 @@ const Notice = styled.div`
   left: 0;
   bottom: 0;
   padding: 24px;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    font-size: 12px;
+  }
+`
+
+const SmallContentWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  height: 90%;
+  position: absolute;
+  left: 0;
+  top: 50vh;
+  transform: translateY(-50%);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+`
+
+const SmallContentBottomText = styled.span`
+  font-size: 13px;
 `
 
 
@@ -112,6 +179,7 @@ const Mainstream: React.FC<{
 
   const [show, setShow] = useState(false)
   const [ordered, setOrdered] = useState<SpotifyArtistBase[]>([])
+  const small = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
 
   const average = ordered
     .map(a => a.popularity)
@@ -211,43 +279,91 @@ const Mainstream: React.FC<{
   return show ? <Section>
     <Content id="mainstreamSection">
       <ParallaxWrapper>
-        <LeftSideArtist id="mainstreamSectionArtistSide-1">
-          <ArtistSide>
-            <ArtistName>
-              {
-                ordered[0].name
-              }
-            </ArtistName>
-            <ArtistImage src={ordered[0].image}/>
-            is your most popular artist, with <b>{ordered[0].popularity}%</b> popularity
-          </ArtistSide>
-        </LeftSideArtist>
 
-        <MainstreamPercent>
-          <MainstreamPercentNumberWrapper>
-            <MainstreamPercentNumber id="mainstreamSectionNumber">
-              {~~average}%
-            </MainstreamPercentNumber>
-          </MainstreamPercentNumberWrapper>
-          <ProgressBar id="mainstreamSectionBar">
-            <ProgressBarInside percent={average}/>
-          </ProgressBar>
-          <span id="mainstreamSectionSubtext">
-            is how much mainstream you were *
-          </span>
-        </MainstreamPercent>
+        {
+          small ? <>
 
-        <RightSideArtist id="mainstreamSectionArtistSide-2">
-          <ArtistSide>
-            <ArtistName>
-              {
-                last.name
-              }
-            </ArtistName>
-            <ArtistImage src={last.image}/>
-            is your least popular artist, with <b>{last.popularity}%</b> popularity
-          </ArtistSide>
-        </RightSideArtist>
+            <SmallContentWrapper>
+              <ArtistSide id="mainstreamSectionArtistSide-1">
+                <ArtistName>
+                  {
+                    ordered[0].name
+                  }
+                </ArtistName>
+                <ArtistImage src={ordered[0].image}/>
+                <SmallContentBottomText>
+                  was your most popular artist, with <b>{ordered[0].popularity}%</b> popularity
+                </SmallContentBottomText>
+              </ArtistSide>
+
+              <MainstreamPercent>
+                <MainstreamPercentNumberWrapper>
+                  <MainstreamPercentNumber id="mainstreamSectionNumber">
+                    {~~average}%
+                  </MainstreamPercentNumber>
+                </MainstreamPercentNumberWrapper>
+                <ProgressBar id="mainstreamSectionBar">
+                  <ProgressBarInside percent={average}/>
+                </ProgressBar>
+                <span id="mainstreamSectionSubtext">
+                  is how much mainstream you were *
+                </span>
+              </MainstreamPercent>
+
+              <ArtistSide id="mainstreamSectionArtistSide-2">
+                <ArtistName>
+                  {
+                    last.name
+                  }
+                </ArtistName>
+                <ArtistImage src={last.image}/>
+                <SmallContentBottomText>
+                  was your least popular artist, with <b>{last.popularity}%</b> popularity
+                </SmallContentBottomText>
+              </ArtistSide>
+            </SmallContentWrapper>
+
+          </> : [
+            <LeftSideArtist id="mainstreamSectionArtistSide-1">
+              <ArtistSide>
+                <ArtistName>
+                  {
+                    ordered[0].name
+                  }
+                </ArtistName>
+                <ArtistImage src={ordered[0].image}/>
+                was your most popular artist, with <b>{ordered[0].popularity}%</b> popularity
+              </ArtistSide>
+            </LeftSideArtist>,
+
+            <MainstreamPercent>
+              <MainstreamPercentNumberWrapper>
+                <MainstreamPercentNumber id="mainstreamSectionNumber">
+                  {~~average}%
+                </MainstreamPercentNumber>
+              </MainstreamPercentNumberWrapper>
+              <ProgressBar id="mainstreamSectionBar">
+                <ProgressBarInside percent={average}/>
+              </ProgressBar>
+              <span id="mainstreamSectionSubtext">
+                is how much mainstream you were *
+              </span>
+            </MainstreamPercent>,
+
+            <RightSideArtist id="mainstreamSectionArtistSide-2">
+              <ArtistSide>
+                <ArtistName>
+                  {
+                    last.name
+                  }
+                </ArtistName>
+                <ArtistImage src={last.image}/>
+                was your least popular artist, with <b>{last.popularity}%</b> popularity
+              </ArtistSide>
+            </RightSideArtist>
+          ]
+        }
+
         <Notice id="mainstreamSectionNotice">
           * Based on an average of your top 100 artists' popularity from Spotify
         </Notice>

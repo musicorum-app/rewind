@@ -8,9 +8,11 @@ import ParallaxWrapper from "../components/ParallaxWrapper";
 import Header from "../components/Header";
 import chroma from 'chroma-js'
 import {THEME_COLOR} from "../Constants";
+import {useMediaQuery} from "@material-ui/core";
 
 gsap.registerPlugin(CustomEase)
 
+const mediaQueryBreak = 800
 
 const TopTagsSection = styled.div`
   position: absolute;
@@ -35,6 +37,10 @@ const AnimationWrapperLeft = styled.div`
   color: ${THEME_COLOR};
   white-space: nowrap;
   padding: 0 10px 0 0;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    padding: 0 5px 0 0;
+  }
 `
 
 const AnimationWrapperRight = styled(AnimationWrapperLeft)`
@@ -50,6 +56,16 @@ const AnimationText = styled.span`
   font-size: 90px;
   line-height: 90px;
   opacity: 0;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    font-size: 50px;
+    line-height: 50px;
+  }
+  
+  @media(max-width: ${mediaQueryBreak / 2}px) {
+    font-size: 30px;
+    line-height: 30px;
+  }
 `
 
 const TopTagsContent = styled.div`
@@ -59,6 +75,10 @@ const TopTagsContent = styled.div`
   justify-content: center;
   align-items: center;
   transform: translateZ(-70px);
+  
+   @media(max-width: ${mediaQueryBreak}px) {
+    flex-direction: column;
+  }
 `
 
 const TopTagsText = styled.div`
@@ -69,6 +89,19 @@ const TopTagsText = styled.div`
   align-items: flex-end;
   font-size: 50px;
   line-height: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    font-size: 30px;
+    line-height: 30px;
+  }
+  
+  @media(max-width: ${mediaQueryBreak}px) and (max-height: 720px) {
+    font-size: 27px;
+    line-height: 27px;
+  }
 `
 
 const TopTagsBars = styled.div`
@@ -88,6 +121,15 @@ const TagPercent = styled.div`
   font-size: 40px;
   text-align: end;
   width: 130px;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    width: auto;
+    font-size: 22px;
+  }
+  
+  @media(max-width: ${mediaQueryBreak}px) and (max-height: 720px) {
+    font-size: 14px;
+  }
 `
 
 const ProgressBar = styled.div`
@@ -95,6 +137,16 @@ const ProgressBar = styled.div`
   height: 54px;
   margin: 17px 19px;
   width: 100%;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    margin: 6px 6px 20px 6px;
+    height: 22px;
+  }
+  
+  @media(max-width: ${mediaQueryBreak}px) and (max-height: 720px) {
+    margin: 4px 4px 14px 4px;
+    height: 14px;
+  }
 `
 
 const ProgressBarInside = styled.div`
@@ -108,7 +160,28 @@ const Notice = styled.div`
   left: 0;
   bottom: 0;
   padding: 24px;
+  @media(max-width: ${mediaQueryBreak}px) {
+    font-size: 12px;
+  }
 `
+
+const SmallItemContent = styled.div`
+  width: 80%;
+`
+
+const SmallItemText = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  font-weight: 900;
+  font-size: 24px;
+`
+
+const SmallProgressBarWrapper = styled.div`
+  display: flex;
+`
+
 
 
 const TAG_SPLITS = 25
@@ -122,6 +195,7 @@ const TopTags: React.FC<{
 
   const [show, setShow] = useState(false)
   const [randomTags, setRandomTags] = useState<TopTag[]>([])
+  const small = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
 
   useEffect(() => {
     if (show) {
@@ -285,34 +359,56 @@ const TopTags: React.FC<{
           }
         </AnimationWrapperRight>
         <TopTagsContent>
-          <TopTagsText>
-            {
-              data.topTags.slice(0, 6).map(({tag}) => <span
-                className="topTagsTextNode"
-                style={{
-                  opacity: 0
-                }}
-                key={tag}
-              >
+          {
+            small ? <>
+              {
+                data.topTags.slice(0, 6).map(({tag, count}) => <SmallItemContent>
+                  <SmallItemText className="topTagsTextNode">
+                    {tag}
+                  </SmallItemText>
+                  <SmallProgressBarWrapper>
+                    <TagPercent className="topTagsPercentNode">{~~getPercent(count)}%</TagPercent>
+                    <ProgressBar className="topTagsProgressBarNode">
+                      <ProgressBarInside
+                        style={{
+                          width: `${getPercent(count)}%`
+                        }}
+                      />
+                    </ProgressBar>
+                  </SmallProgressBarWrapper>
+                </SmallItemContent>)
+              }
+            </> : [
+              <TopTagsText>
+                {
+                  data.topTags.slice(0, 6).map(({tag}) => <span
+                    className="topTagsTextNode"
+                    style={{
+                      opacity: 0
+                    }}
+                    key={tag}
+                  >
                 {tag}
               </span>)
-            }
-          </TopTagsText>
-          <TopTagsBars>
-            {
-              data.topTags.slice(0, 6).map(({tag, count}) => <BarWrapper key={tag}>
-                  <TagPercent className="topTagsPercentNode">{~~getPercent(count)}%</TagPercent>
-                  <ProgressBar className="topTagsProgressBarNode">
-                    <ProgressBarInside
-                      style={{
-                        width: `${getPercent(count)}%`
-                      }}
-                    />
-                  </ProgressBar>
-                </BarWrapper>
-              )
-            }
-          </TopTagsBars>
+                }
+              </TopTagsText>,
+              <TopTagsBars>
+                {
+                  data.topTags.slice(0, 6).map(({tag, count}) => <BarWrapper key={tag}>
+                      <TagPercent className="topTagsPercentNode">{~~getPercent(count)}%</TagPercent>
+                      <ProgressBar className="topTagsProgressBarNode">
+                        <ProgressBarInside
+                          style={{
+                            width: `${getPercent(count)}%`
+                          }}
+                        />
+                      </ProgressBar>
+                    </BarWrapper>
+                  )
+                }
+              </TopTagsBars>
+            ]
+          }
         </TopTagsContent>
         <Notice className="topTagsNotice">
           This chart is based on your top 100 tracks, and then isolating the first 6.

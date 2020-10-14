@@ -9,3 +9,4 @@ export const THEME_COLOR = '#FD0F57'
 export const SPOTIFY_ID = '6735408e99284a42b9e5a736534a538b'
 export const DEEZER_ID = '438862'
 export const AUTH_CALLBACK_URL = 'http://localhost:9030/auth/'
+export const IS_PREVIEW = true

@@ -48,6 +48,12 @@ const FavoriteSubtext = styled.div`
   transform: translateX(-50%) translateY(60px) translateZ(-130px);
   font-size: 20px;
   opacity: 0;
+  text-align: center;
+  
+  
+  @media(max-width: 700px) {
+    font-size: 18px;
+  }
 `
 
 const Background = styled.div`

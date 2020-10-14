@@ -77,8 +77,8 @@ export function exportCanvasToBlob(canvas: HTMLCanvasElement, compressed: boolea
 export async function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise(resolve => {
     const img = new Image()
-    img.src = src
     img.setAttribute('crossorigin', 'anonymous')
+    img.src = src
     img.onload = () => {
       resolve(img)
     }

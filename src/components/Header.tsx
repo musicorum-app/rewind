@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   position: ${(p: WrapperProps) => p.absolute ? 'absolute' : 'auto'};
   z-index: 20;
   
-  @media(max-width: 700px) {
+  @media(max-width: 880px) {
     padding: 30px 0px 0px 18px;  
   }
 `
@@ -25,7 +25,7 @@ const Title = styled.h2`
   //transform: translateZ(20px);
   
   
-  @media(max-width: 700px) {
+  @media(max-width: 880px) {
     font-size: 38px;
     line-height: 43px;
   }
@@ -36,7 +36,7 @@ const SubTitle = styled.p`
   font-size: 28px;
   margin: 10px 0px 5px 0px;
   
-  @media(max-width: 700px) {
+  @media(max-width: 880px) {
     font-size: 15px;
   }
 `

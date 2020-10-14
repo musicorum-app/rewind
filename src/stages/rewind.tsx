@@ -18,13 +18,13 @@ import PlaylistSection from "../sections/PlaylistSection";
 import ImageShare from "../sections/ImageShare";
 
 
-
 const RewindStage: React.FC<{
   data: RewindData,
 }> = forwardRef(({data}) => {
   const [started, setStarted] = useState(false)
   const [sections, setSections] = useState<Section[]>([])
   const [isAnimating, currentSection, prev, next, handleStageEnd] = useSectionController(sections)
+  const [generationStarted, setGenerationStarted] = useState(false)
 
   // Section refs
   const splashRef = useRef(null)
@@ -68,10 +68,21 @@ const RewindStage: React.FC<{
 
   useEffect(() => {
     if (started) {
+      // @ts-ignore
+      // document.documentElement.requestFullscreen()
+
       (splashRef.current as unknown as Section).start()
-      // (topTracksCountRef.current as unknown as Section).start()
+      // (mainstreamRef.current as unknown as Section).start()
     }
   }, [started])
+
+  if (currentSection === 9 && !generationStarted && started) {
+    setGenerationStarted(true)
+    // @ts-ignore
+    playlistRef.current.generateImage()
+    // @ts-ignore
+    imageShareRef.current.generateImage()
+  }
 
   const handleSplashEnd = () => {
     // @ts-ignore
@@ -106,9 +117,9 @@ const RewindStage: React.FC<{
     <TopTags data={data} ref={topTagsRef} onEnd={handleStageEnd}/>
     <Mainstream data={data} ref={mainstreamRef} onEnd={handleStageEnd}/>
     <Analysis data={data} ref={analysisRef} onEnd={handleStageEnd}/>
-    <SplashEnd data={data} ref={splashEnd} onEnd={handleStageEnd} />
-    <PlaylistSection data={data} ref={playlistRef} onEnd={handleStageEnd} />
-    <ImageShare data={data} ref={imageShareRef} onEnd={handleStageEnd} />
+    <SplashEnd data={data} ref={splashEnd} onEnd={handleStageEnd}/>
+    <PlaylistSection data={data} ref={playlistRef} onEnd={handleStageEnd}/>
+    <ImageShare data={data} ref={imageShareRef} onEnd={handleStageEnd}/>
 
     <SlideController
       stage={currentSection}
