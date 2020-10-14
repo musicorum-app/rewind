@@ -1,6 +1,6 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import Section from "../components/Section";
-import {Typography} from "@material-ui/core";
+import {Typography, useMediaQuery} from "@material-ui/core";
 import {RewindData} from "../api/interfaces";
 import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
@@ -8,6 +8,8 @@ import CustomEase from 'gsap/CustomEase'
 import ParallaxWrapper from "../components/ParallaxWrapper";
 
 gsap.registerPlugin(CustomEase)
+
+const mediaQueryBreak = 800
 
 const SectionWrapper = styled.div`
   flex-direction: column;
@@ -31,6 +33,10 @@ const Text = styled.span`
   top: 50vh;
   left: 50vw;
   transform: ${createTransform(30)};
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    font-size: 80px;
+  }
 `
 
 const OutlinedText = styled(Text)`
@@ -52,10 +58,18 @@ const SideText = styled.div`
   left: 50vw;
   top: 50vh;
   transform: translateY(-50%) translateX(-50%);
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    font-size: 18px;
+  }
 `
 
 const SideTextGap = styled.div`
   height: 170px;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    height: 114px;
+  }
 `
 
 const SplashEnd: React.FC<{
@@ -66,6 +80,7 @@ const SplashEnd: React.FC<{
 
   const [show, setShow] = useState(false)
   const [started, setStarted] = useState(false)
+  const small = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
 
   useEffect(() => {
     if (show && !started) {
@@ -80,6 +95,15 @@ const SplashEnd: React.FC<{
     const outlineDelay = 3.4
     const outlineEase = CustomEase.create("custom", "M0,0,C0.084,0.61,-0.014,0.848,0.13,0.924,0.249,0.987,0.374,1,1,1")
 
+    const positions = small ? [
+      // Small size
+      45, 85, 135
+    ] : [
+      // Normal
+      80, 140, 210
+    ]
+
+    console.log(positions)
 
     const tl = new TimelineMax()
       .to('#splashEndSection', {
@@ -101,32 +125,32 @@ const SplashEnd: React.FC<{
         duration: .0001
       }, startTiming)
       .to('#borderTextEffectTop1', {
-        y: -80,
+        y: -positions[0],
         duration: outlineDelay,
         ease: outlineEase
       }, startTiming)
       .to('#borderTextEffectBottom1', {
-        y: 80,
+        y: positions[0],
         duration: outlineDelay,
         ease: outlineEase
       }, startTiming)
       .to('#borderTextEffectTop2', {
-        y: -140,
+        y: -positions[1],
         duration: outlineDelay,
         ease: outlineEase
       }, startTiming + secondTimeGap)
       .to('#borderTextEffectBottom2', {
-        y: 140,
+        y: positions[1],
         duration: outlineDelay,
         ease: outlineEase
       }, startTiming + secondTimeGap)
       .to('#borderTextEffectTop3', {
-        y: -210,
+        y: -positions[2],
         duration: outlineDelay,
         ease: outlineEase
       }, startTiming + (secondTimeGap * 2))
       .to('#borderTextEffectBottom3', {
-        y: 210,
+        y: positions[2],
         duration: outlineDelay,
         ease: outlineEase
       }, startTiming + (secondTimeGap * 2))
@@ -266,11 +290,11 @@ const SplashEnd: React.FC<{
         </Text>
 
         <SideText id="splashEndSideText">
-          <Typography variant="h4">
+          <Typography variant="h4" style={{fontSize: 'inherit'}}>
             ...and that was your
           </Typography>
           <SideTextGap>{" "}</SideTextGap>
-          <Typography variant="h4">
+          <Typography variant="h4" style={{fontSize: 'inherit'}}>
             on music
           </Typography>
         </SideText>

@@ -16,6 +16,7 @@ import AlbumMeme from "../sections/AlbumMeme";
 import SplashEnd from "../sections/SplashEnd";
 import PlaylistSection from "../sections/PlaylistSection";
 import ImageShare from "../sections/ImageShare";
+import {FullScreen, useFullScreenHandle} from "react-full-screen/dist";
 
 
 const RewindStage: React.FC<{
@@ -25,6 +26,8 @@ const RewindStage: React.FC<{
   const [sections, setSections] = useState<Section[]>([])
   const [isAnimating, currentSection, prev, next, handleStageEnd] = useSectionController(sections)
   const [generationStarted, setGenerationStarted] = useState(false)
+
+  const handle = useFullScreenHandle()
 
   // Section refs
   const splashRef = useRef(null)
@@ -71,12 +74,17 @@ const RewindStage: React.FC<{
       // @ts-ignore
       // document.documentElement.requestFullscreen()
 
-      (splashRef.current as unknown as Section).start()
-      // (mainstreamRef.current as unknown as Section).start()
+      // (splashRef.current as unknown as Section).start()
+      (imageShareRef.current as unknown as Section).start()
+
+      // @ts-ignore
+      playlistRef.current.generateImage()
+      // @ts-ignore
+      imageShareRef.current.generateImage()
     }
   }, [started])
 
-  if (currentSection === 9 && !generationStarted && started) {
+  if (currentSection === 5 && !generationStarted && started) {
     setGenerationStarted(true)
     // @ts-ignore
     playlistRef.current.generateImage()
@@ -106,27 +114,30 @@ const RewindStage: React.FC<{
 
 
   return <div onWheel={handleScrollEvent}>
-    <MonthsAnimation data={data} ref={splashRef} onEnd={handleSplashEnd}/>
-    <BeginningSection data={data} ref={beginningRef} onEnd={handleStageEnd}/>
-    <ScrobbleCount data={data} ref={scrobbleCountRef} onEnd={handleStageEnd}/>
-    <TopArtists data={data} ref={topArtistsCountRef} onEnd={handleStageEnd}/>
-    <TopAlbums data={data} ref={topAlbumsCountRef} onEnd={handleStageEnd}/>
-    <AlbumMeme data={data} ref={albumMemeRef} onEnd={handleStageEnd}/>
-    <TopTracks data={data} ref={topTracksCountRef} onEnd={handleStageEnd}/>
-    <FavoriteTracks data={data} ref={favoriteTracksRef} onEnd={handleStageEnd}/>
-    <TopTags data={data} ref={topTagsRef} onEnd={handleStageEnd}/>
-    <Mainstream data={data} ref={mainstreamRef} onEnd={handleStageEnd}/>
-    <Analysis data={data} ref={analysisRef} onEnd={handleStageEnd}/>
-    <SplashEnd data={data} ref={splashEnd} onEnd={handleStageEnd}/>
-    <PlaylistSection data={data} ref={playlistRef} onEnd={handleStageEnd}/>
-    <ImageShare data={data} ref={imageShareRef} onEnd={handleStageEnd}/>
+    <FullScreen handle={handle}>
+      <MonthsAnimation data={data} ref={splashRef} onEnd={handleSplashEnd}/>
+      <BeginningSection data={data} ref={beginningRef} onEnd={handleStageEnd}/>
+      <ScrobbleCount data={data} ref={scrobbleCountRef} onEnd={handleStageEnd}/>
+      <TopArtists data={data} ref={topArtistsCountRef} onEnd={handleStageEnd}/>
+      <TopAlbums data={data} ref={topAlbumsCountRef} onEnd={handleStageEnd}/>
+      <AlbumMeme data={data} ref={albumMemeRef} onEnd={handleStageEnd}/>
+      <TopTracks data={data} ref={topTracksCountRef} onEnd={handleStageEnd}/>
+      <FavoriteTracks data={data} ref={favoriteTracksRef} onEnd={handleStageEnd}/>
+      <TopTags data={data} ref={topTagsRef} onEnd={handleStageEnd}/>
+      <Mainstream data={data} ref={mainstreamRef} onEnd={handleStageEnd}/>
+      <Analysis data={data} ref={analysisRef} onEnd={handleStageEnd}/>
+      <SplashEnd data={data} ref={splashEnd} onEnd={handleStageEnd}/>
+      <PlaylistSection data={data} ref={playlistRef} onEnd={handleStageEnd}/>
+      <ImageShare data={data} ref={imageShareRef} onEnd={handleStageEnd}/>
 
-    <SlideController
-      stage={currentSection}
-      showBottomIcon={!isAnimating}
-      onClick={handleNextSlideClick}
-      onClickBack={handleBackSlideClick}
-    />
+      <SlideController
+        stage={currentSection}
+        showBottomIcon={!isAnimating}
+        onClick={handleNextSlideClick}
+        onClickBack={handleBackSlideClick}
+        handle={handle}
+      />
+    </FullScreen>
   </div>
 })
 

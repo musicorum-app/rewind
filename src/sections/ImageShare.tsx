@@ -85,7 +85,7 @@ const ImageShare: React.FC<{
   }, [show])
 
   const animate = async () => {
-    await repaint()
+    if (!images) await repaint()
     const tl = new TimelineMax()
       .to('#imageShareSection', {
         // opacity: 1,
@@ -210,13 +210,6 @@ const ImageShare: React.FC<{
             <FlexMiddle id="imageShareSectionImage">
               <Grid container direction="column" justify="center" alignItems="center"
                     style={{width: '100%', height: '100%'}}>
-                <Grid item>
-                  <Box mb={4}>
-                    <Typography align="center" variant="h4">
-                      <b>Share your rewind!</b>
-                    </Typography>
-                  </Box>
-                </Grid>
                 <Grid item>
                   <ImageWrapper>
                     {

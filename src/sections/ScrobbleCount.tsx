@@ -66,7 +66,7 @@ const CarouselBox = styled.div`
   opacity: 1;
   height: ${130 * 3}px;
   transform: translateY(-50%) translateZ(300px);
-  background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 40%, rgba(245,245,245,0) 60%, rgba(0,0,0,1) 100%);
+  background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0) 60%, rgba(0,0,0,1) 100%);
   
   @media(max-width: ${mediaQueryBreak}px) {
     height: ${smallFontSize * 3}px;

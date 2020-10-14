@@ -144,10 +144,11 @@ const Notice = styled.div`
   position: absolute;
   left: 0;
   bottom: 0;
-  padding: 24px;
+  padding: 48px 7px;
+  font-size: 13px;
   
   @media(max-width: ${mediaQueryBreak}px) {
-    font-size: 12px;
+    font-size: 11px;
   }
 `
 

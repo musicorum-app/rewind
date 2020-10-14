@@ -42,9 +42,11 @@ const TrackItem = styled.div`
 const TrackCover = styled.img`
   border-radius: 4px;
   width: ${imageSize}px;
+  height: ${imageSize}px;
   
   @media(max-width: ${mediaQueryBreak}px) {
     width: ${imageSizeSmall}px;
+    height: ${imageSizeSmall}px;
   }
 `
 

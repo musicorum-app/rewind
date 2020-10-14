@@ -7,13 +7,11 @@ import CustomEase from 'gsap/CustomEase'
 import ParallaxWrapper from "../components/ParallaxWrapper";
 import {THEME_COLOR} from "../Constants";
 import {handleTrackImage} from "../utils";
+import {useMediaQuery} from "@material-ui/core";
 
 gsap.registerPlugin(CustomEase)
 
-
-interface ProgressBarInsideProps {
-  percent: number
-}
+const mediaQueryBreak = 700
 
 interface Analysis {
   average: number,
@@ -64,13 +62,24 @@ const ValenceText = styled.span`
   left: 50vw;
   top: calc(50vh + 90px);
   transform: translateX(-50%) translateY(-50%) translateZ(80px);
+  text-align: center;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    font-size: 14px;
+    top: calc(50vh + 70px);
+  }
 `
 
 const Notice = styled.div`
   position: absolute;
   left: 0;
   bottom: 0;
-  padding: 24px;
+  padding: 64px 7px;
+  font-size: 13px;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    font-size: 11px;
+  }
 `
 
 const BackgroundTrackImage = styled.img`
@@ -82,6 +91,11 @@ const BackgroundTrackImage = styled.img`
   width: 210px;
   height: 210px;
   transform: translateZ(${(p: BackgroundTrack) => p.z}px);
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    width: 130px;
+    height: 130px;
+  }
 `
 
 
@@ -93,6 +107,7 @@ const Analysis: React.FC<{
 
   const [show, setShow] = useState(false)
   const [analysis, setAnalysis] = useState<Nullable<Analysis>>(null)
+  const small = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
 
   useEffect(() => {
     const textEase = CustomEase.create("textEase", "M0,0,C0,0.658,0.084,0.792,0.15,0.846,0.226,0.908,0.272,0.976,1,1")
@@ -212,7 +227,7 @@ const Analysis: React.FC<{
     animateEnd
   }))
 
-  const size = 120
+  const size = small ? 70 : 120
 
   const fragments = (analysis?.average + '%').split('')
   const repeat = new Array(21).fill(1)
@@ -224,8 +239,16 @@ const Analysis: React.FC<{
 
         <BackgroundTrackImage className="analysisSectionBackgroundImage" src={handleTrackImage(analysis?.top[1].image)}
                               style={{left: '10vw', top: '12vh'}} z={10}/>
-        <BackgroundTrackImage className="analysisSectionBackgroundImage" src={handleTrackImage(analysis?.top[2].image)}
-                              style={{left: '40vw', top: '17vh'}} z={-200}/>
+
+        {
+          small ? <BackgroundTrackImage className="analysisSectionBackgroundImage"
+                                        src={handleTrackImage(analysis?.top[2].image)}
+                                        style={{left: '60vw', top: '38vh'}} z={-200}/>
+            : <BackgroundTrackImage className="analysisSectionBackgroundImage"
+                                    src={handleTrackImage(analysis?.top[2].image)}
+                                    style={{left: '40vw', top: '17vh'}} z={-200}/>
+        }
+
         <BackgroundTrackImage className="analysisSectionBackgroundImage" src={handleTrackImage(analysis?.top[3].image)}
                               style={{right: '2vw', top: ' 0vh'}} z={-100}/>
         <BackgroundTrackImage className="analysisSectionBackgroundImage" src={handleTrackImage(analysis?.top[4].image)}
@@ -239,7 +262,8 @@ const Analysis: React.FC<{
               fragments?.map((f, i) => <ValenceSection key={i} id={`analysisValenceSection-${i}`}>
                 {
                   repeat.map((_, i) =>
-                    <ValenceNumber key={i} className={`analysisValenceLine-${i} endText`} size={size}>{f}</ValenceNumber>
+                    <ValenceNumber key={i} className={`analysisValenceLine-${i} endText`}
+                                   size={size}>{f}</ValenceNumber>
                   )
                 }
               </ValenceSection>)

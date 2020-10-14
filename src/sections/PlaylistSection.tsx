@@ -12,7 +12,7 @@ import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
 import ParallaxWrapper from "../components/ParallaxWrapper";
-import {Typography} from "@material-ui/core";
+import {Typography, useMediaQuery} from "@material-ui/core";
 import {generatePlaylistCover} from "../image";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
@@ -36,6 +36,8 @@ import {Alert} from "@material-ui/lab";
 import DeezerAPI from "../api/DeezerAPI";
 
 gsap.registerPlugin(CustomEase)
+
+const mediaQueryBreak = 800
 
 function SlideTransition(props: TransitionProps) {
   return <Slide {...props} direction="down"/>;
@@ -63,6 +65,12 @@ const Middle = styled.div`
 const CoverImage = styled.img`
   border-radius: 4px;
   width: 400px;
+  height: 400px;
+  
+  @media(max-width: ${mediaQueryBreak}px) {
+    width: 270px;
+    height: 270px;
+  }
 `
 
 const ButtonSide = styled.div`
@@ -89,6 +97,7 @@ const PlaylistSection: React.FC<{
   const [playlists, setPlaylists] = useState<Playlists>({})
   const [showSnackbar, setShowSnackbar] = useState(false)
   const [snackbar, setSnackbar] = useState<string>('')
+  const small = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
 
   useEffect(() => {
     const textEase = CustomEase.create("textEase", "M0,0,C0,0.658,0.084,0.792,0.15,0.846,0.226,0.908,0.272,0.976,1,1")
@@ -350,14 +359,14 @@ const PlaylistSection: React.FC<{
         <Middle>
           <Grid container justify="center" spacing={2} direction="column">
             <Grid item>
-              <Box mb={6}>
-                <Typography align="center" variant="h3">
+              <Box mb={small ? 1 : 6}>
+                <Typography align="center" variant={small ? 'h6' : 'h3'}>
                   <b>Save your whole year in a single playlist!</b>
                 </Typography>
               </Box>
             </Grid>
             <Grid item>
-              <Grid container justify="center" spacing={5}>
+              <Grid container justify="center" spacing={small ? 1 : 5}>
                 <Grid item>
                   <CoverImage
                     id="playlistCoverImage"
@@ -373,6 +382,9 @@ const PlaylistSection: React.FC<{
                         color="#1DB954"
                         disabled={loading}
                         fullWidth
+                        style={small ? {
+                          fontSize: 16
+                        } : {}}
                         textColor="white"
                         icon={<SpotifyLogo fill="white" style={{
                           marginRight: 10
@@ -388,6 +400,9 @@ const PlaylistSection: React.FC<{
                         color="#ffffff"
                         disabled={loading}
                         fullWidth
+                        style={small ? {
+                          fontSize: 16
+                        } : {}}
                         textColor="black"
                         icon={<DeezerLogo fill="white" style={{
                           marginRight: 10
@@ -403,6 +418,9 @@ const PlaylistSection: React.FC<{
                         color="#B71C1C"
                         disabled={loading}
                         fullWidth
+                        style={small ? {
+                          fontSize: 16
+                        } : {}}
                         icon={<MusicorumLogo fill="white" style={{
                           marginRight: 10
                         }}/>}
