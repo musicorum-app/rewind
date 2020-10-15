@@ -11,8 +11,9 @@ export default function generatePlaylistCover(user: UserProfile, compressed = fa
 
     const color = THEME_COLOR
     const img = new Image()
-    img.src = user.image[3]["#text"] || 'https://lastfm.freetls.fastly.net/i/u/300x300/818148bf682d429dc215c1705eb27b98.jpg'
     img.setAttribute('crossorigin', 'anonymous')
+    img.crossOrigin = 'anonymous'
+    img.src = user.image[3]["#text"] || 'https://lastfm.freetls.fastly.net/i/u/300x300/818148bf682d429dc215c1705eb27b98.jpg'
     img.onload = () => {
       ctx.drawImage(img, 0, 0, SIZE, SIZE)
       ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'
@@ -37,8 +38,9 @@ export default function generatePlaylistCover(user: UserProfile, compressed = fa
       ctx.fillText(user.name, 12, (BAR_HEIGHT / 2) + 6, SIZE - 60)
 
       const logo = new Image()
-      logo.src = 'https://cdn-2.musicorumapp.com/rewind/rewind_logo.svg'
+      img.crossOrigin = 'anonymous'
       logo.setAttribute('crossorigin', 'anonymous')
+      logo.src = '/assets/rewind_logo.svg'
       logo.onload = () => {
         ctx.drawImage(logo, 345, 10, 50, 19)
 

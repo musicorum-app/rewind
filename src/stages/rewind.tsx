@@ -17,6 +17,7 @@ import SplashEnd from "../sections/SplashEnd";
 import PlaylistSection from "../sections/PlaylistSection";
 import ImageShare from "../sections/ImageShare";
 import {FullScreen, useFullScreenHandle} from "react-full-screen/dist";
+import EndingSection from "../sections/EndingSection";
 
 
 const RewindStage: React.FC<{
@@ -44,6 +45,7 @@ const RewindStage: React.FC<{
   const splashEnd = useRef(null)
   const playlistRef = useRef(null)
   const imageShareRef = useRef(null)
+  const endingSectionRef = useRef(null)
 
 
   useEffect(() => {
@@ -62,7 +64,8 @@ const RewindStage: React.FC<{
       analysisRef,
       splashEnd,
       playlistRef,
-      imageShareRef
+      imageShareRef,
+      endingSectionRef
     ]
 
     setSections(refs.map(r => (r.current as unknown as Section)))
@@ -71,11 +74,9 @@ const RewindStage: React.FC<{
 
   useEffect(() => {
     if (started) {
-      // @ts-ignore
-      // document.documentElement.requestFullscreen()
-
-      // (splashRef.current as unknown as Section).start()
-      (imageShareRef.current as unknown as Section).start()
+      (splashRef.current as unknown as Section).start()
+      // (endingSectionRef.current as unknown as Section).start()
+      // (playlistRef.current as unknown as Section).start()
 
       // @ts-ignore
       playlistRef.current.generateImage()
@@ -129,6 +130,7 @@ const RewindStage: React.FC<{
       <SplashEnd data={data} ref={splashEnd} onEnd={handleStageEnd}/>
       <PlaylistSection data={data} ref={playlistRef} onEnd={handleStageEnd}/>
       <ImageShare data={data} ref={imageShareRef} onEnd={handleStageEnd}/>
+      <EndingSection data={data} ref={endingSectionRef} onEnd={handleStageEnd} />
 
       <SlideController
         stage={currentSection}

@@ -59,6 +59,12 @@ const ArtistImage = styled.img`
   
   @media(max-width: ${mediaQueryBreak}px) {
     width: 180px;
+    height: 180px;
+  }
+  
+  @media(max-width: ${mediaQueryBreak}px) and (max-height: 700px) {
+    width: 100px;
+    height: 100px;
   }
 `
 
@@ -74,6 +80,10 @@ const ArtistName = styled.span`
     overflow: hidden;
     text-overflow: ellipsis;
     margin-bottom: 6px;
+  }
+  
+  @media(max-width: ${mediaQueryBreak}px) and (max-height: 700px) {
+  font-size: 17px;
   }
 `
 
@@ -99,6 +109,10 @@ const MainstreamPercent = styled.div`
     height: auto;
     margin: 38px 4px;
     text-align: center;
+  }
+  
+  @media(max-width: ${mediaQueryBreak}px) and (max-height: 700px) {
+    margin: 26px 4px;  
   }
 `
 
@@ -165,10 +179,15 @@ const SmallContentWrapper = styled.div`
   align-items: center;
   transform-style: preserve-3d;
   perspective: 1000px;
+  padding-bottom: 40px;
 `
 
 const SmallContentBottomText = styled.span`
   font-size: 13px;
+  
+  @media(max-width: ${mediaQueryBreak}px) and (max-height: 700px) {
+    font-size: 10px;
+  }
 `
 
 

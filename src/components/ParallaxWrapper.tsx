@@ -18,7 +18,8 @@ const Parallax = styled.div`
 
 const ParallaxWrapper: React.FC<{
   ref?: React.Ref<HTMLDivElement>,
-}> = forwardRef(({children}) => {
+  center?: boolean
+}> = forwardRef(({children, center}) => {
   const [windowSize, setWindowSize] = useState<number[]>([0, 0])
   const smol = useMediaQuery(`(max-width: 800px)`)
 
@@ -46,8 +47,19 @@ const ParallaxWrapper: React.FC<{
     })
   }
 
-  return <Wrapper onMouseMove={update}>
-    <Parallax className="parallax" >
+  return <Wrapper style={{
+    height: windowSize[1],
+    ...(
+      center ? {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      } : {}
+    )
+  }} onMouseMove={update}>
+    <Parallax className="parallax" style={center ? {
+      height: 'auto'
+    } : {}} >
       {
         children
       }

@@ -145,7 +145,7 @@ const BeginningSection: React.FC<{
 
   return <Section>
     <Content id="beginningContent">
-      <ParallaxWrapper>
+      <ParallaxWrapper center={smol}>
         <Header title="THE BEGINNING" notAbsolute={smol}>
           This was your first scrobble of <strong>2020</strong>
         </Header>

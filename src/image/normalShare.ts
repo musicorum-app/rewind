@@ -21,7 +21,7 @@ export default async function generateNormalShare(data: RewindData, compressed =
   ctx.fillStyle = 'black'
   ctx.fillRect(0, 0, SIZE, SIZE)
 
-  if (IS_PREVIEW) ctx.filter = 'blur(6px)'
+  if (IS_PREVIEW) ctx.filter = 'blur(4px)'
 
   const HEADER_HEIGHT = 64
   ctx.fillStyle = THEME_COLOR

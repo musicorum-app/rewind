@@ -17,7 +17,7 @@ const SectionWrapper = styled.div`
   display: flex;
   overflow: hidden;
   width: 100vw;
-  height: 100vh;
+  //height: 100vh;
   justify-content: center;
   text-align: center;
   perspective: 1000px;
@@ -26,12 +26,20 @@ const SectionWrapper = styled.div`
   left: 0px;
 `
 
+const CarouselWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+`
+
 const Carousel = styled.div`
   transform-style: preserve-3d;
   display: flex;
   flex-direction: column;
   line-height: 124px;
-  transform: translateY(50vh);
+  //transform: translateY(50%);
   
   @media(max-width: ${mediaQueryBreak}px) {
     line-height: ${smallFontSize - 5}px;
@@ -44,8 +52,8 @@ const CarouselItem = styled.span`
   font-size: 130px;
   text-align: center;
   position: absolute;
-  transform: translateY(-50%) translateX(-50%);
-  left: 50vw;
+  //transform: translateY(-50%) translateX(-50%);
+  //left: 50vw;
   background-color: black;
   opacity: 0;
   backface-visibility: hidden;
@@ -62,7 +70,7 @@ const CarouselItem = styled.span`
 const CarouselBox = styled.div`
   position: absolute;
   width: 100%;
-  top: 50vh;
+  //top: 50vh;
   opacity: 1;
   height: ${130 * 3}px;
   transform: translateY(-50%) translateZ(300px);
@@ -74,15 +82,15 @@ const CarouselBox = styled.div`
 `
 
 const BottomTextBox = styled.div`
-  font-size: 30px;
+  font-size: 28px;
   position: absolute;
   left: 50vw;
   transform: translateX(-50%) translateY(80px);
-  top: 50vh;
+  //top: 50vh;
   overflow: hidden;
   
   @media(max-width: ${mediaQueryBreak}px) {
-    font-size: 21px;
+    font-size: 17px;
     width: 80%;
     transform: translateX(-50%) translateY(60px);
   }
@@ -119,7 +127,7 @@ const ImageBase = styled.img`
 
 const LeftImage = styled(ImageBase)`
   left: 10vw;
-  top: calc(87vh - 300px);
+  top: 7vh;
   transform: translateZ(-70px);
   
   @media(max-width: ${mediaQueryBreak}px) {
@@ -130,12 +138,11 @@ const LeftImage = styled(ImageBase)`
 
 const RightImage = styled(ImageBase)`
   right: 18vw;
-  top: 20vh;
+  bottom: 12vh;
   transform: translateZ(-100px);
   
   @media(max-width: ${mediaQueryBreak}px) {
     right: 7vw;
-    top: auto;
     bottom: 8vh;
   }
 `
@@ -238,8 +245,8 @@ const ScrobbleCount: React.FC<{
 
   return show ? <Section center>
     <SectionWrapper id="scrobbleWrapper">
-      <ParallaxWrapper>
-        {/*<CarouselWrapper>*/}
+      <ParallaxWrapper center>
+        <CarouselWrapper>
         <Carousel id="carousel">
           {
             texts.map((text, i) =>
@@ -251,7 +258,7 @@ const ScrobbleCount: React.FC<{
             )
           }
         </Carousel>
-        {/*</CarouselWrapper>*/}
+        </CarouselWrapper>
         <CarouselBox id="carouselBox"/>
         <BottomTextBox>
           <BottomText id="bottomText">

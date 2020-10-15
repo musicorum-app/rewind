@@ -8,7 +8,7 @@ import {
 } from "./interfaces";
 import {MAX_TRIES} from "../Constants";
 
-const LATFM_API = 'https://ws.audioscrobbler.com/2.0/'
+const LASTFM_API = 'https://ws.audioscrobbler.com/2.0/'
 const LASTFM_KEY = '0ae2a02cb6ec0686e560b365074020b3'
 
 export default class API {
@@ -17,7 +17,7 @@ export default class API {
     params.format = 'json'
     params.method = method
     const queryParams = new URLSearchParams(params)
-    return fetch(`${LATFM_API}?${queryParams}`).then(r => r.json())
+    return fetch(`${LASTFM_API}?${queryParams.toString()}`).then(r => r.json())
   }
 
   static async request(method: string, params: Record<string, any>): Promise<Record<string, any>> {

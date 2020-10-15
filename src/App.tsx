@@ -97,6 +97,7 @@ function App() {
       setUserData(null)
       setShowApp(false)
       setShowStage1(true)
+      document.documentElement.style.position = 'fixed'
     } catch (e) {
       doAnimation()
     }
@@ -172,8 +173,11 @@ function App() {
     }, {
       opacity: 1,
       top: 0,
-      // @ts-ignore
-      onComplete: () => loadingRef.current.load()
+      onComplete: () => {
+        // @ts-ignore
+        loadingRef.current.load()
+        document.documentElement.style.position = 'fixed'
+      }
     })
     tl.play()
 
@@ -228,7 +232,7 @@ function App() {
           showStage0 ? (
             <div ref={userAccountRef}>
               <img style={{
-                maxWidth: smallHeight ? '80%' : '70%'
+                maxWidth: smallHeight ? '40%' : '70%'
               }}
                    src={StartGraphic}
                    className={styles.startGraphic}

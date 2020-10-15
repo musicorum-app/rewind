@@ -37,7 +37,7 @@ import DeezerAPI from "../api/DeezerAPI";
 
 gsap.registerPlugin(CustomEase)
 
-const mediaQueryBreak = 800
+const mediaQueryBreak = 900
 
 function SlideTransition(props: TransitionProps) {
   return <Slide {...props} direction="down"/>;
@@ -52,14 +52,15 @@ const Content = styled.div`
 `
 
 const Middle = styled.div`
-  position: absolute;
-  left: 50vw;
-  top: 50vh;
-  transform: translateX(-50%) translateY(-50%) translateZ(-100px);
+  //position: absolute;
+  //left: 50vw;
+  //top: 50vh;
+  //transform: translateX(-50%) translateY(-50%) translateZ(-100px);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100vw;
+  //width: 100vw;
+  height: 100%;
 `
 
 const CoverImage = styled.img`
@@ -70,6 +71,11 @@ const CoverImage = styled.img`
   @media(max-width: ${mediaQueryBreak}px) {
     width: 270px;
     height: 270px;
+  }
+  
+  @media(max-width: ${mediaQueryBreak}px) and (max-height: 680px) {
+    width: 200px;
+    height: 200px;
   }
 `
 
@@ -360,7 +366,7 @@ const PlaylistSection: React.FC<{
           <Grid container justify="center" spacing={2} direction="column">
             <Grid item>
               <Box mb={small ? 1 : 6}>
-                <Typography align="center" variant={small ? 'h6' : 'h3'}>
+                <Typography align="center" variant={small ? 'body1' : 'h3'}>
                   <b>Save your whole year in a single playlist!</b>
                 </Typography>
               </Box>

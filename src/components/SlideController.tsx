@@ -17,7 +17,7 @@ const Controller = styled.div`
   flex-flow: column;
   align-items: center;
   padding: 0px 15px 15px 0px;
-  opacity: .7;
+  opacity: .4;
   transition: opacity .4s;
   &:hover {
     opacity: 1;
@@ -32,6 +32,10 @@ const Navigation = styled(NavigationIcon)`
     stroke: rgba(253, 15, 87, 0.8);
     cursor: pointer;
   }
+  
+  @media(max-width: 800px) {
+  width: 20px;
+  }
 `
 
 const NavigationDown = styled(Navigation)`
@@ -44,6 +48,10 @@ const NavigationText = styled.span`
   text-align: center;
   font-size: 16px;
   margin: 2px 0px 2px 0px;
+  
+  @media(max-width: 800px) {
+  font-size: 13px;
+  }
 `
 
 interface DownIconProps {
@@ -74,6 +82,7 @@ const FullScreenButtonBase = `
   width: 28px;
   height: 28px;
   transition: transform .18s;
+  opacity: .4;
   
   &: hover {
     transform: scale(1.3);
@@ -98,15 +107,15 @@ const SlideController: React.FC<{
     {/*  FS*/}
     {/*</button>*/}
 
-    {
-      handle && document.documentElement.requestFullscreen ? <>
-        {
-          handle.active
-            ? <ExitFullScreenButton onClick={handle.exit}/>
-            : <FullScreenButton onClick={handle.enter}/>
-        }
-      </> : null
-    }
+    {/*{*/}
+    {/*  handle && document.documentElement.requestFullscreen ? <>*/}
+    {/*    {*/}
+    {/*      handle.active*/}
+    {/*        ? <ExitFullScreenButton onClick={handle.exit}/>*/}
+    {/*        : <FullScreenButton onClick={handle.enter}/>*/}
+    {/*    }*/}
+    {/*  </> : null*/}
+    {/*}*/}
 
     <Controller>
       <Navigation onClick={onClickBack}/>
