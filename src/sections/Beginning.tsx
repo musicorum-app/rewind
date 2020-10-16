@@ -146,18 +146,22 @@ const BeginningSection: React.FC<{
   return <Section>
     <Content id="beginningContent">
       <ParallaxWrapper center={smol}>
-        <Header title="THE BEGINNING" notAbsolute={smol}>
-          This was your first scrobble of <strong>2020</strong>
-        </Header>
+        <div style={{
+          transform: 'translateZ(40px)'
+        }}>
+          <Header title="THE BEGINNING" notAbsolute={smol}>
+            This was your first scrobble of <strong>2020</strong>
+          </Header>
+        </div>
         {
-          smol ? <>
-            <Grid container direction="column">
-              <Grid item xs={12} style={{width: '100%'}}>
+          smol ? [
+            <Grid container direction="column" style={{ transformStyle: 'preserve-3d' }}>
+              <Grid item xs={12} style={{width: '100%', transformStyle: 'preserve-3d'}}>
                 <WidthCenter>
                   <TrackCover src={handleTrackImage(data.firstTrack.image)}/>
                 </WidthCenter>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} style={{ transformStyle: 'preserve-3d' }}>
                 <TrackDataSmall>
                   <Title>{data.firstTrack.name}</Title>
                   by <Emphasized>{data.firstTrack.artist}</Emphasized>,
@@ -165,7 +169,7 @@ const BeginningSection: React.FC<{
                 </TrackDataSmall>
               </Grid>
             </Grid>
-          </> : <TrackWrapper>
+          ] : <TrackWrapper>
             <TrackData>
               <div>
                 <Title>{data.firstTrack.name}</Title>
