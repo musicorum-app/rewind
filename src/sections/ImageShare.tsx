@@ -107,15 +107,12 @@ const ImageShare: React.FC<{
         opacity: 1,
         duration: .1
       })
-      .fromTo('#imageShareSectionYear', {
-        y: -100,
-        opacity: 0
-      }, {
-        y: 0,
-        opacity: 1,
-        duration: 2,
+      .from('#imageShareSectionActions', {
+        y: 17,
+        opacity: 0,
+        duration: 1.7,
         ease: 'expo.out'
-      })
+      }, 1)
       .from('#imageShareSectionImage', {
         x: -200,
         opacity: 0,
@@ -163,6 +160,18 @@ const ImageShare: React.FC<{
         // ease: 'expo.inOut',
         onComplete: () => setAnimating(false)
       }, 0)
+      .fromTo(['#shareImage-normal', '#shareImage-stories'], {
+        translateZ: 0
+      }, {
+        translateZ: -540,
+        duration: duration / 2,
+      }, 0)
+      .fromTo(['#shareImage-normal', '#shareImage-stories'], {
+        translateZ: -540
+      }, {
+        translateZ: 0,
+        duration: duration / 2,
+      }, duration / 2)
 
   }
 
@@ -187,6 +196,9 @@ const ImageShare: React.FC<{
 
   const start = () => {
     console.log('Album meme section')
+    if (data.images) {
+      setImages([data.images.normalShare, data.images.storyShare])
+    } else repaint()
     setShow(true)
   }
 
@@ -203,14 +215,13 @@ const ImageShare: React.FC<{
   useImperativeHandle(ref, () => ({
     start,
     animateEnd,
-    generateImage: repaint
   }))
 
   return show ? <Section>
     <Content id="imageShareSection">
       <Middle>
         <Grid style={{height: '100%'}} container spacing={small ? 1 : 3}>
-          <Grid item xs={12} lg={6}>
+          <Grid item xs={12} lg={6} id="imageShareSectionImage">
             <Grid container direction="column" justify="center" alignItems="center"
                   style={{width: '100%', height: '100%'}}>
               <Grid item>
@@ -228,7 +239,7 @@ const ImageShare: React.FC<{
                   }
                 </ImageWrapper>
               </Grid>
-              <Grid item>
+              <Grid item id="imageShareSectionActions">
                 <Grid container alignItems="center" direction="column">
                   <Grid item>
                     <Typography variant="caption" color="textSecondary">
@@ -255,16 +266,12 @@ const ImageShare: React.FC<{
             <Grid container direction="column" justify="center" alignItems="center"
                   style={{width: '100%', height: small ? 'auto' : '100%'}}>
               <Grid item>
-                <Typography align="center" variant={small ? 'h6' : 'h4'}>
+                <Typography align="center" variant={small ? 'h5' : 'h4'}>
                   <b>Share your rewind!</b>
                 </Typography>
-                <Box mt={1} paddingX={small ? 4 : 6} fontSize={small ? 12 : 21}>
+                <Box mt={1} paddingX={small ? 4 : 6} fontSize={small ? 17 : 21}>
                   <Typography align="center" style={{fontSize: 'inherit'}}>
-                    Your year on music was unique! Save it and share with your followers, or send to a friend, or to your pet, or keep it to yourself, or just skip that, it's your choice.
-                  </Typography>
-                  <br />
-                  <Typography align="center" style={{fontSize: 'inherit'}}>
-                    Oh, and this is not the end yet!
+                    Before we end, take a souvenir from this year's rewind!
                   </Typography>
                 </Box>
 

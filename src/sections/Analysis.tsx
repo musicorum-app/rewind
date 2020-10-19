@@ -243,7 +243,7 @@ const Analysis: React.FC<{
         {
           small ? <BackgroundTrackImage className="analysisSectionBackgroundImage"
                                         src={handleTrackImage(analysis?.top[2].image)}
-                                        style={{left: '60vw', top: '38vh'}} z={-200}/>
+                                        style={{left: '0px', top: '70vh'}} z={-200}/>
             : <BackgroundTrackImage className="analysisSectionBackgroundImage"
                                     src={handleTrackImage(analysis?.top[2].image)}
                                     style={{left: '40vw', top: '17vh'}} z={-200}/>
@@ -274,7 +274,6 @@ const Analysis: React.FC<{
         <ValenceText className="analysisFinalText endText">
           is how positive your songs were *
         </ValenceText>
-
         <Notice className="analysisFinalText endText">
           * Based on an average of your top 100 tracks' valence analysis from Spotify
         </Notice>

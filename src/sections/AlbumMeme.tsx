@@ -21,6 +21,8 @@ const Content = styled.div`
 `
 
 const Middle = styled.div`
+  transform-style: preserve-3d;
+  perspective: 9000px;
   position: absolute;
   left: 50vw;
   top: 50vh;
@@ -50,8 +52,6 @@ const AlbumMeme: React.FC<{
   const [show, setShow] = useState(false)
 
   useEffect(() => {
-    const textEase = CustomEase.create("textEase", "M0,0,C0,0.658,0.084,0.792,0.15,0.846,0.226,0.908,0.272,0.976,1,1")
-
     if (show) {
       const tl = new TimelineMax()
         .to('#albumMemeSection', {
@@ -68,11 +68,13 @@ const AlbumMeme: React.FC<{
           duration: .1
         })
         .fromTo('#albumMemeImage', {
-          y: -200,
+          y: -120,
+          rotateY: -70,
           opacity: 0
         }, {
           y: 0,
           opacity: 1,
+          rotateY: 0,
           duration: 2,
           ease: 'expo.out'
         })
@@ -125,18 +127,9 @@ const AlbumMeme: React.FC<{
     <Content id="albumMemeSection">
       <ParallaxWrapper>
         <Middle>
-          <Typography variant="h6" className="albumMemeFade" style={{
-            marginRight: 32
-          }}>
-            Art made by <Link
-            target="_blank"
-            href="https://musc.pw"
-            rel="nofollow nofollow"
-          >bomdia</Link>
-          </Typography>
           <MemeImage
             id="albumMemeImage"
-            src="https://cdn-2.musicorumapp.com/rewind/769229aae75c382be3d18d1dfefd4a28.jpg"/>
+            src={data.images?.albumMeme}/>
           <ButtonSide className="albumMemeFade">
             <RoundedButton
               color="primary"
@@ -149,6 +142,15 @@ const AlbumMeme: React.FC<{
             >
               Download
             </RoundedButton>
+            <Typography variant="h6" className="albumMemeFade" style={{
+              marginRight: 32
+            }}>
+              Art made by <Link
+              target="_blank"
+              href="https://musc.pw"
+              rel="nofollow nofollow"
+            >artista</Link>
+            </Typography>
           </ButtonSide>
         </Middle>
       </ParallaxWrapper>

@@ -155,7 +155,7 @@ const BeginningSection: React.FC<{
         </div>
         {
           smol ? [
-            <Grid container direction="column" style={{ transformStyle: 'preserve-3d' }}>
+            <Grid container direction="column" style={{ transformStyle: 'preserve-3d', transform: 'translateZ(-100px)' }}>
               <Grid item xs={12} style={{width: '100%', transformStyle: 'preserve-3d'}}>
                 <WidthCenter>
                   <TrackCover src={handleTrackImage(data.firstTrack.image)}/>

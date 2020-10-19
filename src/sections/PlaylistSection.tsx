@@ -98,7 +98,6 @@ const PlaylistSection: React.FC<{
 
   const [show, setShow] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [playlistCover, setPlaylistCover] = useState(data.user.image[3]['#text'])
   const [dialogData, setDialogData] = useState<Nullable<DialogData>>(null)
   const [playlists, setPlaylists] = useState<Playlists>({})
   const [showSnackbar, setShowSnackbar] = useState(false)
@@ -109,7 +108,7 @@ const PlaylistSection: React.FC<{
     const textEase = CustomEase.create("textEase", "M0,0,C0,0.658,0.084,0.792,0.15,0.846,0.226,0.908,0.272,0.976,1,1")
 
     if (show) {
-      generateImage()
+      // generateImage()
       animate()
     }
   }, [show])
@@ -165,12 +164,6 @@ const PlaylistSection: React.FC<{
     })
   }
 
-  const generateImage = async () => {
-    generatePlaylistCover(data.user)
-      .then(blob => {
-        setPlaylistCover(URL.createObjectURL(blob))
-      })
-  }
 
   const start = () => {
     console.log('Album meme section')
@@ -180,8 +173,7 @@ const PlaylistSection: React.FC<{
 // @ts-ignore
   useImperativeHandle(ref, () => ({
     start,
-    animateEnd,
-    generateImage
+    animateEnd
   }))
 
   const saveMusicorumPlaylist = async () => {
@@ -376,7 +368,7 @@ const PlaylistSection: React.FC<{
                 <Grid item>
                   <CoverImage
                     id="playlistCoverImage"
-                    src={playlistCover}/>
+                    src={data.images?.playlist}/>
                 </Grid>
                 <Grid item>
                   <Grid container direction="column" justify="center" style={{

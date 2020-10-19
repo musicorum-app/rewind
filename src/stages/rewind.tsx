@@ -18,7 +18,8 @@ import PlaylistSection from "../sections/PlaylistSection";
 import ImageShare from "../sections/ImageShare";
 import {FullScreen, useFullScreenHandle} from "react-full-screen/dist";
 import EndingSection from "../sections/EndingSection";
-
+import {useSwipeable} from 'react-swipeable'
+import {generateAlbumMeme, generateNormalShare, generatePlaylistCover, generateStoriesShare} from "../image";
 
 const RewindStage: React.FC<{
   data: RewindData,
@@ -27,6 +28,11 @@ const RewindStage: React.FC<{
   const [sections, setSections] = useState<Section[]>([])
   const [isAnimating, currentSection, prev, next, handleStageEnd] = useSectionController(sections)
   const [generationStarted, setGenerationStarted] = useState(false)
+
+  const swipeableHandlers = useSwipeable({
+    onSwipedDown: prev,
+    onSwipedUp: next
+  })
 
   const handle = useFullScreenHandle()
 
@@ -70,33 +76,45 @@ const RewindStage: React.FC<{
 
     setSections(refs.map(r => (r.current as unknown as Section)))
     setStarted(true)
+
+    preGenerate().then(() => {
+      setGenerationStarted(true)
+    })
   }, [started, splashRef.current, beginningRef.current])
 
   useEffect(() => {
-    if (started) {
+    if (started && generationStarted) {
       (splashRef.current as unknown as Section).start()
+      // (albumMemeRef.current as unknown as Section).start()
       // (endingSectionRef.current as unknown as Section).start()
-      // (playlistRef.current as unknown as Section).start()
-
-      // @ts-ignore
-      playlistRef.current.generateImage()
-      // @ts-ignore
-      imageShareRef.current.generateImage()
     }
-  }, [started])
-
-  if (currentSection === 5 && !generationStarted && started) {
-    setGenerationStarted(true)
-    // @ts-ignore
-    playlistRef.current.generateImage()
-    // @ts-ignore
-    imageShareRef.current.generateImage()
-  }
+  }, [started, generationStarted])
 
   const handleSplashEnd = () => {
     // @ts-ignore
     beginningRef.current.start()
     next()
+  }
+
+  const preGenerate = async () => {
+    const [
+      playlist,
+      normalShare,
+      storyShare,
+      albumMeme
+    ] = (await Promise.all([
+      generatePlaylistCover(data.user),
+      generateNormalShare(data, true),
+      generateStoriesShare(data, true),
+      generateAlbumMeme(data, true)
+    ])).map(blob => URL.createObjectURL(blob))
+
+    data.images = {
+      playlist,
+      normalShare,
+      storyShare,
+      albumMeme
+    }
   }
 
   const handleNextSlideClick = () => {
@@ -114,7 +132,7 @@ const RewindStage: React.FC<{
   }
 
 
-  return <div onWheel={handleScrollEvent}>
+  return <div onWheel={handleScrollEvent} {...swipeableHandlers}>
     <FullScreen handle={handle}>
       <MonthsAnimation data={data} ref={splashRef} onEnd={handleSplashEnd}/>
       <BeginningSection data={data} ref={beginningRef} onEnd={handleStageEnd}/>
@@ -130,7 +148,7 @@ const RewindStage: React.FC<{
       <SplashEnd data={data} ref={splashEnd} onEnd={handleStageEnd}/>
       <PlaylistSection data={data} ref={playlistRef} onEnd={handleStageEnd}/>
       <ImageShare data={data} ref={imageShareRef} onEnd={handleStageEnd}/>
-      <EndingSection data={data} ref={endingSectionRef} onEnd={handleStageEnd} />
+      <EndingSection data={data} ref={endingSectionRef} onEnd={handleStageEnd}/>
 
       <SlideController
         stage={currentSection}
@@ -138,6 +156,7 @@ const RewindStage: React.FC<{
         onClick={handleNextSlideClick}
         onClickBack={handleBackSlideClick}
         handle={handle}
+        sectionCount={sections.length}
       />
     </FullScreen>
   </div>

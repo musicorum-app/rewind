@@ -2,14 +2,11 @@ import {
   ArtistBase,
   RewindData,
   UserProfile,
-  WeeklyArtistChart,
   WeeklyArtist,
   AlbumBase,
-  WeeklyAlbumChart,
   WeeklyAlbum,
   MonthData,
   LovedTrack,
-  ExtendedTrackWithPlaytime,
   WeeklyTrackChart,
   WeeklyTrack,
   TrackInfo,
@@ -25,6 +22,7 @@ import API from "./index";
 import {chunks as chunkArray} from '@reactgular/chunks'
 import {addToMap, getShuffledArray} from "../utils";
 import MusicorumAPI from "./MusicorumAPI";
+import {generateAlbumMeme, generateNormalShare, generatePlaylistCover, generateStoriesShare} from "../image";
 
 const year = 2020
 const offset = 0
@@ -49,15 +47,15 @@ const dataFetcher = async (
     ],
     [
       (r: any[], pgr: Function) => fetchArtists(userData.name, r, pgr),
-      'Fetching all your artists from 2020...'
+      'Browsing all your artists from 2020...'
     ],
     [
       (r: any[], pgr: Function) => fetchAlbums(userData.name, r, pgr),
-      'Judging your albums...'
+      'Browsing all your albums...'
     ],
     [
       () => console.log('DEPRECATED'),
-      'Snooping around your months...'
+      'Working...'
     ],
     [
       () =>
@@ -77,13 +75,13 @@ const dataFetcher = async (
     [
       () =>
         fetchFavorites(userData.name),
-      'Rating your favorite songs...'
+      'Tuning in to your favorite songs...'
     ],
     [
       (r: any[], pgr: Function) =>
         fetchTrackInfos(userData.name, r, pgr),
-      'Fetching more information on your most played songs...',
-      100
+      'Taking a deeper look on your most played songs...',
+      101
     ]
   ]
 
@@ -129,7 +127,8 @@ const dataFetcher = async (
   const topTracks = await formatTracks(result[9])
   console.log(firstTrack)
   const scrobbles = Number(result[0]['@attr']['total'])
-  return {
+
+  const tempData: RewindData = {
     user: userData,
     firstTrack: {
       name: firstTrack.name,
@@ -156,6 +155,9 @@ const dataFetcher = async (
     topTags: formatTags(topTracks)
       .sort((a, b) => b.count - a.count)
   }
+//  onProgress(null, 'Generating some fancy images...')
+
+  return tempData
 }
 
 const calculatePlayTime = (trackChart: WeeklyTrackChart, tracks: TrackInfo[], total: number): number => {

@@ -17,6 +17,7 @@ import {ReactComponent as GithubLogo} from '../assets/logos/github.svg'
 import {ReactComponent as LastfmLogo} from '../assets/logos/lastfm.svg'
 import {ReactComponent as MediumLogo} from '../assets/logos/medium.svg'
 import {ReactComponent as MusicorumLogo} from '../assets/logos/musicorum.svg'
+import {ReactComponent as HeartSVG} from '../assets/heart.svg'
 import Container from "@material-ui/core/Container";
 import IconButton from "@material-ui/core/IconButton";
 import Dialog from "@material-ui/core/Dialog";
@@ -26,6 +27,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import Link from "@material-ui/core/Link";
 import {TransitionProps} from "@material-ui/core/transitions";
 import Slide from "@material-ui/core/Slide";
+import {THEME_COLOR} from "../Constants";
 
 const Transition = React.forwardRef((
   props: TransitionProps & { children?: React.ReactElement<any, any> },
@@ -73,8 +75,31 @@ const Year = styled.span`
   
   @media(max-width: ${mediaQueryBreak}px) {
     font-size: 40px;
-      -webkit-text-stroke: 1px #FD0F57;
+    -webkit-text-stroke: 1px #FD0F57;
   }
+`
+
+const CreditName = styled.div`
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+  color: ${THEME_COLOR};
+  font-weight: 700;
+`
+
+const CreditTitle = styled.div`
+  width: 100%;
+  text-align: center;
+  font-size: 17px;
+  color: white;
+  font-weight: 400;
+`
+
+const HeartIcon = styled(HeartSVG)`
+  fill: ${THEME_COLOR};
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
 `
 
 const EndingSection: React.FC<{
@@ -111,16 +136,23 @@ const EndingSection: React.FC<{
         opacity: 1,
         duration: .1
       })
-      .fromTo('#endingSectionYear', {
-        y: 80,
-        scale: 4.5,
-        opacity: 0
-      }, {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 2,
-        ease: 'expo.out'
+      .from('#endingSectionYear', {
+        y: 60,
+        scale: .7,
+        opacity: 0,
+        duration: .6
+      })
+      .from('#endingSectionText', {
+        y: -50,
+        opacity: 0,
+        scale: .8,
+        duration: .6
+      }, 0)
+      .from('.endingSectionIcon', {
+        scale: .7,
+        opacity: 0,
+        duration: .5,
+        stagger: .08
       })
 
 
@@ -135,11 +167,11 @@ const EndingSection: React.FC<{
   const animateEnd = () => {
     return new Promise(resolve => {
       const tl = new TimelineMax()
-      tl.to('#imageShareSection', {
+      tl.to('#endingSection', {
         opacity: 0,
         y: 80
       })
-        .to('#imageShareSection', {
+        .to('#endingSection', {
           top: '100vh',
           duration: 0,
           onComplete: () => {
@@ -147,7 +179,7 @@ const EndingSection: React.FC<{
           }
         })
 
-      console.log('ALbum meme section end')
+      console.log('Ending section end')
     })
   }
 
@@ -185,7 +217,7 @@ const EndingSection: React.FC<{
           <Grid container direction="column" justify="space-between" alignItems="center" style={{
             width: '100%'
           }}>
-            <Grid item>
+            <Grid item id="endingSectionText">
               <Typography variant="h3" align="center" style={{fontSize: small ? 30 : 40}}>
                 <b>The end!</b>
               </Typography>
@@ -255,32 +287,32 @@ const EndingSection: React.FC<{
               <Grid container spacing={small ? 0 : 1} direction="column" alignItems="center" style={{width: '100%'}}>
                 <Grid item>
                   <Grid container spacing={small ? 0 : 1} justify="center">
-                    <Grid item>
+                    <Grid item className="endingSectionIcon">
                       <IconButton component="a" target="_blank" href="https://twitter.com/MusicorumApp">
                         <TwitterLogo width={iconsSize} height={iconsSize}/>
                       </IconButton>
                     </Grid>
-                    <Grid item>
+                    <Grid item className="endingSectionIcon">
                       <IconButton component="a" target="_blank" href="https://www.patreon.com/musicorumapp">
                         <PatreonLogo width={iconsSize} height={iconsSize}/>
                       </IconButton>
                     </Grid>
-                    <Grid item>
+                    <Grid item className="endingSectionIcon">
                       <IconButton component="a" target="_blank" href="https://github.com/musicorum-app/">
                         <GithubLogo width={iconsSize} height={iconsSize}/>
                       </IconButton>
                     </Grid>
-                    <Grid item>
+                    <Grid item className="endingSectionIcon">
                       <IconButton component="a" target="_blank" href="https://www.last.fm/user/metye">
                         <LastfmLogo width={iconsSize} height={iconsSize}/>
                       </IconButton>
                     </Grid>
-                    <Grid item>
+                    <Grid item className="endingSectionIcon">
                       <IconButton component="a" target="_blank" href="https://medium.com/musicorum">
                         <MediumLogo width={iconsSize} height={iconsSize}/>
                       </IconButton>
                     </Grid>
-                    <Grid item>
+                    <Grid item className="endingSectionIcon">
                       <IconButton component="a" target="_blank" href="https://musicorumapp.com">
                         <MusicorumLogo width={iconsSize} height={iconsSize}/>
                       </IconButton>
@@ -289,12 +321,12 @@ const EndingSection: React.FC<{
                 </Grid>
                 <Grid item style={{width: '100%'}}>
                   <Grid container spacing={2} justify="center">
-                    <Grid item>
+                    <Grid item className="endingSectionIcon">
                       <RoundedButton outlined color="primary" onClick={() => setDialogOpen(true)}>
                         Credits
                       </RoundedButton>
                     </Grid>
-                    <Grid item>
+                    <Grid item className="endingSectionIcon">
                       <RoundedButton outlined color="primary" onClick={() => {
                       }}>
                         Feedback
@@ -323,9 +355,33 @@ const EndingSection: React.FC<{
       <DialogContent>
         <DialogContentText>
           <Grid container justify="center">
-            <Typography align="center">
+            <Typography align="center" variant="subtitle2">
               Here are some credits to all the people who helped to build Musicorum Rewind 2020
             </Typography>
+            <Box mt={2}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <CreditName>Design & Development</CreditName>
+                  <CreditTitle>Matheus Dias</CreditTitle>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <CreditName>Album meme artist</CreditName>
+                  <CreditTitle>Luana Barros</CreditTitle>
+                </Grid>
+                <Grid item xs={12}>
+                  <CreditName>Patrons <HeartIcon /></CreditName>
+                  <CreditTitle>Micael Guerriero</CreditTitle>
+                </Grid>
+                <Grid item xs={12}>
+                  <CreditName>Special Thanks</CreditName>
+                  <CreditTitle>Pedro Fracassi and Raphael Sousa Lima</CreditTitle>
+                </Grid>
+                <Grid item xs={12}>
+                  <CreditName>Beta testers</CreditName>
+                  <CreditTitle><em>Soon™</em></CreditTitle>
+                </Grid>
+              </Grid>
+            </Box>
           </Grid>
         </DialogContentText>
       </DialogContent>

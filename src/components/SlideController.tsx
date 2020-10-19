@@ -71,7 +71,7 @@ const DownIcon = styled(DownNavigationIcon)`
   }
   
   @media(max-width: 800px) {
-    bottom: 10px;
+    bottom: 20px;
   }
 `
 
@@ -98,8 +98,9 @@ const SlideController: React.FC<{
   onClick?: () => void,
   onClickBack?: () => void,
   stage?: number,
-  handle?: FullScreenHandle
-}> = ({showBottomIcon, stage, onClick, onClickBack, handle}) => {
+  handle?: FullScreenHandle,
+  sectionCount: number
+}> = ({showBottomIcon, stage, onClick, onClickBack, handle, sectionCount}) => {
 
 
   return <div>
@@ -126,7 +127,9 @@ const SlideController: React.FC<{
       }}/>
     </Controller>
     {
-      <DownIcon show={showBottomIcon} onClick={onClick}/>
+      stage !== (sectionCount - 1)
+        ? <DownIcon show={showBottomIcon} onClick={onClick}/>
+        : null
     }
   </div>
 }

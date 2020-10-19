@@ -5,6 +5,8 @@ import {useMediaQuery} from "@material-ui/core";
 // import {RelativeOrientationSensor} from 'motion-sensors-polyfill'
 import {Nullable} from "../api/interfaces";
 import {convertRange} from "../utils";
+// @ts-ignore
+import Quaternion from 'quaternion'
 
 const Wrapper = styled.div`
   perspective: 2500px;
@@ -29,24 +31,58 @@ const ParallaxWrapper: React.FC<{
   const smol = useMediaQuery(`(max-width: 800px)`)
 
   useEffect(() => {
-    const sensor = [sensorData[0] || 0, sensorData[1] || 0]
+    const sensor = [sensorData[1] || 0, sensorData[0] || 0]
     const center = [windowSize[0] / 2, windowSize[1] / 2]
-    const sensorRange = 100
-    update(
-      convertRange(sensor[1], [-sensorRange, sensorRange], [-center[0], center[0]]),
-      convertRange(sensor[0], [-sensorRange, sensorRange], [-center[1], center[1]]),
-      false
-    )
+    const sensorRange = .3
+    // update(
+    //   // convertRange(sensor[1], [-sensorRange, sensorRange], [-windowSize[0], windowSize[0]]),
+    //   // convertRange(sensor[0], [-sensorRange, sensorRange], [-windowSize[1], windowSize[1]]),
+    //   (sensor[1] < 0 ? -sensor[1] : sensor[1]) * windowSize[1],
+    //   (sensor[0] < 0 ? -sensor[0] : sensor[0]) * windowSize[0],
+    //   true
+    // )
+    const qt = new Quaternion(sensorData[3], sensorData[0], sensorData[1], sensorData[2])
+
+    const tilt = [
+      sensorData[0],
+      sensorData[1]
+    ]
+    const radius = Math.sqrt(Math.pow(tilt[0], 2) + Math.pow(tilt[1], 2))
+    const degree = radius * 28
+
+    gsap.to('.parallax', {
+      transform: `rotateX(${tilt[0] * degree}deg) rotateY(${tilt[1] * degree}deg)`,
+    })
+
   }, [sensorData, windowSize])
 
   useLayoutEffect(() => {
-    function updateOrientation(x: Nullable<number>, y: Nullable<number>) {
-      setSensorData([x || 0, y || 0])
+    function updateOrientation(v: number[]) {
+      setSensorData(v)
     }
 
-    window.addEventListener('devicemotion', ev => updateOrientation(ev.rotationRate!.beta, ev.rotationRate!.alpha))
+    // TODO: sensor opt in
+    if ('AbsoluteOrientationSensor' in window) {
     // @ts-ignore
-    return () => window.removeEventListener('devicemotion', updateOrientation)
+    const sensor = new AbsoluteOrientationSensor({ frequency: 60 });
+    Promise.all([navigator.permissions.query({ name: "accelerometer" }),
+      navigator.permissions.query({ name: "magnetometer" }),
+      navigator.permissions.query({ name: "gyroscope" })])
+      .then(results => {
+        if (results.every(result => result.state === "granted")) {
+          sensor.addEventListener('reading', () => {
+            updateOrientation(sensor.quaternion)
+          });
+          sensor.start()
+        } else {
+          console.log("No permissions to use RelativeOrientationSensor.");
+        }
+      });
+    }
+
+   // window.addEventListener('devicemotion', ev => updateOrientation(ev.rotationRate!.beta, ev.rotationRate!.alpha))
+    // @ts-ignore
+    //return () => window.removeEventListener('devicemotion', updateOrientation)
   }, []);
 
   useLayoutEffect(() => {
@@ -73,7 +109,7 @@ const ParallaxWrapper: React.FC<{
       (position[1] - (center[1])) / center[1]
     ]
     const radius = Math.sqrt(Math.pow(tilt[0], 2) + Math.pow(tilt[1], 2))
-    const degree = radius * 3
+    const degree = radius * 4
     gsap.to('.parallax', {
       transform: `rotate3d(${tilt[0]}, ${tilt[1]}, 0, ${degree}deg)`,
       duration: tween ? 1 : 0
@@ -105,10 +141,18 @@ const ParallaxWrapper: React.FC<{
       transform: 'translateY(100px)'
     }}>
 
-      {
-        sensorData.map(d => d.toFixed(2)).toString()
-      }
+      <pre>
 
+      {/*{*/}
+      {/*  sensorData.map(d => d.toFixed(2)).toString()*/}
+      {/*}*/}
+
+      {/*  {" - "}*/}
+      {/*  {((sensorData[1] < 0 ? -sensorData[1] : sensorData[1]) * windowSize[1]).toFixed(2)}*/}
+      {/*  ,*/}
+      {/*  {((sensorData[0] < 0 ? -sensorData[0] : sensorData[0]) * windowSize[0]).toFixed(2)}*/}
+
+      </pre>
     </h1>
   </Wrapper>
 })

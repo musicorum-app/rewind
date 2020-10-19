@@ -261,7 +261,13 @@ export interface RewindData {
   lovedTracks: FormattedLovedTrack[],
   // months: MonthsData,
   spotifyData?: SpotifyArtistBase[],
-  topTags: TopTag[]
+  topTags: TopTag[],
+  images?: {
+    playlist: string,
+    normalShare: string,
+    storyShare: string,
+    albumMeme: string
+  }
 }
 
 export interface SpotifyArtistBase {

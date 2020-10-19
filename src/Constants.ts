@@ -1,4 +1,4 @@
-export const VERSION = 11
+export const VERSION = 12
 export const DEFAULT_AVATAR = 'https://lastfm.freetls.fastly.net/i/u/avatar670/818148bf682d429dc215c1705eb27b98'
 export const RESOURCE_API_URL = 'https://resource.musicorumapp.com/'
 export const API_URL = 'https://api.musicorumapp.com/'
@@ -6,7 +6,7 @@ export const PLAYLIST_URL = 'https://p.musc.pw/'
 export const MAX_TRIES = 3
 export const SHOW_PEDRO_PRINT = 'UDgdDQz'
 export const THEME_COLOR = '#FD0F57'
-export const SPOTIFY_ID = '6735408e99284a42b9e5a736534a538b'
+export const SPOTIFY_ID = '6cbbdd6ab64c449db2cb42ecb0984f77'
 export const DEEZER_ID = '438862'
 export const AUTH_CALLBACK_URL = 'http://localhost:9030/auth/'
 export const IS_PREVIEW = true
