@@ -14,6 +14,7 @@ import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import RoundedButton from "../RoundedButton";
 import {VERSION} from "../Constants";
+import {hasOrientationSensor} from "../utils";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -44,6 +45,7 @@ const LoadingStage: React.FC<{
   const [cacheData, setCacheData] = useState<RewindCache | null>(null)
 
   const load = async () => {
+
     const cache = localStorage.getItem('cache')
     if (cache) {
       try {

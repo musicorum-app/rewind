@@ -155,7 +155,24 @@ const dataFetcher = async (
     topTags: formatTags(topTracks)
       .sort((a, b) => b.count - a.count)
   }
-//  onProgress(null, 'Generating some fancy images...')
+ onProgress(null, 'Generating some fancy images...')
+
+  const [
+    playlist,
+    normalShare,
+    storyShare,
+    albumMeme
+  ] = (await Promise.all([
+    generatePlaylistCover(tempData.user),
+    generateNormalShare(tempData, true),
+    generateStoriesShare(tempData, true),
+    generateAlbumMeme(tempData, true)
+  ]))
+
+  localStorage.setItem('image.playlist', playlist)
+  localStorage.setItem('image.normalShare', normalShare)
+  localStorage.setItem('image.storyShare', storyShare)
+  localStorage.setItem('image.albumMeme', albumMeme)
 
   return tempData
 }

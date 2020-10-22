@@ -16,6 +16,8 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import RewindStage from "./stages/rewind";
 
 import sample from './api/sample.json'
+import {hasOrientationSensor} from "./utils";
+import OrientationSensorPrompt from "./components/OrientationSensorPrompt";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   mainBtn: {
@@ -55,6 +57,7 @@ function App() {
   const [rewindStartTimeline, setStartTimeline] = useState<TimelineMax | null>(null)
   const [rewindData, setRewindData] = useState<RewindData | null>(null)
   const [showApp, setShowApp] = useState(true)
+  const [showGyroscopePrompt, setShowGyroscopePrompt] = useState(false)
 
   const smallHeight = useMediaQuery('(max-height:700px)');
   const smallWidth = useMediaQuery('(max-width:580px)');
@@ -84,23 +87,23 @@ function App() {
     //     }
     //   });
 
-    try {
-      const data: any = JSON.parse(localStorage.getItem('cache') as string)
-      if (data._v !== VERSION) {
-        localStorage.removeItem('cache')
-        throw new Error('Version mismatch')
-      }
-      // @ts-ignore
-      data.data.firstTrack.listenedAt = new Date(data.data.firstTrack.listenedAt)
-      // @ts-ignore
-      setRewindData(data.data)
-      setUserData(null)
-      setShowApp(false)
-      setShowStage1(true)
-      document.documentElement.style.position = 'fixed'
-    } catch (e) {
-      doAnimation()
-    }
+    // try {
+    //   const data: any = JSON.parse(localStorage.getItem('cache') as string)
+    //   if (data._v !== VERSION) {
+    //     localStorage.removeItem('cache')
+    //     throw new Error('Version mismatch')
+    //   }
+    //   // @ts-ignore
+    //   data.data.firstTrack.listenedAt = new Date(data.data.firstTrack.listenedAt)
+    //   // @ts-ignore
+    //   setRewindData(data.data)
+    //   setUserData(null)
+    //   setShowApp(false)
+    //   setShowStage1(true)
+    //   document.documentElement.style.position = 'fixed'
+    // } catch (e) {
+    //   doAnimation()
+    // }
   }, [])
 
   const doAnimation = () => {
@@ -189,7 +192,17 @@ function App() {
     formTimeline?.play()
   }
 
-  const fetchComplete = (data: RewindData) => {
+  const fetchComplete = async (data: RewindData) => {
+    const hasGyroscope = await hasOrientationSensor()
+    if (hasGyroscope) {
+      setShowApp(false)
+      setShowGyroscopePrompt(true)
+    } else {
+      startRewind(data)
+    }
+  }
+
+  const startRewind = (data: RewindData) => {
     setShowStage1(true)
     setRewindData(data)
     const tl = new TimelineMax({paused: true})
@@ -211,8 +224,14 @@ function App() {
 
   return <div>
 
+    <OrientationSensorPrompt />
+
+    {
+      showGyroscopePrompt ? <OrientationSensorPrompt /> : null
+    }
+
     <div style={{
-      // opacity: 0,
+      opacity: 0,
     }} ref={rewindStageRef}>
       {
         showStage1 && rewindData ? <RewindStage data={rewindData}/> : null

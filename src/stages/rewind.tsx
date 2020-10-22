@@ -53,26 +53,28 @@ const RewindStage: React.FC<{
   const imageShareRef = useRef(null)
   const endingSectionRef = useRef(null)
 
+  const refs = [
+    beginningRef,
+    scrobbleCountRef,
+    topArtistsCountRef,
+    topAlbumsCountRef,
+    // albumMemeRef,
+    topTracksCountRef,
+    favoriteTracksRef,
+    topTagsRef,
+    mainstreamRef,
+    analysisRef,
+    splashEnd,
+    playlistRef,
+    imageShareRef,
+    endingSectionRef
+  ]
+
 
   useEffect(() => {
     // @ts-ignore
     if (!splashRef.current || started) return
-    const refs = [
-      beginningRef,
-      scrobbleCountRef,
-      topArtistsCountRef,
-      topAlbumsCountRef,
-      // albumMemeRef,
-      topTracksCountRef,
-      favoriteTracksRef,
-      topTagsRef,
-      mainstreamRef,
-      analysisRef,
-      splashEnd,
-      playlistRef,
-      imageShareRef,
-      endingSectionRef
-    ]
+
 
     setSections(refs.map(r => (r.current as unknown as Section)))
     setStarted(true)
@@ -97,23 +99,11 @@ const RewindStage: React.FC<{
   }
 
   const preGenerate = async () => {
-    const [
-      playlist,
-      normalShare,
-      storyShare,
-      albumMeme
-    ] = (await Promise.all([
-      generatePlaylistCover(data.user),
-      generateNormalShare(data, true),
-      generateStoriesShare(data, true),
-      generateAlbumMeme(data, true)
-    ])).map(blob => URL.createObjectURL(blob))
-
     data.images = {
-      playlist,
-      normalShare,
-      storyShare,
-      albumMeme
+      playlist: localStorage.getItem('image.playlist') || '',
+      normalShare: localStorage.getItem('image.normalShare') || '',
+      storyShare: localStorage.getItem('image.storyShare') || '',
+      albumMeme: localStorage.getItem('image.albumMeme') || ''
     }
   }
 
@@ -130,6 +120,8 @@ const RewindStage: React.FC<{
     if (event.deltaY > 0) handleNextSlideClick()
     else handleBackSlideClick()
   }
+
+
 
 
   return <div onWheel={handleScrollEvent} {...swipeableHandlers}>

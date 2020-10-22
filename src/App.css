@@ -14,6 +14,7 @@ body {
 
 .App {
     text-align: center;
+    opacity: 0;
 }
 
 .r1 {
@@ -50,5 +51,15 @@ body {
     }
     100% {
         background-position-y: 100%;
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotateX(0deg) rotateY(0deg);
+    }
+
+    100% {
+        transform: rotateX(30deg) rotateY(360deg);
     }
 }

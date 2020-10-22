@@ -1,7 +1,7 @@
 import {Nullable, UserProfile} from "../api/interfaces";
 import {THEME_COLOR} from "../Constants";
 
-export default function generatePlaylistCover(user: UserProfile, compressed = false): Promise<Nullable<Blob>> {
+export default function generatePlaylistCover(user: UserProfile, compressed = false): Promise<string> {
   return new Promise(resolve => {
     const SIZE = 400
     const canvas = document.createElement('canvas')
@@ -44,9 +44,7 @@ export default function generatePlaylistCover(user: UserProfile, compressed = fa
       logo.onload = () => {
         ctx.drawImage(logo, 345, 10, 50, 19)
 
-        canvas.toBlob(blob => {
-          resolve(blob)
-        }, 'image/' + (compressed ? 'jpeg' : 'png'), compressed ? .9 : 1)
+        resolve(canvas.toDataURL('image/jpeg', 0.98))
       }
     }
   })

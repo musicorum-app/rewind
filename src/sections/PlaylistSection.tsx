@@ -230,16 +230,10 @@ const PlaylistSection: React.FC<{
 
       const playlistID = playlist.id
 
-
-      const photo: Nullable<string> = await (new Promise(async resolve => {
-        const blob = await generatePlaylistCover(data.user, true)
-        const reader = new FileReader()
-
-        if (!blob) resolve(null)
-        reader.readAsDataURL(blob!)
-        // @ts-ignore
-        reader.onloadend = () => resolve(reader.result)
-      }))
+      let photo = localStorage.getItem('image.playlist')
+      if (!photo) {
+        photo = await generatePlaylistCover(data.user, true)
+      }
 
       if (photo) {
         const imageResponse = await spotify.uploadPlaylistImage(playlistID, photo
@@ -304,7 +298,12 @@ const PlaylistSection: React.FC<{
       const playlistDescription = PlaylistStrings.description.replace('{{user}}', data.user.realname || data.user.name)
       const {id} = await deezer.createPlaylist(playlistTitle, playlistDescription)
 
-      const blob = await generatePlaylistCover(data.user, true)
+      let photo = localStorage.getItem('image.playlist')
+      if (!photo) {
+        photo = await generatePlaylistCover(data.user, true)
+      }
+
+      const blob = await fetch(photo).then(r => r.blob())
       if (blob) {
         const upload = await deezer.uploadPlaylistImage(id, blob)
         console.log(upload)

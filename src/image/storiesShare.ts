@@ -9,7 +9,7 @@ import {
   writeText
 } from "../utils";
 
-export default async function generateStoriesShare(data: RewindData, compressed = false): Promise<Nullable<Blob>> {
+export default async function generateStoriesShare(data: RewindData, compressed = false): Promise<string> {
   const WIDTH = 1080
   const HEIGHT = 1920
   const canvas = document.createElement('canvas')
@@ -153,5 +153,5 @@ export default async function generateStoriesShare(data: RewindData, compressed 
     ctx.drawImage(preview, WIDTH / 2 - preview.width / 2, HEIGHT / 2 - preview.height / 2)
   }
 
-  return exportCanvasToBlob(canvas, compressed)
+  return canvas.toDataURL('image/jpeg', 0.98)
 }

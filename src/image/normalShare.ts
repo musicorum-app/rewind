@@ -9,7 +9,7 @@ import {
   writeText
 } from "../utils";
 
-export default async function generateNormalShare(data: RewindData, compressed = false): Promise<Nullable<Blob>> {
+export default async function generateNormalShare(data: RewindData, compressed = false): Promise<string> {
   const SIZE = 800
   const canvas = document.createElement('canvas')
   canvas.width = SIZE
@@ -154,5 +154,5 @@ export default async function generateNormalShare(data: RewindData, compressed =
     ctx.drawImage(preview, SIZE / 2 - preview.width / 2, SIZE / 2 - preview.height / 2)
   }
 
-  return exportCanvasToBlob(canvas, compressed)
+  return canvas.toDataURL('image/jpeg', 0.98)
 }
