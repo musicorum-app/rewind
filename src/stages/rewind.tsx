@@ -23,6 +23,8 @@ import {generateAlbumMeme, generateNormalShare, generatePlaylistCover, generateS
 
 const RewindStage: React.FC<{
   data: RewindData,
+  useSensor?: boolean,
+  onSensorChange?: (use: boolean) => void
 }> = forwardRef(({data}) => {
   const [started, setStarted] = useState(false)
   const [sections, setSections] = useState<Section[]>([])
@@ -86,8 +88,8 @@ const RewindStage: React.FC<{
 
   useEffect(() => {
     if (started && generationStarted) {
-      (splashRef.current as unknown as Section).start()
-      // (albumMemeRef.current as unknown as Section).start()
+      // (splashRef.current as unknown as Section).start()
+      (albumMemeRef.current as unknown as Section).start()
       // (endingSectionRef.current as unknown as Section).start()
     }
   }, [started, generationStarted])

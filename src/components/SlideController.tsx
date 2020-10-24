@@ -1,11 +1,13 @@
-import React from "react";
+import React, {useState} from "react";
 import styled from 'styled-components'
 import {THEME_COLOR} from "../Constants";
 import {ReactComponent as NavigationIcon} from '../assets/navigation.svg'
 import {ReactComponent as DownNavigationIcon} from '../assets/navigateDown.svg'
 import {ReactComponent as FullscreenIcon} from '../assets/fullscreen.svg'
 import {ReactComponent as ExitFullScreenIcon} from '../assets/exitFullscreen.svg'
+import {ReactComponent as ConfigIcon} from '../assets/config.svg'
 import {FullScreenHandle} from "react-full-screen/dist";
+import ConfigDialog from "./ConfigDialog";
 
 const Controller = styled.div`
   //height: 100vh;
@@ -34,7 +36,7 @@ const Navigation = styled(NavigationIcon)`
   }
   
   @media(max-width: 800px) {
-  width: 20px;
+   width: 20px;
   }
 `
 
@@ -46,11 +48,11 @@ const NavigationText = styled.span`
   color: ${THEME_COLOR};
   font-weight: 600;
   text-align: center;
-  font-size: 16px;
-  margin: 2px 0px 2px 0px;
+  font-size: 14px;
+  //margin: 2px 0px 2px 0px;
   
   @media(max-width: 800px) {
-  font-size: 13px;
+  font-size: 11px;
   }
 `
 
@@ -62,11 +64,11 @@ const DownIcon = styled(DownNavigationIcon)`
   position: absolute;
   bottom: 20px;
   left: 50vw;
-  transform: translateX(-50%);
+  transform: translateX(-50%) scale(1);
   opacity: ${(props: DownIconProps) => props.show ? '.4' : '0'};
-  transition: opacity .4s;
+  transition: opacity .2s, transform .2s;
   &:hover {
-    opacity: ${(props: DownIconProps) => props.show ? '.7' : '0'};
+    opacity: ${(props: DownIconProps) => props.show ? '.9' : '0'};
     cursor: ${(props: DownIconProps) => props.show ? 'pointer' : ''};;
   }
   
@@ -75,23 +77,22 @@ const DownIcon = styled(DownNavigationIcon)`
   }
 `
 
-const FullScreenButtonBase = `
+const ConfigIconButton = styled(ConfigIcon)`
   position: absolute;
-  left: 16px;
-  bottom: 16px;
-  width: 28px;
-  height: 28px;
-  transition: transform .18s;
-  opacity: .4;
+  left: 22px;
+  bottom: 22px;
+  width: 20px;
+  height: 20px;
+  transition: transform .18s, opacity .18s;
+  opacity: .4; 
   
-  &: hover {
+  &:hover {
     transform: scale(1.3);
     cursor: pointer;
+    opacity: .9;
   }
 `
 
-const FullScreenButton = styled(FullscreenIcon)`${FullScreenButtonBase}`
-const ExitFullScreenButton = styled(ExitFullScreenIcon)`${FullScreenButtonBase}`
 
 const SlideController: React.FC<{
   showBottomIcon?: boolean,
@@ -101,22 +102,10 @@ const SlideController: React.FC<{
   handle?: FullScreenHandle,
   sectionCount: number
 }> = ({showBottomIcon, stage, onClick, onClickBack, handle, sectionCount}) => {
-
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   return <div>
-    {/*<button onClick={openFullScreen}>*/}
-    {/*  FS*/}
-    {/*</button>*/}
-
-    {/*{*/}
-    {/*  handle && document.documentElement.requestFullscreen ? <>*/}
-    {/*    {*/}
-    {/*      handle.active*/}
-    {/*        ? <ExitFullScreenButton onClick={handle.exit}/>*/}
-    {/*        : <FullScreenButton onClick={handle.enter}/>*/}
-    {/*    }*/}
-    {/*  </> : null*/}
-    {/*}*/}
+    <ConfigIconButton onClick={() => setDialogOpen(true)} />
 
     <Controller>
       <Navigation onClick={onClickBack}/>
@@ -131,6 +120,8 @@ const SlideController: React.FC<{
         ? <DownIcon show={showBottomIcon} onClick={onClick}/>
         : null
     }
+
+    <ConfigDialog open={dialogOpen} onClose={() => setDialogOpen(false)}/>
   </div>
 }
 

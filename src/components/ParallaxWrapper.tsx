@@ -1,12 +1,12 @@
 import styled from "styled-components";
-import React, {forwardRef, useEffect, useLayoutEffect, useState} from "react";
+import React, {forwardRef, useContext, useEffect, useLayoutEffect, useState} from "react";
 import {gsap} from 'gsap';
 import {useMediaQuery} from "@material-ui/core";
-// import {RelativeOrientationSensor} from 'motion-sensors-polyfill'
 import {Nullable} from "../api/interfaces";
 import {convertRange} from "../utils";
 // @ts-ignore
 import Quaternion from 'quaternion'
+import OrientationSensorContext from "../context/orientationSensor";
 
 const Wrapper = styled.div`
   perspective: 2500px;
@@ -25,10 +25,20 @@ const ParallaxWrapper: React.FC<{
   ref?: React.Ref<HTMLDivElement>,
   center?: boolean
 }> = forwardRef(({children, center}) => {
+  const useSensor = useContext(OrientationSensorContext)
   const [windowSize, setWindowSize] = useState<number[]>([0, 0])
   const [sensorData, setSensorData] = useState<number[]>([0, 0])
-  // const [sensor, setSensor] = useState<Nullable<AbsoluteOrientationSensor>>(null)
+  const [orientationSensor, setSensor] = useState<Nullable<any>>(null)
   const smol = useMediaQuery(`(max-width: 800px)`)
+
+  useEffect(() => {
+    if (!orientationSensor) return
+    if (useSensor) {
+      orientationSensor.start()
+    } else {
+      orientationSensor.stop()
+    }
+  }, [useSensor, orientationSensor])
 
   useEffect(() => {
     const sensor = [sensorData[1] || 0, sensorData[0] || 0]
@@ -48,7 +58,7 @@ const ParallaxWrapper: React.FC<{
       sensorData[1]
     ]
     const radius = Math.sqrt(Math.pow(tilt[0], 2) + Math.pow(tilt[1], 2))
-    const degree = radius * 28
+    const degree = radius * 18
 
     gsap.to('.parallax', {
       transform: `rotateX(${tilt[0] * degree}deg) rotateY(${tilt[1] * degree}deg)`,
@@ -74,6 +84,7 @@ const ParallaxWrapper: React.FC<{
             updateOrientation(sensor.quaternion)
           });
           sensor.start()
+          setSensor(sensor)
         } else {
           console.log("No permissions to use RelativeOrientationSensor.");
         }

@@ -1,11 +1,15 @@
-import React, {useLayoutEffect} from 'react'
+import React, {useLayoutEffect, useState} from 'react'
 import styled from "styled-components";
 import {THEME_COLOR} from "../Constants";
 // @ts-ignore
 import Quaternion from "quaternion";
 import {gsap} from "gsap";
+import {Grid} from "@material-ui/core";
+import RoundedButton from "../RoundedButton";
+import Typography from "@material-ui/core/Typography";
 
 const PromptWrapper = styled.div`
+  opacity: 0;
   height: 100%;
   position: absolute;
   left: 0;
@@ -87,15 +91,30 @@ const Text = styled.span`
   margin: 12px 0;
 `
 
-export default function OrientationSensorPrompt() {
+const OrientationSensorPrompt: React.FC<{
+  onContinue?: (useSensor: boolean) => void
+}> = ({ onContinue }) => {
+
+  const [orientationSensor, setSensor] = useState<any>(null)
 
   useLayoutEffect(() => {
+    setTimeout(() => {
+      gsap.fromTo('#orientationSensor', {
+        y: 80,
+        opacity: 0
+      }, {
+        y: 0,
+        opacity: 1
+      })
+    }, 500)
+
+
     if ('AbsoluteOrientationSensor' in window) {
       // @ts-ignore
-      const sensor = new AbsoluteOrientationSensor({ frequency: 60 });
-      Promise.all([navigator.permissions.query({ name: "accelerometer" }),
-        navigator.permissions.query({ name: "magnetometer" }),
-        navigator.permissions.query({ name: "gyroscope" })])
+      const sensor = new AbsoluteOrientationSensor({frequency: 60});
+      Promise.all([navigator.permissions.query({name: "accelerometer"}),
+        navigator.permissions.query({name: "magnetometer"}),
+        navigator.permissions.query({name: "gyroscope"})])
         .then(results => {
           if (results.every(result => result.state === "granted")) {
             sensor.addEventListener('reading', () => {
@@ -108,6 +127,7 @@ export default function OrientationSensorPrompt() {
               })
             });
             sensor.start()
+            setSensor(sensor)
           } else {
             console.log("No permissions to use RelativeOrientationSensor.");
           }
@@ -115,33 +135,79 @@ export default function OrientationSensorPrompt() {
     }
   }, [])
 
-  return <div>
-    <PromptWrapper>
-      <Title>Orientation sensor detected!</Title>
-      <CubeSpacing>
-        {" "}
-      </CubeSpacing>
-      <CubeWrapper>
-        <Cube id="orientationCube">
-          <Front />
-          <Right />
-          <Back />
-          <Left />
-          <Top />
-          <Bottom />
-        </Cube>
-      </CubeWrapper>
-      <CubeSpacing>
-        {" "}
-      </CubeSpacing>
-     <Text>
-       It looks like your device has support for orientation sensor.
-       Musicorum Rewind also has support for it on some parallax animations.
-     </Text>
+  const doContinue = (useSensor: boolean) => () => {
+    gsap.fromTo('#orientationSensor', {
+      y: 0,
+      opacity: 1
+    }, {
+      y: -80,
+      opacity: 0,
+      onComplete: () => {
+        orientationSensor.stop()
+        if(onContinue) onContinue(useSensor)
+      }
+    })
+  }
 
+  return <PromptWrapper id="orientationSensor">
+    <Title>Orientation sensor detected!</Title>
+    <CubeSpacing>
+      {" "}
+    </CubeSpacing>
+    <CubeWrapper>
+      <Cube id="orientationCube">
+        <Front/>
+        <Right/>
+        <Back/>
+        <Left/>
+        <Top/>
+        <Bottom/>
+      </Cube>
+    </CubeWrapper>
+    <CubeSpacing>
+      {" "}
+    </CubeSpacing>
+    <Text>
+      It looks like your device has support for orientation sensor.
+      Musicorum Rewind also has support for it on some parallax animations.
+    </Text>
+
+    <Text>
+      But this can slow down performance on some devices. You can disable it here or later on the settings!
+    </Text>
+
+    <Typography color="textSecondary" align="center" style={{
+      padding: '30 10',
+      fontSize: 11
+    }}>
       <Text>
-        But this can slow down performance on some devices. You can disable it here or later on the settings!
+        <em>If you have slow performance, try closing external tabs/apps.</em>
       </Text>
-    </PromptWrapper>
-  </div>
+    </Typography>
+    <Grid container spacing={1} style={{
+      padding: '10 24',
+      marginTop: 17
+    }}>
+      <Grid item xs={12}>
+        <RoundedButton
+          onClick={doContinue(true)}
+          fullWidth
+          color="primary"
+        >
+          Continue with sensor
+        </RoundedButton>
+      </Grid>
+      <Grid item xs={12}>
+        <RoundedButton
+          onClick={doContinue(false)}
+          fullWidth
+          outlined
+        >
+          Continue without sensor
+        </RoundedButton>
+      </Grid>
+    </Grid>
+  </PromptWrapper>
 }
+
+export default OrientationSensorPrompt
