@@ -19,5 +19,13 @@
     "language": "Language",
     "sensor": "Use orientation sensor",
     "clearCache": "Clear cache"
+  },
+  "sensor": {
+    "title": "Orientation sensor detected!",
+    "text": "It looks like your device has support for orientation sensor. Musicorum Rewind also has support for it on some parallax animations.",
+    "text2": "But this can slow down performance on some devices. You can disable it here or later on the settings!",
+    "tip": "If you have slow performance, try closing external tabs/apps.",
+    "continueWith": "Continue with sensor",
+    "continueWithout": "Continue without sensor"
   }
 }

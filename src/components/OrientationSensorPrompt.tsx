@@ -168,8 +168,7 @@ const OrientationSensorPrompt: React.FC<{
       {" "}
     </CubeSpacing>
     <Text>
-      It looks like your device has support for orientation sensor.
-      Musicorum Rewind also has support for it on some parallax animations.
+
     </Text>
 
     <Text>
