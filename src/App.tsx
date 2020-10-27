@@ -18,6 +18,9 @@ import RewindStage from "./stages/rewind";
 import {hasOrientationSensor} from "./utils";
 import OrientationSensorPrompt from "./components/OrientationSensorPrompt";
 import OrientationSensorContext from './context/orientationSensor'
+import {Trans, useTranslation} from "react-i18next";
+import {ConfigIconButton} from "./components/SlideController";
+import ConfigDialog from "./components/ConfigDialog";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   mainBtn: {
@@ -45,6 +48,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }))
 
 function App() {
+  const { t, i18n } = useTranslation()
+
   const styles = useStyles()
   const [formAnimation, setFormAnimation] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -59,6 +64,7 @@ function App() {
   const [showApp, setShowApp] = useState(true)
   const [showGyroscopePrompt, setShowGyroscopePrompt] = useState(false)
   const [useSensor, setUseSensor] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   const smallHeight = useMediaQuery('(max-height:700px)');
   const smallWidth = useMediaQuery('(max-width:580px)');
@@ -235,6 +241,12 @@ function App() {
         <OrientationSensorPrompt onContinue={handleOrientationPrompt}/> : null
     }
 
+    {
+      !showStage1 && !showGyroscopePrompt
+        ? <ConfigIconButton onClick={() => setDialogOpen(true)} />
+        : null
+    }
+
     <div style={{
       // opacity: 0,
     }} ref={rewindStageRef}>
@@ -262,6 +274,7 @@ function App() {
               <img style={{
                 maxWidth: smallHeight ? '40%' : '70%'
               }}
+                   onClick={() => i18n.changeLanguage('pt')}
                    src={StartGraphic}
                    className={styles.startGraphic}
                    ref={mainImageRef}
@@ -270,12 +283,17 @@ function App() {
                 <Grid item xs={12}>
                   <div ref={mainTextRef}>
                     <Box fontWeight={800} fontSize={smallWidth ? 23 : 30} mb={1} mt={5} mx={2}>
-                      Let's rewind your <Box component="span" color="primary.main">2020</Box> on music
+                      <Trans
+                        i18nKey="main.splash.title"
+                        components={[
+                          <Box component="span" color="primary.main" key={0} />
+                        ]}
+                      />
                     </Box>
                   </div>
                   <div ref={mainSubTextRef}>
                     <Box fontSize={smallWidth ? 15 : 20}>
-                      from your last.fm profile
+                      {t('main.splash.subtitle')}
                     </Box>
                   </div>
                 </Grid>
@@ -290,7 +308,7 @@ function App() {
                     className={styles.mainBtn}
                     onClick={startForm}
                   >
-                    Start
+                    {t('main.splash.button')}
                   </Button>
                   {
                     userData ? <Grid container justify="center" spacing={1}>
@@ -311,7 +329,7 @@ function App() {
                                 </Box>
                               </Typography>
                               <Typography>
-                                Scrobbling since {moment(userData.registered["#text"] * 1000).format('MMMM Do YYYY')}
+                                {t('main.user.scrobbling', { date: moment(userData.registered["#text"] * 1000).format('MMMM Do YYYY')})}
                               </Typography>
                             </Grid>
                             <Grid item xs={12} sm={6} xl={4}>
@@ -330,7 +348,7 @@ function App() {
                                         setLoading(false)
                                       }}
                                     >
-                                      Back
+                                      {t('main.user.back')}
                                     </Button>
                                   </Grid>
                                   <Grid item xs={12} sm={6}>
@@ -343,7 +361,7 @@ function App() {
                                       className={styles.continueBtn}
                                       onClick={startLoad}
                                     >
-                                      Continue
+                                      {t('main.user.continue')}
                                     </Button>
                                   </Grid>
                                 </Grid>
@@ -351,7 +369,7 @@ function App() {
                             </Grid>
                           </> : <>
                             <Typography variant="h6" color="error">
-                              User not found
+                              {t('main.user.notFound')}
                             </Typography>
                             <Grid item xs={12} sm={6}>
                               <Button
@@ -366,7 +384,7 @@ function App() {
                                   setLoading(false)
                                 }}
                               >
-                                Back
+                                {t('main.user.back')}
                               </Button>
                             </Grid>
                           </>
@@ -395,7 +413,7 @@ function App() {
                                 <Box paddingX={3} mb={2}>
                                   <TextField
                                     fullWidth
-                                    label="Last.fm username"
+                                    label={t('main.user.input')}
                                     variant="outlined"
                                     onChange={handleUserChange}
                                     value={user}
@@ -413,7 +431,7 @@ function App() {
                               variant="outlined"
                               className={styles.formBtn}
                             >
-                              Start
+                              {t('main.user.button')}
                             </Button>
                           </Grid>
                         </Grid>
@@ -426,6 +444,13 @@ function App() {
         }
       </div> : null
     }
+
+    <ConfigDialog
+      open={dialogOpen}
+      onClose={() => setDialogOpen(false)}
+      showGyro={false}
+    />
+
   </div>
 }
 

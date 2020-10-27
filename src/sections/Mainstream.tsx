@@ -62,9 +62,9 @@ const ArtistImage = styled.img`
     height: 180px;
   }
   
-  @media(max-width: ${mediaQueryBreak}px) and (max-height: 700px) {
-    width: 100px;
-    height: 100px;
+  @media(max-width: ${mediaQueryBreak}px) and (max-height: 850px) {
+    width: 80px;
+    height: 80px;
   }
 `
 

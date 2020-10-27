@@ -87,7 +87,7 @@ const ConfigIconButton = styled(ConfigIcon)`
   opacity: .4; 
   
   &:hover {
-    transform: scale(1.3);
+    transform: scale(1.16);
     cursor: pointer;
     opacity: .9;
   }
@@ -100,12 +100,23 @@ const SlideController: React.FC<{
   onClickBack?: () => void,
   stage?: number,
   handle?: FullScreenHandle,
-  sectionCount: number
-}> = ({showBottomIcon, stage, onClick, onClickBack, handle, sectionCount}) => {
+  sectionCount: number,
+  useSensor?: boolean,
+  onSensorChange?: (use: boolean) => void
+}> = ({
+        showBottomIcon,
+        stage,
+        onClick,
+        onClickBack,
+        handle,
+        sectionCount,
+        useSensor,
+        onSensorChange
+      }) => {
   const [dialogOpen, setDialogOpen] = useState(false)
 
   return <div>
-    <ConfigIconButton onClick={() => setDialogOpen(true)} />
+    <ConfigIconButton onClick={() => setDialogOpen(true)}/>
 
     <Controller>
       <Navigation onClick={onClickBack}/>
@@ -121,9 +132,15 @@ const SlideController: React.FC<{
         : null
     }
 
-    <ConfigDialog open={dialogOpen} onClose={() => setDialogOpen(false)}/>
+    <ConfigDialog
+      open={dialogOpen}
+      onClose={() => setDialogOpen(false)}
+      useSensor={useSensor}
+      onSensorChange={onSensorChange}
+    />
   </div>
 }
 
-
 export default SlideController
+
+export { ConfigIconButton }

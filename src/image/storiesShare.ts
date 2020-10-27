@@ -3,7 +3,7 @@ import {IS_PREVIEW, THEME_COLOR} from "../Constants";
 import {
   exportCanvasToBlob,
   handleArtistImage,
-  handleTrackImage,
+  handleTrackImage, loadFont,
   loadImage,
   roundedCanvas,
   writeText
@@ -31,6 +31,7 @@ export default async function generateStoriesShare(data: RewindData, compressed 
   ctx.fillStyle = THEME_COLOR
 
   ctx.textBaseline = 'middle'
+  await loadFont('900 100px Montserrat')
   ctx.font = '900 100px Montserrat'
   ctx.lineWidth = 5
   ctx.strokeText('2020', MARGIN, HEADER_HEIGHT / 2 + 3)
@@ -81,12 +82,15 @@ export default async function generateStoriesShare(data: RewindData, compressed 
   ctx.textBaseline = 'top'
   ctx.textAlign = 'center'
 
+  await loadFont('900 62px Montserrat')
   ctx.font = '900 62px Montserrat'
   writeText(ctx, data.user.name, WIDTH - (MARGIN * 2), WIDTH / 2, USER_Y + USER_IMAGE_SIZE + MARGIN)
 
+  await loadFont('900 167px Montserrat')
   ctx.font = '900 167px Montserrat'
-  writeText(ctx, data.stats.scrobbles.toLocaleString(), WIDTH - (MARGIN * 2), WIDTH / 2, USER_Y + USER_IMAGE_SIZE + (MARGIN * 2) + 63 )
+  writeText(ctx, data.stats.scrobbles.toLocaleString(), WIDTH - (MARGIN * 2), WIDTH / 2, USER_Y + USER_IMAGE_SIZE + (MARGIN * 2) + 63)
 
+  await loadFont('500 34px Montserrat')
   ctx.font = '500 34px Montserrat'
   ctx.fillStyle = 'white'
   writeText(ctx, 'scrobbles', WIDTH - (MARGIN * 2), WIDTH / 2, USER_Y + USER_IMAGE_SIZE + (MARGIN * 2) + 63 + 153)
@@ -110,6 +114,7 @@ export default async function generateStoriesShare(data: RewindData, compressed 
     for (let k = 0; k < 2; k++) {
       const list = lists[i]
 
+      await loadFont('700 34px Montserrat')
       ctx.font = '700 34px Montserrat'
       ctx.fillStyle = THEME_COLOR
       const BOX_X = MARGIN + (BOX_WIDTH * j)
@@ -118,6 +123,7 @@ export default async function generateStoriesShare(data: RewindData, compressed 
 
       writeText(ctx, list[0], BOX_MAX_WIDTH, BOX_X, BOX_Y)
 
+      await loadFont('500 36px Montserrat')
       ctx.font = '500 36px Montserrat'
       ctx.fillStyle = 'white'
 
@@ -131,6 +137,7 @@ export default async function generateStoriesShare(data: RewindData, compressed 
     }
   }
 
+  await loadFont('600 16px Montserrat')
   ctx.font = '600 16px Montserrat'
   ctx.fillStyle = 'rgba(255, 255, 255, .5)'
   ctx.save()

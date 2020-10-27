@@ -1,0 +1,23 @@
+{
+  "main": {
+    "splash": {
+      "title": "Vamos dar uma olhada em seu <0>2020</0> na música",
+      "subtitle": "a partir de seu perfil no Last.fm",
+      "button": "COMEÇAR"
+    },
+    "user": {
+      "input": "Usuário do Last.fm",
+      "button": "Começar",
+      "back": "Voltar",
+      "continue": "Continuar",
+      "notFound": "Usuário não encontrado.",
+      "scrobbling": "Fazendo scrobbles desde {{date}}"
+    }
+  },
+  "config": {
+    "title": "Configurações",
+    "language": "Linguagem",
+    "sensor": "Usar sensor de orientação",
+    "clearCache": "Limpar cache"
+  }
+}

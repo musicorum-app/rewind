@@ -1,0 +1,23 @@
+{
+  "main": {
+    "splash": {
+      "title": "Let's rewind your <0>2020</0> on music",
+      "subtitle": "from your Last.fm profile",
+      "button": "START"
+    },
+    "user": {
+      "input": "Last.fm username",
+      "button": "Start",
+      "back": "Back",
+      "continue": "Continue",
+      "notFound": "User not found.",
+      "scrobbling": "Scrobbling since {{date}}"
+    }
+  },
+  "config": {
+    "title": "Configurations",
+    "language": "Language",
+    "sensor": "Use orientation sensor",
+    "clearCache": "Clear cache"
+  }
+}

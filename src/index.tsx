@@ -8,6 +8,8 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import SpotifyCallback from "./callbacks/Spotify";
 import DeezerCallback from "./callbacks/Deezer";
 
+import './locales'
+
 const theme = createMuiTheme({
   palette: {
     type: 'dark',

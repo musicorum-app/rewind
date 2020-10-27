@@ -1,27 +1,68 @@
 import {Nullable, RewindData} from "../api/interfaces";
 import {IS_PREVIEW, THEME_COLOR} from "../Constants";
 import {
-  exportCanvasToBlob,
-  loadImage
+  exportCanvasToBlob, handleAlbumImage,
+  loadImage, roundedCanvas
 } from "../utils";
 
 export default async function generateAlbumMeme(data: RewindData, compressed = false): Promise<string> {
-  const WIDTH = 800
-  const HEIGHT = 500
+  const WIDTH = 1000
+  const HEIGHT = 660
   const canvas = document.createElement('canvas')
   canvas.width = WIDTH
   canvas.height = HEIGHT
   const ctx: CanvasRenderingContext2D = (canvas.getContext('2d') as CanvasRenderingContext2D)
 
-  ctx.fillStyle = THEME_COLOR
-  ctx.fillRect(0, 0, WIDTH, HEIGHT)
+  if (IS_PREVIEW) ctx.filter = 'blur(2px)'
 
-  // if (IS_PREVIEW) ctx.filter = 'blur(4px)'
+  const bg = await loadImage('/assets/albumMeme/background.png')
+  ctx.drawImage(bg, 0, 0, WIDTH, HEIGHT)
 
-  ctx.fillStyle = '#000'
-  ctx.fillRect(30, 30, 100, 217)
+  const albums = data.topAlbums.slice(0, 5)
 
-  if (IS_PREVIEW && false) {
+  ctx.save()
+
+  let album
+  for (let alb of albums) {
+    if (alb.image) {
+      album = alb
+      break
+    }
+  }
+  if (!album) album = albums[0]
+
+  const image = await loadImage(handleAlbumImage(album))
+
+  const rc = roundedCanvas(image, 18)
+  ctx.transform(.96, 0.31, -0.164, .91, 622, 405)
+
+  // ctx.globalAlpha = .7
+
+  ctx.drawImage(rc, 0, 0, 180, 200)
+
+  ctx.restore()
+
+  const hand = await loadImage('/assets/albumMeme/hand.png')
+  ctx.drawImage(hand, 681, 495, 123, 146)
+
+  ctx.font = '700 32px Montserrat'
+  ctx.textAlign = 'center'
+  ctx.fillStyle = '#fff'
+  ctx.strokeStyle = '#000'
+  ctx.lineWidth = 4.4
+
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.3)'
+  ctx.shadowBlur = 16
+  ctx.shadowOffsetX = .5
+  ctx.shadowOffsetY = .5
+
+  const textParams: [string, number, number, number] = ['i love this album more than i love my life', WIDTH / 2, HEIGHT - 30, WIDTH * .9]
+  ctx.strokeText(...textParams)
+  ctx.fillText(...textParams)
+
+
+  if (IS_PREVIEW) {
+    ctx.filter = 'none'
     ctx.fillStyle = 'rgba(0, 0, 0, .4)'
     ctx.fillRect(0, 0, WIDTH, HEIGHT)
     const preview = await loadImage('/assets/rewind_preview_2.svg')
@@ -29,5 +70,5 @@ export default async function generateAlbumMeme(data: RewindData, compressed = f
     ctx.drawImage(preview, WIDTH / 2 - preview.width / 2, HEIGHT / 2 - preview.height / 2)
   }
 
-  return canvas.toDataURL('image/jpeg', 0.98)
+  return canvas.toDataURL('image/png', 1)
 }

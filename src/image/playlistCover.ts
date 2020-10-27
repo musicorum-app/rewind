@@ -14,7 +14,7 @@ export default function generatePlaylistCover(user: UserProfile, compressed = fa
     img.setAttribute('crossorigin', 'anonymous')
     img.crossOrigin = 'anonymous'
     img.src = user.image[3]["#text"] || 'https://lastfm.freetls.fastly.net/i/u/300x300/818148bf682d429dc215c1705eb27b98.jpg'
-    img.onload = () => {
+    img.onload = async () => {
       ctx.drawImage(img, 0, 0, SIZE, SIZE)
       ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'
       ctx.fillRect(0, 0, SIZE, SIZE)
@@ -24,6 +24,8 @@ export default function generatePlaylistCover(user: UserProfile, compressed = fa
       ctx.fillStyle = color
       ctx.fillRect(0, 0, SIZE, BAR_HEIGHT)
 
+      // @ts-ignore
+      await document.fonts.load('900 italic 115px "Montserrat"')
       ctx.font = '900 italic 115px "Montserrat"'
       ctx.textAlign = 'center'
       ctx.fillText('2020', SIZE / 2, 340)
@@ -34,6 +36,9 @@ export default function generatePlaylistCover(user: UserProfile, compressed = fa
 
       ctx.fillStyle = 'black'
       ctx.textAlign = 'start'
+
+      // @ts-ignore
+      await document.fonts.load('900 20px "Montserrat"')
       ctx.font = '900 20px "Montserrat"'
       ctx.fillText(user.name, 12, (BAR_HEIGHT / 2) + 6, SIZE - 60)
 

@@ -3,7 +3,7 @@ import {IS_PREVIEW, THEME_COLOR} from "../Constants";
 import {
   exportCanvasToBlob,
   handleArtistImage,
-  handleTrackImage,
+  handleTrackImage, loadFont,
   loadImage,
   roundedCanvas,
   writeText
@@ -71,6 +71,7 @@ export default async function generateNormalShare(data: RewindData, compressed =
   ctx.fillStyle = '#000'
   ctx.textBaseline = 'middle'
 
+  await loadFont('900 45px Montserrat')
   ctx.font = '900 45px Montserrat'
   ctx.lineWidth = 3
   ctx.strokeText('2020', MARGIN, HEADER_HEIGHT / 2 + 3)
@@ -82,9 +83,11 @@ export default async function generateNormalShare(data: RewindData, compressed =
   ctx.lineTo(168, HEADER_HEIGHT - HEADER_PADDING)
   ctx.stroke()
 
+  await loadFont('900 28px Montserrat')
   ctx.font = '900 28px Montserrat'
   writeText(ctx, data.user.name, 480, 188, HEADER_HEIGHT / 2 + 3)
 
+  await loadFont('900 60px Montserrat')
   ctx.font = '900 60px Montserrat'
   ctx.textBaseline = 'top'
   ctx.textAlign = 'center'
@@ -95,6 +98,7 @@ export default async function generateNormalShare(data: RewindData, compressed =
 
   writeText(ctx, data.stats.scrobbles.toLocaleString(), BOX_WIDTH, MARGIN + BOX_HALF, USER_Y + USER_IMAGE_SIZE + MARGIN)
   writeText(ctx, data.topTags[0].tag, BOX_WIDTH, SIZE - MARGIN - BOX_HALF, USER_Y + USER_IMAGE_SIZE + MARGIN)
+  await loadFont('500 28px Montserrat')
   ctx.font = '500 28px Montserrat'
   ctx.fillStyle = 'white'
 
@@ -103,6 +107,7 @@ export default async function generateNormalShare(data: RewindData, compressed =
   writeText(ctx, 'scrobbles', BOX_WIDTH, MARGIN + BOX_HALF, USER_Y + USER_IMAGE_SIZE + MARGIN + SUBTEXT_GAP)
   writeText(ctx, 'top tag', BOX_WIDTH, SIZE - MARGIN - BOX_HALF, USER_Y + USER_IMAGE_SIZE + MARGIN + SUBTEXT_GAP)
 
+  await loadFont('700 28px Montserrat')
   ctx.font = '700 28px Montserrat'
   ctx.fillStyle = THEME_COLOR
   ctx.textAlign = 'start'
@@ -112,6 +117,7 @@ export default async function generateNormalShare(data: RewindData, compressed =
   writeText(ctx, 'most listened artists', BOX_WIDTH - MARGIN, MARGIN, LIST_Y)
   writeText(ctx, 'most listened tracks', BOX_WIDTH - MARGIN, MARGIN + BOX_WIDTH, LIST_Y)
 
+  await loadFont('500 23px Montserrat')
   ctx.font = '500 23px Montserrat'
   ctx.fillStyle = 'white'
 
@@ -133,6 +139,7 @@ export default async function generateNormalShare(data: RewindData, compressed =
   }
 
 
+  await loadFont('600 16px Montserrat')
   ctx.font = '600 16px Montserrat'
   ctx.fillStyle = 'rgba(255, 255, 255, .5)'
   ctx.save()

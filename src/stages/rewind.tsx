@@ -25,7 +25,7 @@ const RewindStage: React.FC<{
   data: RewindData,
   useSensor?: boolean,
   onSensorChange?: (use: boolean) => void
-}> = forwardRef(({data}) => {
+}> = forwardRef(({data, useSensor, onSensorChange}) => {
   const [started, setStarted] = useState(false)
   const [sections, setSections] = useState<Section[]>([])
   const [isAnimating, currentSection, prev, next, handleStageEnd] = useSectionController(sections)
@@ -60,7 +60,7 @@ const RewindStage: React.FC<{
     scrobbleCountRef,
     topArtistsCountRef,
     topAlbumsCountRef,
-    // albumMemeRef,
+    albumMemeRef,
     topTracksCountRef,
     favoriteTracksRef,
     topTagsRef,
@@ -77,7 +77,6 @@ const RewindStage: React.FC<{
     // @ts-ignore
     if (!splashRef.current || started) return
 
-
     setSections(refs.map(r => (r.current as unknown as Section)))
     setStarted(true)
 
@@ -88,8 +87,8 @@ const RewindStage: React.FC<{
 
   useEffect(() => {
     if (started && generationStarted) {
-      // (splashRef.current as unknown as Section).start()
-      (albumMemeRef.current as unknown as Section).start()
+      (splashRef.current as unknown as Section).start()
+      // (albumMemeRef.current as unknown as Section).start()
       // (endingSectionRef.current as unknown as Section).start()
     }
   }, [started, generationStarted])
@@ -151,6 +150,8 @@ const RewindStage: React.FC<{
         onClickBack={handleBackSlideClick}
         handle={handle}
         sectionCount={sections.length}
+        useSensor={useSensor}
+        onSensorChange={onSensorChange}
       />
     </FullScreen>
   </div>

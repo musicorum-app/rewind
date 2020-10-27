@@ -186,6 +186,7 @@ const ImageShare: React.FC<{
           top: '100vh',
           duration: 0,
           onComplete: () => {
+            setShow(false)
             resolve()
           }
         })
@@ -228,8 +229,8 @@ const ImageShare: React.FC<{
                 <ImageWrapper>
                   {
                     images ? [
-                      <Image onClick={repaint} id="shareImage-normal" src={images[0]} alt="Rewind share image"/>,
-                      <Image onClick={repaint} id="shareImage-stories" src={images[1]} alt="Rewind share image"
+                      <Image id="shareImage-normal" src={images[0]} alt="Rewind share image"/>,
+                      <Image id="shareImage-stories" src={images[1]} alt="Rewind share image"
                              style={{
                                transform: 'rotateY(180deg)',
                                right: '32%',
@@ -241,11 +242,6 @@ const ImageShare: React.FC<{
               </Grid>
               <Grid item id="imageShareSectionActions">
                 <Grid container alignItems="center" direction="column">
-                  <Grid item>
-                    <Typography variant="caption" color="textSecondary">
-                      (if fonts are missing, click on the image to try again)
-                    </Typography>
-                  </Grid>
                   <Box mt={4} mb={2}>
                     <RoundedButton disabled={!images} size="large" onClick={download} color="primary" style={{
                       fontSize: small ? 14 : 20

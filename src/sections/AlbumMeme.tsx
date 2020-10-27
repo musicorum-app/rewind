@@ -6,8 +6,10 @@ import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
 import ParallaxWrapper from "../components/ParallaxWrapper";
 import RoundedButton from "../RoundedButton";
-import {Typography} from "@material-ui/core";
+import {Typography, useMediaQuery} from "@material-ui/core";
 import Link from "@material-ui/core/Link";
+import {generateAlbumMeme} from "../image";
+import Box from "@material-ui/core/Box";
 
 gsap.registerPlugin(CustomEase)
 
@@ -26,20 +28,24 @@ const Middle = styled.div`
   position: absolute;
   left: 50vw;
   top: 50vh;
-  transform: translateX(-50%) translateY(-50%) translateZ(-100px);
+  transform: translateX(-50%) translateY(-50%) translateZ(-30px) scale(.85);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   width: 100vw;
 `
 
 const MemeImage = styled.img`
   border-radius: 4px;
-  height: 75vh;
+  width: 100%;
 `
 
 const ButtonSide = styled.div`
-  margin-left: 32px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 `
 
 
@@ -50,6 +56,7 @@ const AlbumMeme: React.FC<{
 }> = forwardRef(({data, onEnd}, ref) => {
 
   const [show, setShow] = useState(false)
+  const smol = useMediaQuery(`(max-width: 480px)`)
 
   useEffect(() => {
     if (show) {
@@ -112,6 +119,15 @@ const AlbumMeme: React.FC<{
     })
   }
 
+  const download = () => {
+    const a = document.createElement('a')
+    if (data.images) {
+      a.href = data.images.albumMeme
+      a.download = 'Musicorum rewind 2020 - Loved album'
+      a.click()
+    }
+  }
+
   const start = () => {
     console.log('Album meme section')
     setShow(true)
@@ -131,26 +147,28 @@ const AlbumMeme: React.FC<{
             id="albumMemeImage"
             src={data.images?.albumMeme}/>
           <ButtonSide className="albumMemeFade">
-            <RoundedButton
-              color="primary"
-              size="large"
-              onClick={() => {
-              }}
-              style={{
-                fontSize: 27
-              }}
-            >
-              Download
-            </RoundedButton>
-            <Typography variant="h6" className="albumMemeFade" style={{
-              marginRight: 32
-            }}>
+            <Box my={3}>
+              <Typography variant={smol ? 'subtitle1' : 'h6'} className="albumMemeFade">
               Art made by <Link
               target="_blank"
-              href="https://musc.pw"
+              href="https://www.instagram.com/spiritrika"
               rel="nofollow nofollow"
-            >artista</Link>
+            >Luana Barros</Link>
             </Typography>
+            </Box>
+
+             <Box>
+               <RoundedButton
+                 color="primary"
+                 size="large"
+                 onClick={download}
+                 style={{
+                   fontSize: 27
+                 }}
+               >
+                 Download
+               </RoundedButton>
+             </Box>
           </ButtonSide>
         </Middle>
       </ParallaxWrapper>
