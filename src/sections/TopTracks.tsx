@@ -13,6 +13,7 @@ import {THEME_COLOR} from "../Constants";
 import {handleTrackImage} from "../utils";
 import {useMediaQuery} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
+import {useTranslation} from "react-i18next";
 
 gsap.registerPlugin(CustomEase)
 
@@ -164,6 +165,7 @@ const TopTracks: React.FC<{
 }> = forwardRef(({onEnd, data}, ref) => {
   const tracks = data.topTracks.slice(0, 18)
 
+  const {t} = useTranslation()
   const smol = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
   const [show, setShow] = useState(false)
   const [currentTrack, setCurrentTrack] = useState<number>(0)
@@ -355,7 +357,7 @@ const TopTracks: React.FC<{
   return show ? <Section center>
     <TopTracksSection id="topTracksSection">
       <ParallaxWrapper>
-        <Header title="THE TRACKS">
+        <Header title={t('sections.tracks.title')}>
         </Header>
         {/*<TracksScroller>*/}
         {tracks.map((track, index) => (
@@ -375,7 +377,7 @@ const TopTracks: React.FC<{
 
           <b>
             <Box fontSize={smol ? 12 : 20}>
-              {tracks[currentTrack].playCount} scrobbles
+              {t('sections.tracks.scrobbles', {scrobbles: tracks[currentTrack].playCount})}
             </Box>
           </b>
           <TrackPreview>

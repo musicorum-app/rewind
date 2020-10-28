@@ -10,6 +10,7 @@ import {Typography, useMediaQuery} from "@material-ui/core";
 import Link from "@material-ui/core/Link";
 import {generateAlbumMeme} from "../image";
 import Box from "@material-ui/core/Box";
+import {Trans} from "react-i18next";
 
 gsap.registerPlugin(CustomEase)
 
@@ -149,26 +150,35 @@ const AlbumMeme: React.FC<{
           <ButtonSide className="albumMemeFade">
             <Box my={3}>
               <Typography variant={smol ? 'subtitle1' : 'h6'} className="albumMemeFade">
-              Art made by <Link
-              target="_blank"
-              href="https://www.instagram.com/spiritrika"
-              rel="nofollow nofollow"
-            >Luana Barros</Link>
-            </Typography>
+              <Trans
+                i18nKey='sections.albumMeme.artMadeBy'
+                values={{
+                  artist: 'Luana Barros'
+                }}
+                components={[
+                  <Link
+                    key={0}
+                    target="_blank"
+                    href="https://www.instagram.com/spiritrika"
+                    rel="nofollow nofollow"
+                  />
+                ]}
+                />
+              </Typography>
             </Box>
 
-             <Box>
-               <RoundedButton
-                 color="primary"
-                 size="large"
-                 onClick={download}
-                 style={{
-                   fontSize: 27
-                 }}
-               >
-                 Download
-               </RoundedButton>
-             </Box>
+            <Box>
+              <RoundedButton
+                color="primary"
+                size="large"
+                onClick={download}
+                style={{
+                  fontSize: 27
+                }}
+              >
+                <Trans i18nKey='sections.albumMeme.download' />
+              </RoundedButton>
+            </Box>
           </ButtonSide>
         </Middle>
       </ParallaxWrapper>

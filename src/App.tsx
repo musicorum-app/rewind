@@ -94,23 +94,23 @@ function App() {
     //     }
     //   });
 
-    try {
-      const data: any = JSON.parse(localStorage.getItem('cache') as string)
-      if (data._v !== VERSION) {
-        localStorage.removeItem('cache')
-        throw new Error('Version mismatch')
-      }
-      // @ts-ignore
-      data.data.firstTrack.listenedAt = new Date(data.data.firstTrack.listenedAt)
-      // @ts-ignore
-      setRewindData(data.data)
-      setUserData(null)
-      setShowApp(false)
-      setShowStage1(true)
-      document.documentElement.style.position = 'fixed'
-    } catch (e) {
+    // try {
+    //   const data: any = JSON.parse(localStorage.getItem('cache') as string)
+    //   if (data._v !== VERSION) {
+    //     localStorage.removeItem('cache')
+    //     throw new Error('Version mismatch')
+    //   }
+    //   // @ts-ignore
+    //   data.data.firstTrack.listenedAt = new Date(data.data.firstTrack.listenedAt)
+    //   // @ts-ignore
+    //   setRewindData(data.data)
+    //   setUserData(null)
+    //   setShowApp(false)
+    //   setShowStage1(true)
+    //   document.documentElement.style.position = 'fixed'
+    // } catch (e) {
     doAnimation()
-    }
+    // }
   }, [])
 
   const doAnimation = () => {

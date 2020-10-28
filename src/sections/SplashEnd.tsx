@@ -6,6 +6,7 @@ import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
 import ParallaxWrapper from "../components/ParallaxWrapper";
+import {useTranslation} from "react-i18next";
 
 gsap.registerPlugin(CustomEase)
 
@@ -78,6 +79,7 @@ const SplashEnd: React.FC<{
   onEnd?: () => void;
 }> = forwardRef(({onEnd}, ref) => {
 
+  const {t} = useTranslation()
   const [show, setShow] = useState(false)
   const [started, setStarted] = useState(false)
   const small = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
@@ -291,11 +293,11 @@ const SplashEnd: React.FC<{
 
         <SideText id="splashEndSideText">
           <Typography variant="h4" style={{fontSize: 'inherit'}}>
-            ...and that was your
+            {t('sections.splashEnd.textUp')}
           </Typography>
           <SideTextGap>{" "}</SideTextGap>
           <Typography variant="h4" style={{fontSize: 'inherit'}}>
-            on music
+            {t('sections.splashEnd.textDown')}
           </Typography>
         </SideText>
       </ParallaxWrapper>

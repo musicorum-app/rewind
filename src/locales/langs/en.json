@@ -27,5 +27,140 @@
     "tip": "If you have slow performance, try closing external tabs/apps.",
     "continueWith": "Continue with sensor",
     "continueWithout": "Continue without sensor"
+  },
+  "loading": {
+    "title": "We found out a past rewind.",
+    "text": "You already used Musicorum Rewind at <0>{{date}}</0>",
+    "continue": "Continue",
+    "fetchAgain": "Clear and try again",
+    "loading": "Loading...",
+    "loadingSubText": "Sit down while we analyze your entire year on music...",
+    "texts": {
+      "0": "Grabbing your stats...",
+      "1": "Getting your first track...",
+      "2": "Browsing all your artists from 2020...",
+      "3": "Browsing all your albums...",
+      "4": "Working...",
+      "5": "Taking a look at your most listened artists of the year...",
+      "6": "Taking a look at your most listened albums of the year...",
+      "7": "Taking a look at your most listened tracks of the year...",
+      "8": "Tuning in to your favorite songs...",
+      "9": "Taking a deeper look on your most played songs...",
+      "10": "Cross matching data... This may take a while. Please be patient.",
+      "11": "Generating some fancy images..."
+    }
+  },
+  "sections": {
+    "months": {
+      "jan": "January",
+      "feb": "February",
+      "mar": "March",
+      "apr": "April",
+      "may": "May",
+      "jun": "June",
+      "jul": "July",
+      "aug": "August",
+      "sep": "September",
+      "oct": "October",
+      "nov": "November",
+      "dec": "December"
+    },
+    "beginning": {
+      "title": "THE BEGINNING",
+      "subTitle": "This was your first scrobble of <0>2020</0>",
+      "text": "<0>{{name}}</0> by <1>{{artist}}</1>, listened at <2>{{date}}</2>"
+    },
+    "scrobbleCount": {
+      "text": "is how many scrobbles you had this year"
+    },
+    "artists": {
+      "title": "THE ARTISTS",
+      "scrobbles": "scrobbles",
+      "text": "Your most listened artists were"
+    },
+    "albums": {
+      "title": "THE ALBUMS",
+      "scrobbles": "scrobbles",
+      "text": "Your most listened albums were"
+    },
+    "tracks": {
+      "title": "THE TRACKS",
+      "scrobbles": "{{scrobbles}} scrobbles"
+    },
+    "albumMeme": {
+      "artMadeBy": "Art made by <0>{{artist}}</0>",
+      "download": "Download"
+    },
+    "favorites": {
+      "text": "is how many tracks you loved this year"
+    },
+    "tags": {
+      "title": "TOP TAGS",
+      "subTitle": "These are your most listened tags, A.K.A. genres",
+      "notice": "This chart is based on your top 100 tracks, and then isolating the first 6."
+    },
+    "mainstream": {
+      "popular": "was your most popular artist, with <0>{{popularity}}%</0> popularity",
+      "least": "was your least popular artist, with <0>{{popularity}}%</0> popularity",
+      "text": "is how much mainstream you were *",
+      "notice": "* Based on an average of your top 100 artists' popularity from Spotify"
+    },
+    "analysis": {
+      "text": "is how positive your songs were *",
+      "notice": "* Based on an average of your top 100 tracks' valence analysis from Spotify"
+    },
+    "splashEnd": {
+      "textUp": "...and that was your",
+      "textDown": "on music"
+    },
+    "playlist": {
+      "title": "Save your whole year in a single playlist!",
+      "save": {
+        "spotify": "Save on Spotify",
+        "deezer": "Save on Deezer",
+        "musicorum": "Save on Musicorum"
+      },
+      "openInNewTab": "Open in a new tab",
+      "error": "Could not create a {{service}} playlist :/"
+    },
+    "imageShare": {
+      "download": "Download",
+      "normal": "Normal version",
+      "stories": "Stories version",
+      "title": "Share your rewind!",
+      "text": "Before we end, take a souvenir from this year's rewind!"
+    },
+    "ending": {
+      "title": "The end!",
+      "text1": "Well, and that was your year on music! We hope you liked this new experience.",
+      "text2": "This website was developed by one person with no financial return. If you like this idea and want to see more in the future, please consider becoming a patron, or consider sharing it and giving us a feedback :)",
+      "text3": "We hope to see you next year! Happy 2021!",
+      "patreon": "Patreon",
+      "tweetButton": "Tweet",
+      "credits": "Credits",
+      "feedback": "Feedback",
+      "tweet": "Come take a look at your year in music from lastfm, by @{{user}}",
+      "creditsText": "Here are some credits to all the people who helped to build Musicorum Rewind 2020",
+      "creditsNames": {
+        "designDev": "Design & development",
+        "artist": "Album meme artist",
+        "patrons": "Patrons",
+        "special": "Special thanks",
+        "betaTesters": "Beta testers"
+      }
+    }
+  },
+  "images": {
+    "share": {
+      "scrobbles": "scrobbles",
+      "topTag": "top tag",
+      "artists": "most listened artists",
+      "tracks": "most listened tracks",
+      "albums": "most listened albums",
+      "tags": "most listened tags"
+    },
+    "albumMeme": {
+      "text": "i love this album more than i love my life"
+    }
   }
 }

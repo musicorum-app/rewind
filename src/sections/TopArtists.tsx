@@ -10,6 +10,7 @@ import {handleArtistImage} from "../utils";
 import {THEME_COLOR} from "../Constants";
 import {useMediaQuery} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
+import {useTranslation} from "react-i18next";
 
 gsap.registerPlugin(CustomEase)
 
@@ -176,6 +177,7 @@ const TopArtists: React.FC<{
   onEnd?: () => void;
 }> = forwardRef(({onEnd, data}, ref) => {
 
+  const {t} = useTranslation()
   const smol = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
   const [show, setShow] = useState(false)
   const [hoveredArtist, setHoveredArtist] = useState<FormattedArtist>(data.topArtists[0])
@@ -249,8 +251,8 @@ const TopArtists: React.FC<{
   return show ? <Section center>
     <TopArtistsSection id="topArtistsSection">
       <ParallaxWrapper>
-        <Header title="THE ARTISTS" notAbsolute={smol}>
-          {smol ? 'Your most listened artists were' : null}
+        <Header title={t('sections.artists.title')} notAbsolute={smol}>
+          {smol ? t('sections.artists.text') : null}
         </Header>
         {
           smol ? <>
@@ -287,10 +289,10 @@ const TopArtists: React.FC<{
             </ImageWraper>,
             <ScrobbleCount>
               <h3>{Number(hoveredArtist.playcount).toLocaleString()}</h3>
-              scrobbles
+              {t('sections.artists.scrobbles')}
             </ScrobbleCount>,
             <ArtistList>
-              {!smol ? 'Your most listened artists were' : null}
+              {!smol ? t('sections.artists.text') : null}
               <List>
                 {
                   artists.map((a, i) => <ListItem

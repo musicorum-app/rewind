@@ -1,5 +1,6 @@
 import {Nullable, UserProfile} from "../api/interfaces";
 import {THEME_COLOR} from "../Constants";
+import {TFunction} from "i18next";
 
 export default function generatePlaylistCover(user: UserProfile, compressed = false): Promise<string> {
   return new Promise(resolve => {

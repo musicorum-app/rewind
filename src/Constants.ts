@@ -10,3 +10,4 @@ export const SPOTIFY_ID = '6cbbdd6ab64c449db2cb42ecb0984f77'
 export const DEEZER_ID = '438862'
 export const AUTH_CALLBACK_URL = 'http://localhost:9030/auth/'
 export const IS_PREVIEW = !true
+export const FORM_URL = 'https://forms.gle/iCCAEjfhTZVHqadYA'

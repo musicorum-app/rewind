@@ -4,10 +4,11 @@ import {RewindData} from "../api/interfaces";
 import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
+import {useTranslation} from "react-i18next";
 
 gsap.registerPlugin(CustomEase)
 
-const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+const monthsShort = ['jan', 'feb',  'mar',  'apr',  'may',  'jun',  'jul',  'aug',  'sep',  'oct',  'nov',  'dec']
 
 const cubeSize = 120
 const cubeSizeSmall = 58
@@ -88,6 +89,9 @@ const MonthsAnimation: React.FC<{
   ref?: React.Ref<HTMLDivElement>,
   onEnd?: () => void;
 }> = forwardRef(({onEnd, data}, ref) => {
+  const { t } = useTranslation()
+
+  const months = monthsShort.map(m => t('sections.months.' + m))
 
   const start = () => {
     console.log('Starting')

@@ -8,6 +8,7 @@ import ParallaxWrapper from "../components/ParallaxWrapper";
 import {THEME_COLOR} from "../Constants";
 import {handleTrackImage} from "../utils";
 import {useMediaQuery} from "@material-ui/core";
+import {useTranslation} from "react-i18next";
 
 gsap.registerPlugin(CustomEase)
 
@@ -105,6 +106,7 @@ const Analysis: React.FC<{
   onEnd?: () => void;
 }> = forwardRef(({data, onEnd}, ref) => {
 
+  const {t} = useTranslation()
   const [show, setShow] = useState(false)
   const [analysis, setAnalysis] = useState<Nullable<Analysis>>(null)
   const small = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
@@ -272,10 +274,10 @@ const Analysis: React.FC<{
         }
 
         <ValenceText className="analysisFinalText endText">
-          is how positive your songs were *
+          {t('sections.analysis.text')}
         </ValenceText>
         <Notice className="analysisFinalText endText">
-          * Based on an average of your top 100 tracks' valence analysis from Spotify
+          {t('sections.analysis.notice')}
         </Notice>
       </ParallaxWrapper>
     </Content>

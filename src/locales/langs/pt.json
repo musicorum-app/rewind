@@ -19,5 +19,148 @@
     "language": "Linguagem",
     "sensor": "Usar sensor de orientação",
     "clearCache": "Limpar cache"
+  },
+  "sensor": {
+    "title": "Sensor de orientação detectado!",
+    "text": "Parece que seu dispositivo tem suporte para o sensor de orientação. O Musicorum Rewind pode usá-lo em algumas animações de fundo.",
+    "text2": "Porém isso pode abaixar a performance. Você pode desativar depois nas configurações!",
+    "tip": "Se tiver travando um pouco, tente fechar outras abas/aplicativos.",
+    "continueWith": "Continuar com sensor",
+    "continueWithout": "Continuar sem sensor"
+  },
+  "loading": {
+    "title": "Nós achamos um rewind anterior.",
+    "text": "Você já usou este rewind em <0>{{date}}</0>",
+    "continue": "Continuar",
+    "fetchAgain": "Apagar e tentar novamente",
+    "loading": "Carregando...",
+    "loadingSubText": "Sente-se e aguarde enquanto analisamos seu ano inteiro na musica...",
+    "texts": {
+      "0": "Pegando alguns dados...",
+      "1": "Vendo sua primeira música ouvida...",
+      "2": "Dando uma olhada nos artistas que ouviu em 2020...",
+      "3": "Agora analisando seus albums...",
+      "4": "Working...",
+      "5": "Organizando os artistas que mais ouviu esse ano...",
+      "6": "Organizando os albums que mais ouviu esse ano...",
+      "7": "Organizando as músicas que mais ouviu esse ano...",
+      "8": "Ouvindo suas músicas favoritas...",
+      "9": "Observando mais suas músicas favoritas...",
+      "10": "Cruzando dados. Isso pode demorar um pouco, por favor, seja paciente.",
+      "11": "Desenhando umas imagens bontinhas..."
+    }
+  },
+  "sections": {
+    "months": {
+      "jan": "Janeiro",
+      "feb": "Fevereiro",
+      "mar": "Março",
+      "apr": "Abril",
+      "may": "Maio",
+      "jun": "Junho",
+      "jul": "Julho",
+      "aug": "Agosto",
+      "sep": "Setembro",
+      "oct": "Outubro",
+      "nov": "Novembro",
+      "dec": "Dezembro"
+    },
+    "beginning": {
+      "title": "O INÍCIO",
+      "subTitle": "Esse foi seu primeiro scrobble de <0>2020</0>",
+      "text": "<0>{{name}}</0> de <1>{{artist}}</1>, ouvido em <1>{{date}}</1>"
+    },
+    "scrobbleCount": {
+      "text": "é o quanto de músicas você ouviu nesse ano"
+    },
+    "artists": {
+      "title": "OS ARTISTAS",
+      "scrobbles": "scrobbles",
+      "text": "Os artistas que você mais ouviu foram"
+    },
+    "albums": {
+      "title": "OS ALBUMS",
+      "scrobbles": "scrobbles",
+      "text": "Os albums que você mais ouviu foram"
+    },
+    "tracks": {
+      "title": "AS MÚSICAS",
+      "scrobbles": "{{scrobbles}} scrobbles"
+    },
+    "albumMeme": {
+      "artMadeBy": "Arte feita por <0>{{artist}}</0>",
+      "download": "Baixar"
+    },
+    "favorites": {
+      "text": "é o quanto de músicas você amou este ano"
+    },
+    "tags": {
+      "title": "AS TAGS",
+      "subTitle": "Essas são as tags mais ouvidas neste ano. Basicamente os gêneros que mais ouviu",
+      "notice": "Esses dados são baseados nas suas 100 músicas mais ouvidas, e então isolando-as 6."
+    },
+    "mainstream": {
+      "popular": "foi seu artista mais ouvido(a), com <0>{{popularity}}%</0> popularidade",
+      "least": "foi seu artista menos ouvido(a), com <0>{{popularity}}%</0> popularidade",
+      "text": "é o quão \"maria vai com as outras\" você é *",
+      "notice": "* Baseado na média de popularidade dos seus 100 artistas mais ouvidos, com dados do Spotify"
+    },
+    "analysis": {
+      "text": "é o quão positivo suas musicas foram *",
+      "notice": "* Baseado na média de valência dos seus 100 artistas mais ouvidos, com dados do Spotify"
+    },
+    "splashEnd": {
+      "textUp": "...e esse foi seu",
+      "textDown": "na música"
+    },
+    "playlist": {
+      "title": "Salve seu ano inteiro em uma playlist!",
+      "save": {
+        "spotify": "Salvar no Spotify",
+        "deezer": "Salvar no Deezer",
+        "musicorum": "Salvar no Musicorum"
+      },
+      "openInNewTab": "Abrir em uma nova aba",
+      "error": "Não foi possível criar uma playlist do {{service}} :/"
+    },
+    "imageShare": {
+      "download": "Baixar",
+      "normal": "Versão normal",
+      "stories": "Versão de stories",
+      "title": "Compartilhe seu rewind!",
+      "text": "Antes de terminarmos, pegue umas lembrancinhas para lembrar de seu rewind!"
+    },
+    "ending": {
+      "title": "O fim!",
+      "text1": "Então, esse foi seu seu ano na música, e esperamos que tenha gostado dessa nova experiência.",
+      "text2": "Este site foi desenvolvido por uma pessoa, sem retorno financeiro. Se gostou da ideia e deseja ver mais no futuro, considere apoiar-nos no Patreon, ou apenas compartilhe e nos de uma opinião sobre o projeto  :)",
+      "text3": "Esperamos vê-lo novamente ano que vem! Feliz 2021!",
+      "patreon": "Patreon",
+      "tweetButton": "Tweeetar",
+      "credits": "Créditos",
+      "feedback": "Dar opinião",
+      "tweet": "Venha ver seu ano na música do lastfm, por @{{user}}",
+      "creditsText": "Aqui está os créditos para todas as pessoas que ajudaram à realizar o Musicorum Rewind 2020",
+      "creditsNames": {
+        "designDev": "Design & Desenvolvimento",
+        "artist": "Artista do meme do album",
+        "patrons": "Patrons",
+        "special": "Agradecimentos especiais",
+        "betaTesters": "Testadores beta"
+      }
+    }
+  },
+  "images": {
+    "share": {
+      "scrobbles": "scrobbles",
+      "topTag": "top tag",
+      "artists": "artists mais ouvidos",
+      "tracks": "músicas mais ouvidas",
+      "albums": "albums mais ouvidos",
+      "tags": "tags mais ouvidas"
+    },
+    "albumMeme": {
+      "text": "eu amo esse álbum mais que eu amo minha vida"
+    }
   }
 }

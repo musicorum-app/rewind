@@ -10,6 +10,7 @@ import {handleAlbumImage, handleArtistImage} from "../utils";
 import {THEME_COLOR} from "../Constants";
 import {useMediaQuery} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
+import {useTranslation} from "react-i18next";
 
 gsap.registerPlugin(CustomEase)
 
@@ -177,6 +178,7 @@ const TopAlbums: React.FC<{
   onEnd?: () => void;
 }> = forwardRef(({onEnd, data}, ref) => {
 
+  const {t} = useTranslation()
   const smol = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
   const [show, setShow] = useState(false)
   const [hoveredAlbum, setHoveredAlbum] = useState<FormattedAlbum>(data.topAlbums[0])
@@ -249,8 +251,8 @@ const TopAlbums: React.FC<{
   return show ? <Section center>
     <TopAlbumsSection id="topAlbumsSection">
       <ParallaxWrapper>
-        <Header title="THE ALBUMS" notAbsolute={smol}>
-          {smol ? 'Your most listened albums were' : null}
+        <Header title={t('sections.albums.title')} notAbsolute={smol}>
+          {smol ? t('sections.albums.text') : null}
         </Header>
 
         {
@@ -291,7 +293,7 @@ const TopAlbums: React.FC<{
             </ScrobbleCount>,
 
             <AlbumList>
-              {!smol ? 'Your most listened albums were' : null}
+              {!smol ? t('sections.albums.text') : null}
               <List>
                 {
                   Albums.map((a, i) => <ListItem

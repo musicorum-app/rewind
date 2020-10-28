@@ -13,6 +13,7 @@ import BigColoredButton from "../components/BigColoredButton";
 
 import {ReactComponent as TwitterLogo} from '../assets/logos/twitter.svg'
 import {ReactComponent as PatreonLogo} from '../assets/logos/patreon.svg'
+import {useTranslation} from "react-i18next";
 
 gsap.registerPlugin(CustomEase)
 
@@ -78,6 +79,7 @@ const ImageShare: React.FC<{
   onEnd?: () => void;
 }> = forwardRef(({data, onEnd}, ref) => {
 
+  const {t} = useTranslation()
   const [show, setShow] = useState(false)
   const [images, setImages] = useState<Nullable<string[]>>(null)
   const [isStoriesSelected, setStoriesSelected] = useState(false)
@@ -136,8 +138,8 @@ const ImageShare: React.FC<{
   }
 
   const repaint = async () => {
-    const stories = URL.createObjectURL(await generateStoriesShare(data))
-    const image = URL.createObjectURL(await generateNormalShare(data))
+    const stories = URL.createObjectURL(await generateStoriesShare(t, data))
+    const image = URL.createObjectURL(await generateNormalShare(t, data))
     setImages([image, stories])
   }
 
@@ -246,13 +248,13 @@ const ImageShare: React.FC<{
                     <RoundedButton disabled={!images} size="large" onClick={download} color="primary" style={{
                       fontSize: small ? 14 : 20
                     }}>
-                      Download
+                      {t('sections.imageShare.download')}
                     </RoundedButton>
                   </Box>
                   <RoundedButton disabled={!images} onClick={switchStories} color="primary" outlined style={{
                     fontSize: small ? 11 : 17
                   }}>
-                    {isStoriesSelected ? 'Normal' : 'Stories'} version
+                    {t('sections.imageShare.' + (isStoriesSelected ? 'normal' : 'stories'))}
                   </RoundedButton>
                 </Grid>
               </Grid>
@@ -263,11 +265,13 @@ const ImageShare: React.FC<{
                   style={{width: '100%', height: small ? 'auto' : '100%'}}>
               <Grid item>
                 <Typography align="center" variant={small ? 'h5' : 'h4'}>
-                  <b>Share your rewind!</b>
+                  <b>
+                    {t('sections.imageShare.title')}
+                  </b>
                 </Typography>
                 <Box mt={1} paddingX={small ? 4 : 6} fontSize={small ? 17 : 21}>
                   <Typography align="center" style={{fontSize: 'inherit'}}>
-                    Before we end, take a souvenir from this year's rewind!
+                    {t('sections.imageShare.text')}
                   </Typography>
                 </Box>
 

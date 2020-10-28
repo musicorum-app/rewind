@@ -7,6 +7,7 @@ import {gsap} from "gsap";
 import {Grid} from "@material-ui/core";
 import RoundedButton from "../RoundedButton";
 import Typography from "@material-ui/core/Typography";
+import {useTranslation} from "react-i18next";
 
 const PromptWrapper = styled.div`
   opacity: 0;
@@ -95,6 +96,7 @@ const OrientationSensorPrompt: React.FC<{
   onContinue?: (useSensor: boolean) => void
 }> = ({ onContinue }) => {
 
+  const { t } = useTranslation()
   const [orientationSensor, setSensor] = useState<any>(null)
 
   useLayoutEffect(() => {
@@ -150,7 +152,7 @@ const OrientationSensorPrompt: React.FC<{
   }
 
   return <PromptWrapper id="orientationSensor">
-    <Title>Orientation sensor detected!</Title>
+    <Title>{t('sensor.title')}</Title>
     <CubeSpacing>
       {" "}
     </CubeSpacing>
@@ -168,11 +170,11 @@ const OrientationSensorPrompt: React.FC<{
       {" "}
     </CubeSpacing>
     <Text>
-
+      {t('sensor.text')}
     </Text>
 
     <Text>
-      But this can slow down performance on some devices. You can disable it here or later on the settings!
+      {t('sensor.text2')}
     </Text>
 
     <Typography color="textSecondary" align="center" style={{
@@ -180,7 +182,7 @@ const OrientationSensorPrompt: React.FC<{
       fontSize: 11
     }}>
       <Text>
-        <em>If you have slow performance, try closing external tabs/apps.</em>
+        <em>{t('sensor.tip')}</em>
       </Text>
     </Typography>
     <Grid container spacing={1} style={{
@@ -193,7 +195,7 @@ const OrientationSensorPrompt: React.FC<{
           fullWidth
           color="primary"
         >
-          Continue with sensor
+          {t('sensor.continueWith')}
         </RoundedButton>
       </Grid>
       <Grid item xs={12}>
@@ -202,7 +204,7 @@ const OrientationSensorPrompt: React.FC<{
           fullWidth
           outlined
         >
-          Continue without sensor
+          {t('sensor.continueWithout')}
         </RoundedButton>
       </Grid>
     </Grid>

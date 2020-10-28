@@ -15,6 +15,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import RoundedButton from "../RoundedButton";
 import {VERSION} from "../Constants";
 import {hasOrientationSensor} from "../utils";
+import {Trans, useTranslation} from "react-i18next";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -39,6 +40,7 @@ const LoadingStage: React.FC<{
   onComplete: (data: RewindData) => void,
   ref: React.Ref<HTMLDivElement>
 }> = forwardRef(({user, onComplete}, ref) => {
+  const {t} = useTranslation()
   const [progress, setProgress] = useState(0)
   const [progressText, setProgressText] = useState('Loading...')
   const [rewindData, setRewindData] = useState<RewindData | null>(null)
@@ -63,7 +65,7 @@ const LoadingStage: React.FC<{
   }
 
   const fetchData = async () => {
-    const data = await dataFetcher(user, (pgr, text) => {
+    const data = await dataFetcher(t, user, (pgr, text) => {
       setProgress(prevState => pgr ? pgr : prevState)
       setProgressText(text)
     })
@@ -103,11 +105,20 @@ const LoadingStage: React.FC<{
           {
             cacheData ? <>
                 <Typography component="h5" variant="h5">
-                  <Box fontWeight={600}>We found out a past rewind.</Box>
+                  <Box fontWeight={600}>{t('loading.title')}</Box>
                 </Typography>
                 <br/>
-                <Typography>You already used Musicorum Rewind
-                  at <strong>{getFormatted(cacheData.cachedAt)}</strong></Typography>
+                <Typography>
+                  <Trans
+                    i18nKey="loading.text"
+                    components={[
+                      <strong key={0}/>
+                    ]}
+                    values={{
+                      date: getFormatted(cacheData.cachedAt)
+                    }}
+                  />
+                </Typography>
                 <ListItem>
                   <ListItemAvatar>
                     <Avatar style={{
@@ -124,21 +135,21 @@ const LoadingStage: React.FC<{
                 </ListItem>
                 <Box my={2}>
                   <RoundedButton onClick={complete} fullWidth color="primary">
-                    Continue
+                    {t('loading.continue')}
                   </RoundedButton>
                   <Box mt={1}>
                     <RoundedButton onClick={fetchAgain} outlined fullWidth color="primary">
-                      Fetch again
+                      {t('loading.fetchAgain')}
                     </RoundedButton>
                   </Box>
                 </Box>
               </>
               : <>
                 <Typography component="h4" variant="h4">
-                  <Box fontWeight={700}>Loading...</Box>
+                  <Box fontWeight={700}>{t('loading.loading')}</Box>
                 </Typography>
                 <br/>
-                <Typography>Dont mind, we are just grabbing your entire 2020 on music...</Typography>
+                <Typography>{t('loading.loadingSubText')}</Typography>
                 <Box mt={5}>
                   <Typography color="textSecondary">{progressText}</Typography>
                   <LinearProgress variant="determinate" value={progress}/>

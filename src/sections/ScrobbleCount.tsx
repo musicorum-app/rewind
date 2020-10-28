@@ -6,6 +6,7 @@ import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
 import ParallaxWrapper from "../components/ParallaxWrapper";
 import {useMediaQuery} from "@material-ui/core";
+import {useTranslation} from "react-i18next";
 
 gsap.registerPlugin(CustomEase)
 
@@ -153,6 +154,7 @@ const ScrobbleCount: React.FC<{
   onEnd?: () => void;
 }> = forwardRef(({onEnd, data}, ref) => {
 
+  const {t} = useTranslation()
   const [show, setShow] = useState(false)
   const smol = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
 
@@ -262,7 +264,7 @@ const ScrobbleCount: React.FC<{
         <CarouselBox id="carouselBox"/>
         <BottomTextBox>
           <BottomText id="bottomText">
-            is how many scrobbles you had this year
+            {t('sections.scrobbleCount.text')}
           </BottomText>
         </BottomTextBox>
         <LeftImage className="counterBackgroundImage" src={data.topTracks[2].image} draggable={false}/>

@@ -8,6 +8,7 @@ import HeartIcon from '../assets/heart.svg'
 import ParallaxWrapper from "../components/ParallaxWrapper";
 import {THEME_COLOR} from "../Constants";
 import {getReversed} from "../utils";
+import {useTranslation} from "react-i18next";
 
 gsap.registerPlugin(CustomEase)
 
@@ -77,6 +78,7 @@ const FavoriteTracks: React.FC<{
   onEnd?: () => void;
 }> = forwardRef(({data, onEnd}, ref) => {
 
+  const {t} = useTranslation()
   const [show, setShow] = useState(false)
   const REPEATS = 7
 
@@ -212,7 +214,7 @@ const FavoriteTracks: React.FC<{
           }
         </AnimationWrapper>
         <FavoriteSubtext id="favoriteSubtext">
-          is how many tracks you loved this year
+          {t('sections.favorites.text')}
         </FavoriteSubtext>
       </ParallaxWrapper>
     </Content>

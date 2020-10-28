@@ -88,7 +88,7 @@ const RewindStage: React.FC<{
   useEffect(() => {
     if (started && generationStarted) {
       (splashRef.current as unknown as Section).start()
-      // (albumMemeRef.current as unknown as Section).start()
+      // (endingSectionRef.current as unknown as Section).start()
       // (endingSectionRef.current as unknown as Section).start()
     }
   }, [started, generationStarted])

@@ -34,6 +34,7 @@ import PlaylistStrings from '../assets/playlist.json'
 import Snackbar from "@material-ui/core/Snackbar";
 import {Alert} from "@material-ui/lab";
 import DeezerAPI from "../api/DeezerAPI";
+import {useTranslation} from "react-i18next";
 
 gsap.registerPlugin(CustomEase)
 
@@ -96,6 +97,7 @@ const PlaylistSection: React.FC<{
   onEnd?: () => void;
 }> = forwardRef(({data, onEnd}, ref) => {
 
+  const {t} = useTranslation()
   const [show, setShow] = useState(false)
   const [loading, setLoading] = useState(false)
   const [dialogData, setDialogData] = useState<Nullable<DialogData>>(null)
@@ -198,7 +200,7 @@ const PlaylistSection: React.FC<{
     } catch (e) {
       console.error(e)
       setLoading(false)
-      setSnackbar('Could not create a Musicorum playlist :/')
+      setSnackbar(t('sections.playlist.error', {service: 'Musicorum'}))
       setShowSnackbar(true)
     }
   }
@@ -269,7 +271,7 @@ const PlaylistSection: React.FC<{
     } catch (e) {
       console.error(e)
       setLoading(false)
-      setSnackbar('Could not create a Spotify playlist :/')
+      setSnackbar(t('sections.playlist.error', {service: 'Spotify'}))
       setShowSnackbar(true)
     }
   }
@@ -333,7 +335,7 @@ const PlaylistSection: React.FC<{
     } catch (e) {
       console.error(e)
       setLoading(false)
-      setSnackbar('Could not create a Deezer playlist :/')
+      setSnackbar(t('sections.playlist.error', {service: 'Deezer'}))
       setShowSnackbar(true)
     }
   }
@@ -358,7 +360,7 @@ const PlaylistSection: React.FC<{
             <Grid item>
               <Box mb={small ? 1 : 6}>
                 <Typography align="center" variant={small ? 'body1' : 'h3'}>
-                  <b>Save your whole year in a single playlist!</b>
+                  <b>{t('sections.playlist.title')}</b>
                 </Typography>
               </Box>
             </Grid>
@@ -387,7 +389,7 @@ const PlaylistSection: React.FC<{
                           marginRight: 10
                         }}/>}
                       >
-                        Save on Spotify
+                        {t('sections.playlist.save.spotify')}
                       </BigColoredButton>
                     </Box>
 
@@ -405,7 +407,7 @@ const PlaylistSection: React.FC<{
                           marginRight: 10
                         }}/>}
                       >
-                        Save on Deezer
+                        {t('sections.playlist.save.deezer')}
                       </BigColoredButton>
                     </Box>
 
@@ -422,7 +424,7 @@ const PlaylistSection: React.FC<{
                           marginRight: 10
                         }}/>}
                       >
-                        Save on Musicorum
+                        {t('sections.playlist.save.musicorum')}
                       </BigColoredButton>
                     </Box>
                   </Grid>
@@ -473,7 +475,7 @@ const PlaylistSection: React.FC<{
                           <Grid item>
                             <Link href={dialogData.data} target="_blank" rel="noreferrer nofollow">
                               <Box fontSize={26} fontWeight={700}>
-                                Open in a new tab
+                                {t('sections.playlist.openInNewTab')}
                               </Box>
                             </Link>
                           </Grid>

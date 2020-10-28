@@ -23,6 +23,7 @@ import {chunks as chunkArray} from '@reactgular/chunks'
 import {addToMap, getShuffledArray} from "../utils";
 import MusicorumAPI from "./MusicorumAPI";
 import {generateAlbumMeme, generateNormalShare, generatePlaylistCover, generateStoriesShare} from "../image";
+import {TFunction} from "i18next";
 
 const year = 2020
 const offset = 0
@@ -30,6 +31,7 @@ const startTime = (new Date(year, 0, 1, 0, 0).getTime() / 1000) + offset
 const endTime = (new Date(year + 1, 0, 0, 0, 0).getTime() / 1000) + offset
 
 const dataFetcher = async (
+  t: TFunction,
   userData: UserProfile,
   onProgress: (pgr: number | null, txt: string) => void
 ): Promise<RewindData> => {
@@ -38,49 +40,49 @@ const dataFetcher = async (
     [
       () =>
         API.userGetRecentTracks(userData.name, startTime, endTime, 1),
-      'Grabbing your stats...'
+      t('loading.texts.0')
     ],
     [
       (r: any[]) =>
         API.userGetRecentTracks(userData.name, startTime, endTime, 1, r[0]['@attr']['totalPages']),
-      'Getting your first track...'
+      t('loading.texts.1')
     ],
     [
       (r: any[], pgr: Function) => fetchArtists(userData.name, r, pgr),
-      'Browsing all your artists from 2020...'
+      t('loading.texts.2')
     ],
     [
       (r: any[], pgr: Function) => fetchAlbums(userData.name, r, pgr),
-      'Browsing all your albums...'
+      t('loading.texts.3')
     ],
     [
       () => console.log('DEPRECATED'),
-      'Working...'
+      t('loading.texts.4')
     ],
     [
       () =>
         API.userGetArtistChart(userData.name, startTime, endTime, 100),
-      'Taking a look at your most listened artists of the year...'
+      t('loading.texts.5')
     ],
     [
       () =>
         API.userGetAlbumChart(userData.name, startTime, endTime, 50),
-      'Taking a look at your most listened albums of the year...'
+      t('loading.texts.6')
     ],
     [
       () =>
         API.userGetTrackChart(userData.name, startTime, endTime, 150),
-      'Taking a look at your most listened tracks of the year...'
+      t('loading.texts.7')
     ],
     [
       () =>
         fetchFavorites(userData.name),
-      'Tuning in to your favorite songs...'
+      t('loading.texts.8')
     ],
     [
       (r: any[], pgr: Function) =>
         fetchTrackInfos(userData.name, r, pgr),
-      'Taking a deeper look on your most played songs...',
+      t('loading.texts.9'),
       101
     ]
   ]
@@ -104,7 +106,7 @@ const dataFetcher = async (
     result.push(await f[0](result, nextStep))
   }
 
-  onProgress(null, 'Cross matching data... This may take a while. Please be patient.')
+  onProgress(null, t('loading.texts.10'))
 
   const toFetch = new Map<string, SpotifyArtistBase>()
 
@@ -124,9 +126,10 @@ const dataFetcher = async (
   const artists = groupArtists(result[2])
   const albums = groupAlbums(result[3])
   const firstTrack: ListenedTrack = result[1].track[1] || result[1].track[0]
-  const topTracks = await formatTracks(result[9])
+  const topTracks = await formatTracks(result[9], result[7].track)
   console.log(firstTrack)
   const scrobbles = Number(result[0]['@attr']['total'])
+
 
   const tempData: RewindData = {
     user: userData,
@@ -155,7 +158,7 @@ const dataFetcher = async (
     topTags: formatTags(topTracks)
       .sort((a, b) => b.count - a.count)
   }
- onProgress(null, 'Generating some fancy images...')
+ onProgress(null, t('loading.texts.11'))
 
   const [
     playlist,
@@ -164,9 +167,9 @@ const dataFetcher = async (
     albumMeme
   ] = (await Promise.all([
     generatePlaylistCover(tempData.user),
-    generateNormalShare(tempData, true),
-    generateStoriesShare(tempData, true),
-    generateAlbumMeme(tempData, true)
+    generateNormalShare(t, tempData, true),
+    generateStoriesShare(t, tempData, true),
+    generateAlbumMeme(t, tempData)
   ]))
 
   localStorage.setItem('image.playlist', playlist)
@@ -507,16 +510,32 @@ const formatAlbums = async (albums: WeeklyAlbum[]): Promise<FormattedAlbum[]> =>
   })
 }
 
-const formatTracks = async (tracks: TrackInfo[]): Promise<FormattedTrack[]> => {
-  const formatted: FormattedTrack[] = tracks.map(track => ({
-    name: track.name,
-    album: track.album?.title,
-    artist: track.artist.name,
-    image: track.album?.image[3]?.["#text"],
-    url: track.url,
-    tags: track.toptags.tag.map(t => t.name),
-    playCount: parseInt(track.userplaycount || '0')
-  }))
+const formatTracks = async (tracks: TrackInfo[], otherTracks: WeeklyTrack[]): Promise<FormattedTrack[]> => {
+  console.log(tracks)
+  const formatted: FormattedTrack[] = tracks.map((track, i) => {
+    if (track && track.name) {
+      return {
+        name: track.name,
+        album: track.album?.title,
+        artist: track.artist.name,
+        image: track.album?.image[3]?.["#text"],
+        url: track.url,
+        tags: track.toptags.tag.map(t => t.name),
+        playCount: parseInt(track.userplaycount || '0')
+      }
+    } else {
+      const ot = otherTracks[i]
+      return {
+        name: ot.name,
+        album: ot.album || '',
+        artist: ot.artist['#text'],
+        image: ot.image[3]?.["#text"],
+        url: ot.url,
+        tags: [],
+        playCount: parseInt(ot.playcount + '' || '0')
+      }
+    }
+  })
 
 
   const result = await MusicorumAPI.fetchTracksMetadata(formatted.slice(0, 150))

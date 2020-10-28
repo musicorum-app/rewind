@@ -8,8 +8,9 @@ import {
   roundedCanvas,
   writeText
 } from "../utils";
+import {TFunction} from "i18next";
 
-export default async function generateStoriesShare(data: RewindData, compressed = false): Promise<string> {
+export default async function generateStoriesShare(t: TFunction, data: RewindData, compressed = false): Promise<string> {
   const WIDTH = 1080
   const HEIGHT = 1920
   const canvas = document.createElement('canvas')
@@ -93,13 +94,13 @@ export default async function generateStoriesShare(data: RewindData, compressed 
   await loadFont('500 34px Montserrat')
   ctx.font = '500 34px Montserrat'
   ctx.fillStyle = 'white'
-  writeText(ctx, 'scrobbles', WIDTH - (MARGIN * 2), WIDTH / 2, USER_Y + USER_IMAGE_SIZE + (MARGIN * 2) + 63 + 153)
+  writeText(ctx, t('images.share.scrobbles'), WIDTH - (MARGIN * 2), WIDTH / 2, USER_Y + USER_IMAGE_SIZE + (MARGIN * 2) + 63 + 159)
 
   const lists: string[][] = [
-    ['most listened artists', ...data.topArtists.map(a => a.name)],
-    ['most listened albums', ...data.topAlbums.map(a => a.name)],
-    ['most listened tracks', ...data.topTracks.map(a => a.name)],
-    ['most listened tags', ...data.topTags.map(a => a.tag)]
+    [t('images.share.artists'), ...data.topArtists.map(a => a.name)],
+    [t('images.share.albums'), ...data.topAlbums.map(a => a.name)],
+    [t('images.share.tracks'), ...data.topTracks.map(a => a.name)],
+    [t('images.share.tags'), ...data.topTags.map(a => a.tag)]
   ]
 
   const BOXES_Y = USER_Y + USER_IMAGE_SIZE + (MARGIN * 4) + 63 + 153 + 3

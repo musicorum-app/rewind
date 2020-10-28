@@ -8,6 +8,7 @@ import ParallaxWrapper from "../components/ParallaxWrapper";
 import {THEME_COLOR} from "../Constants";
 import chroma from "chroma-js";
 import {useMediaQuery} from "@material-ui/core";
+import {Trans, useTranslation} from "react-i18next";
 
 gsap.registerPlugin(CustomEase)
 
@@ -197,6 +198,7 @@ const Mainstream: React.FC<{
   onEnd?: () => void;
 }> = forwardRef(({data, onEnd}, ref) => {
 
+  const {t} = useTranslation()
   const [show, setShow] = useState(false)
   const [ordered, setOrdered] = useState<SpotifyArtistBase[]>([])
   const small = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
@@ -312,7 +314,15 @@ const Mainstream: React.FC<{
                 </ArtistName>
                 <ArtistImage src={ordered[0].image}/>
                 <SmallContentBottomText>
-                  was your most popular artist, with <b>{ordered[0].popularity}%</b> popularity
+                  <Trans
+                    i18nKey='sections.mainstream.popular'
+                    components={[
+                      <b/>
+                    ]}
+                    values={{
+                      popularity: ordered[0].popularity
+                    }}
+                  />
                 </SmallContentBottomText>
               </ArtistSide>
 
@@ -326,7 +336,7 @@ const Mainstream: React.FC<{
                   <ProgressBarInside percent={average}/>
                 </ProgressBar>
                 <span id="mainstreamSectionSubtext">
-                  is how much mainstream you were *
+                  {t('sections.mainstream.text')}
                 </span>
               </MainstreamPercent>
 
@@ -338,7 +348,15 @@ const Mainstream: React.FC<{
                 </ArtistName>
                 <ArtistImage src={last.image}/>
                 <SmallContentBottomText>
-                  was your least popular artist, with <b>{last.popularity}%</b> popularity
+                  <Trans
+                  i18nKey='sections.mainstream.least'
+                  components={[
+                    <b/>
+                  ]}
+                  values={{
+                    popularity: last.popularity
+                  }}
+                />
                 </SmallContentBottomText>
               </ArtistSide>
             </SmallContentWrapper>
@@ -352,7 +370,15 @@ const Mainstream: React.FC<{
                   }
                 </ArtistName>
                 <ArtistImage src={ordered[0].image}/>
-                was your most popular artist, with <b>{ordered[0].popularity}%</b> popularity
+                <Trans
+                  i18nKey='sections.mainstream.popular'
+                  components={[
+                    <b/>
+                  ]}
+                  values={{
+                    popularity: ordered[0].popularity
+                  }}
+                />
               </ArtistSide>
             </LeftSideArtist>,
 
@@ -366,7 +392,7 @@ const Mainstream: React.FC<{
                 <ProgressBarInside percent={average}/>
               </ProgressBar>
               <span id="mainstreamSectionSubtext">
-                is how much mainstream you were *
+                 {t('sections.mainstream.text')}
               </span>
             </MainstreamPercent>,
 
@@ -378,14 +404,22 @@ const Mainstream: React.FC<{
                   }
                 </ArtistName>
                 <ArtistImage src={last.image}/>
-                was your least popular artist, with <b>{last.popularity}%</b> popularity
+                <Trans
+                  i18nKey='sections.mainstream.least'
+                  components={[
+                    <b/>
+                  ]}
+                  values={{
+                    popularity: last.popularity
+                  }}
+                />
               </ArtistSide>
             </RightSideArtist>
           ]
         }
 
         <Notice id="mainstreamSectionNotice">
-          * Based on an average of your top 100 artists' popularity from Spotify
+          {t('sections.mainstream.notice')}
         </Notice>
       </ParallaxWrapper>
     </Content>

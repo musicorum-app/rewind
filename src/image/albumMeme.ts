@@ -4,8 +4,9 @@ import {
   exportCanvasToBlob, handleAlbumImage,
   loadImage, roundedCanvas
 } from "../utils";
+import {TFunction} from "i18next";
 
-export default async function generateAlbumMeme(data: RewindData, compressed = false): Promise<string> {
+export default async function generateAlbumMeme(t: TFunction, data: RewindData, compressed = false): Promise<string> {
   const WIDTH = 1000
   const HEIGHT = 660
   const canvas = document.createElement('canvas')
@@ -56,7 +57,7 @@ export default async function generateAlbumMeme(data: RewindData, compressed = f
   ctx.shadowOffsetX = .5
   ctx.shadowOffsetY = .5
 
-  const textParams: [string, number, number, number] = ['i love this album more than i love my life', WIDTH / 2, HEIGHT - 30, WIDTH * .9]
+  const textParams: [string, number, number, number] = [t('images.albumMeme.text'), WIDTH / 2, HEIGHT - 30, WIDTH * .9]
   ctx.strokeText(...textParams)
   ctx.fillText(...textParams)
 

@@ -8,8 +8,9 @@ import {
   roundedCanvas,
   writeText
 } from "../utils";
+import {TFunction} from "i18next";
 
-export default async function generateNormalShare(data: RewindData, compressed = false): Promise<string> {
+export default async function generateNormalShare(t: TFunction, data: RewindData, compressed = false): Promise<string> {
   const SIZE = 800
   const canvas = document.createElement('canvas')
   canvas.width = SIZE
@@ -104,8 +105,8 @@ export default async function generateNormalShare(data: RewindData, compressed =
 
   const SUBTEXT_GAP = 60
 
-  writeText(ctx, 'scrobbles', BOX_WIDTH, MARGIN + BOX_HALF, USER_Y + USER_IMAGE_SIZE + MARGIN + SUBTEXT_GAP)
-  writeText(ctx, 'top tag', BOX_WIDTH, SIZE - MARGIN - BOX_HALF, USER_Y + USER_IMAGE_SIZE + MARGIN + SUBTEXT_GAP)
+  writeText(ctx, t('images.share.scrobbles'), BOX_WIDTH, MARGIN + BOX_HALF, USER_Y + USER_IMAGE_SIZE + MARGIN + SUBTEXT_GAP)
+  writeText(ctx, t('images.share.topTag'), BOX_WIDTH, SIZE - MARGIN - BOX_HALF, USER_Y + USER_IMAGE_SIZE + MARGIN + SUBTEXT_GAP)
 
   await loadFont('700 28px Montserrat')
   ctx.font = '700 28px Montserrat'
@@ -114,8 +115,8 @@ export default async function generateNormalShare(data: RewindData, compressed =
 
   const LIST_Y = USER_Y + USER_IMAGE_SIZE + (MARGIN * 2) + SUBTEXT_GAP + 28
 
-  writeText(ctx, 'most listened artists', BOX_WIDTH - MARGIN, MARGIN, LIST_Y)
-  writeText(ctx, 'most listened tracks', BOX_WIDTH - MARGIN, MARGIN + BOX_WIDTH, LIST_Y)
+  writeText(ctx, t('images.share.artists'), BOX_WIDTH - MARGIN, MARGIN, LIST_Y)
+  writeText(ctx, t('images.share.tracks'), BOX_WIDTH - MARGIN, MARGIN + BOX_WIDTH, LIST_Y)
 
   await loadFont('500 23px Montserrat')
   ctx.font = '500 23px Montserrat'

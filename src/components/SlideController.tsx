@@ -121,7 +121,7 @@ const SlideController: React.FC<{
     <Controller>
       <Navigation onClick={onClickBack}/>
       <NavigationText>
-        {(stage || 0) + 1} / 9
+        {(stage || 0) + 1} / 14
       </NavigationText>
       <NavigationDown onClick={showBottomIcon ? onClick : () => {
       }}/>

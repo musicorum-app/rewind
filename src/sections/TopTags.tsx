@@ -9,6 +9,7 @@ import Header from "../components/Header";
 import chroma from 'chroma-js'
 import {THEME_COLOR} from "../Constants";
 import {useMediaQuery} from "@material-ui/core";
+import {useTranslation} from "react-i18next";
 
 gsap.registerPlugin(CustomEase)
 
@@ -195,6 +196,7 @@ const TopTags: React.FC<{
   onEnd?: () => void;
 }> = forwardRef(({onEnd, data}, ref) => {
 
+  const {t} = useTranslation()
   const [show, setShow] = useState(false)
   const [randomTags, setRandomTags] = useState<TopTag[]>([])
   const small = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
@@ -330,8 +332,8 @@ const TopTags: React.FC<{
     <TopTagsSection id="topTagsSection">
       <ParallaxWrapper>
         <div id="topTagsSectionHeader">
-          <Header title="TOP TAGS">
-            These are your most listened tags, A.K.A. genres
+          <Header title={t('sections.tags.title')}>
+            {t('sections.tags.subTitle')}
           </Header>
         </div>
         <AnimationWrapperLeft>
@@ -413,7 +415,7 @@ const TopTags: React.FC<{
           }
         </TopTagsContent>
         <Notice className="topTagsNotice">
-          This chart is based on your top 100 tracks, and then isolating the first 6.
+          {t('sections.tags.notice')}
         </Notice>
       </ParallaxWrapper>
     </TopTagsSection>

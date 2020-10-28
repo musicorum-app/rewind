@@ -27,7 +27,8 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import Link from "@material-ui/core/Link";
 import {TransitionProps} from "@material-ui/core/transitions";
 import Slide from "@material-ui/core/Slide";
-import {THEME_COLOR} from "../Constants";
+import {FORM_URL, THEME_COLOR} from "../Constants";
+import {useTranslation} from "react-i18next";
 
 const Transition = React.forwardRef((
   props: TransitionProps & { children?: React.ReactElement<any, any> },
@@ -108,6 +109,7 @@ const EndingSection: React.FC<{
   onEnd?: () => void;
 }> = forwardRef(({data, onEnd}, ref) => {
 
+  const {t} = useTranslation()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [show, setShow] = useState(false)
 
@@ -190,7 +192,7 @@ const EndingSection: React.FC<{
 
   const tweet = () => {
     const params = {
-      text: 'Come take a look at your year in music from lastfm, by @musicorumapp',
+      text: t('sections.ending.tweet', { user: 'musicorumapp' }),
       url: 'https://rewind.musc.pw',
       hashtags: 'MusicorumRewind'
     }
@@ -219,28 +221,23 @@ const EndingSection: React.FC<{
           }}>
             <Grid item id="endingSectionText">
               <Typography variant="h3" align="center" style={{fontSize: small ? 30 : 40}}>
-                <b>The end!</b>
+                <b>
+                  {t('sections.ending.title')}
+                </b>
               </Typography>
              <Box fontSize={small ? 13 : 16}>
                <Typography align="center" style={{fontSize: 'inherit'}}>
-                 Well, and that was your year on music! We hope you liked this new experience.
+                 {t('sections.ending.text1')}
                </Typography>
                <br/>
                <Typography align="center" style={{fontSize: 'inherit'}}>
-                 {/*The Musicorum Rewind is a open source and free project, made by one person, and if you liked this*/}
-                 {/*project and*/}
-                 {/*you want to see more of it in the future, please consider becoming a patron at our Patreon, or, if you*/}
-                 {/*can't,*/}
-                 {/*help us by sharing and giving feedback :)*/}
-                 This website was developed by one person with no financial return. If you like this idea and want to see
-                 more in the future, please consider becoming a patron, or consider sharing it and giving us a feedback
-                 :)
+                 {t('sections.ending.text2')}
                </Typography>
              </Box>
               <br/>
               <Box mt={small ? 1 : 2} mb={small ? 1 : 7}>
                 <Typography align="center" variant="h5">
-                  We hope to see you next year! Happy 2021!
+                  {t('sections.ending.text3')}
                 </Typography>
               </Box>
 
@@ -262,7 +259,7 @@ const EndingSection: React.FC<{
                           target: '_blank'
                         }}
                       >
-                        Patreon
+                        {t('sections.ending.patreon')}
                       </BigColoredButton>
                     </Grid>
 
@@ -276,7 +273,7 @@ const EndingSection: React.FC<{
                         style={{
                           fontSize: small ? 14 : 18,
                         }}>
-                        Tweet
+                        {t('sections.ending.tweetButton')}
                       </BigColoredButton>
                     </Grid>
                   </Grid>
@@ -323,13 +320,12 @@ const EndingSection: React.FC<{
                   <Grid container spacing={2} justify="center">
                     <Grid item className="endingSectionIcon">
                       <RoundedButton outlined color="primary" onClick={() => setDialogOpen(true)}>
-                        Credits
+                        {t('sections.ending.credits')}
                       </RoundedButton>
                     </Grid>
                     <Grid item className="endingSectionIcon">
-                      <RoundedButton outlined color="primary" onClick={() => {
-                      }}>
-                        Feedback
+                      <RoundedButton outlined color="primary" href={FORM_URL}>
+                        {t('sections.ending.feedback')}
                       </RoundedButton>
                     </Grid>
                   </Grid>
@@ -351,33 +347,33 @@ const EndingSection: React.FC<{
       }}
       onClose={() => setDialogOpen(false)}
     >
-      <DialogTitle>Credits</DialogTitle>
+      <DialogTitle>{t('sections.ending.credits')}</DialogTitle>
       <DialogContent>
         <DialogContentText>
           <Grid container justify="center">
             <Typography align="center" variant="subtitle2">
-              Here are some credits to all the people who helped to build Musicorum Rewind 2020
+              {t('sections.ending.creditsText')}
             </Typography>
             <Box mt={2}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  <CreditName>Design & Development</CreditName>
+                  <CreditName>{t('sections.ending.creditsNames.designDev')}</CreditName>
                   <CreditTitle>Matheus Dias</CreditTitle>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <CreditName>Album meme artist</CreditName>
+                  <CreditName>{t('sections.ending.creditsNames.artist')}</CreditName>
                   <CreditTitle>Luana Barros</CreditTitle>
                 </Grid>
                 <Grid item xs={12}>
-                  <CreditName>Patrons <HeartIcon /></CreditName>
+                  <CreditName>{t('sections.ending.creditsNames.patrons')} <HeartIcon /></CreditName>
                   <CreditTitle>Micael Guerriero</CreditTitle>
                 </Grid>
                 <Grid item xs={12}>
-                  <CreditName>Special Thanks</CreditName>
+                  <CreditName>{t('sections.ending.creditsNames.special')}</CreditName>
                   <CreditTitle>Pedro Fracassi and Raphael Sousa Lima</CreditTitle>
                 </Grid>
                 <Grid item xs={12}>
-                  <CreditName>Beta testers</CreditName>
+                  <CreditName>{t('sections.ending.creditsNames.betaTesters')}</CreditName>
                   <CreditTitle><em>Soon™</em></CreditTitle>
                 </Grid>
               </Grid>

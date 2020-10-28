@@ -10,6 +10,7 @@ import {Emphasized, Title} from '../common'
 import ParallaxWrapper from "../components/ParallaxWrapper";
 import {useMediaQuery} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
+import {Trans, useTranslation} from "react-i18next";
 
 gsap.registerPlugin(CustomEase)
 
@@ -90,6 +91,7 @@ const BeginningSection: React.FC<{
   onEnd?: () => void;
 }> = forwardRef(({data, onEnd}, ref) => {
 
+  const {t} = useTranslation()
   const smol = useMediaQuery(`(max-width: ${mediaQueryBreak}px)`)
 
   const start = () => {
@@ -141,7 +143,13 @@ const BeginningSection: React.FC<{
     animateEnd
   }))
 
-  const date = new Date(data.firstTrack.listenedAt).toLocaleDateString()
+  const date = new Date(data.firstTrack.listenedAt).toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
 
   return <Section>
     <Content id="beginningContent">
@@ -149,32 +157,55 @@ const BeginningSection: React.FC<{
         <div style={{
           transform: 'translateZ(40px)'
         }}>
-          <Header title="THE BEGINNING" notAbsolute={smol}>
-            This was your first scrobble of <strong>2020</strong>
+          <Header title={t('sections.beginning.title')} notAbsolute={smol}>
+            <Trans
+              i18nKey='sections.beginning.subTitle'
+              components={[
+                <strong key={0} />
+              ]}
+            />
           </Header>
         </div>
         {
           smol ? [
-            <Grid container direction="column" style={{ transformStyle: 'preserve-3d', transform: 'translateZ(-100px)' }}>
+            <Grid container direction="column" style={{transformStyle: 'preserve-3d', transform: 'translateZ(-100px)'}}>
               <Grid item xs={12} style={{width: '100%', transformStyle: 'preserve-3d'}}>
                 <WidthCenter>
                   <TrackCover src={handleTrackImage(data.firstTrack.image)}/>
                 </WidthCenter>
               </Grid>
-              <Grid item xs={12} style={{ transformStyle: 'preserve-3d' }}>
+              <Grid item xs={12} style={{transformStyle: 'preserve-3d'}}>
                 <TrackDataSmall>
-                  <Title>{data.firstTrack.name}</Title>
-                  by <Emphasized>{data.firstTrack.artist}</Emphasized>,
-                  listened at <Emphasized>{date}</Emphasized>
+                  <Trans
+                    i18nKey='sections.beginning.text'
+                    components={[
+                      <Title key={0} />,
+                      <Emphasized key={1} />
+                    ]}
+                    values={{
+                      name: data.firstTrack.name,
+                      artist: data.firstTrack.artist,
+                      date
+                    }}
+                  />
                 </TrackDataSmall>
               </Grid>
             </Grid>
           ] : <TrackWrapper>
             <TrackData>
               <div>
-                <Title>{data.firstTrack.name}</Title>
-                by <Emphasized>{data.firstTrack.artist}</Emphasized>,
-                listened at <Emphasized>{date}</Emphasized>
+                <Trans
+                  i18nKey='sections.beginning.text'
+                  components={[
+                    <Title key={0} />,
+                    <Emphasized key={1} />
+                  ]}
+                  values={{
+                    name: data.firstTrack.name,
+                    artist: data.firstTrack.artist,
+                    date
+                  }}
+                />
               </div>
             </TrackData>
             <TrackCoverWraper>
