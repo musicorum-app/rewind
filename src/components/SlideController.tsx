@@ -133,6 +133,7 @@ const SlideController: React.FC<{
     }
 
     <ConfigDialog
+      showGyro
       open={dialogOpen}
       onClose={() => setDialogOpen(false)}
       useSensor={useSensor}
