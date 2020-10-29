@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {TweenMax, TimelineMax, Power3, Sine} from 'gsap'
 import './App.css';
 import Button from '@material-ui/core/Button/Button';
@@ -8,7 +8,7 @@ import StartGraphic from './assets/start.svg'
 import Box from "@material-ui/core/Box";
 import API from "./api";
 import {RewindData, UserProfile} from "./api/interfaces";
-import {DEFAULT_AVATAR, VERSION} from "./Constants";
+import {DEFAULT_AVATAR, IS_PREVIEW} from "./Constants";
 import Typography from "@material-ui/core/Typography";
 import moment from 'moment'
 import LoadingStage from "./stages/loading";
@@ -21,6 +21,12 @@ import OrientationSensorContext from './context/orientationSensor'
 import {Trans, useTranslation} from "react-i18next";
 import {ConfigIconButton} from "./components/SlideController";
 import ConfigDialog from "./components/ConfigDialog";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import Link from "@material-ui/core/Link";
+import DialogActions from "@material-ui/core/DialogActions";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   mainBtn: {
@@ -48,13 +54,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }))
 
 function App() {
-  const { t, i18n } = useTranslation()
+  const {t} = useTranslation()
 
   const styles = useStyles()
-  const [formAnimation, setFormAnimation] = useState(false)
+  const [, setFormAnimation] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [stage, setStage] = useState<number>(0)
-  const [user, setUser] = useState('metye')
+  const [, setStage] = useState<number>(0)
+  const [user, setUser] = useState('')
   const [userData, setUserData] = useState<UserProfile | null>(null)
   const [showStage0, setShowStage0] = useState(true)
   const [showStage1, setShowStage1] = useState(false)
@@ -65,10 +71,11 @@ function App() {
   const [showGyroscopePrompt, setShowGyroscopePrompt] = useState(false)
   const [useSensor, setUseSensor] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [showBeta, setShowBeta] = useState(IS_PREVIEW)
 
+  const loadingRef = useRef(null)
   const smallHeight = useMediaQuery('(max-height:700px)');
   const smallWidth = useMediaQuery('(max-width:580px)');
-  const loadingRef = useRef(null)
 
   // Animation refs
   const mainImageRef = useRef(null)
@@ -109,9 +116,14 @@ function App() {
     //   setShowStage1(true)
     //   document.documentElement.style.position = 'fixed'
     // } catch (e) {
-    doAnimation()
+    if (!IS_PREVIEW) doAnimation()
     // }
   }, [])
+
+  const closeDialog = () => {
+    setShowBeta(false)
+    doAnimation()
+  }
 
   const doAnimation = () => {
     TweenMax.fromTo([mainTextRef, mainSubTextRef, mainButtonRef].map(r => r.current), 2.8, {
@@ -243,7 +255,7 @@ function App() {
 
     {
       !showStage1 && !showGyroscopePrompt
-        ? <ConfigIconButton onClick={() => setDialogOpen(true)} />
+        ? <ConfigIconButton onClick={() => setDialogOpen(true)}/>
         : null
     }
 
@@ -274,7 +286,7 @@ function App() {
               <img style={{
                 maxWidth: smallHeight ? '40%' : '70%'
               }}
-                   onClick={() => i18n.changeLanguage('pt')}
+                   alt="Musicorum Rewind"
                    src={StartGraphic}
                    className={styles.startGraphic}
                    ref={mainImageRef}
@@ -286,7 +298,7 @@ function App() {
                       <Trans
                         i18nKey="main.splash.title"
                         components={[
-                          <Box component="span" color="primary.main" key={0} />
+                          <Box component="span" color="primary.main" key={0}/>
                         ]}
                       />
                     </Box>
@@ -329,7 +341,7 @@ function App() {
                                 </Box>
                               </Typography>
                               <Typography>
-                                {t('main.user.scrobbling', { date: moment(userData.registered["#text"] * 1000).format('MMMM Do YYYY')})}
+                                {t('main.user.scrobbling', {date: moment(userData.registered["#text"] * 1000).format('MMMM Do YYYY')})}
                               </Typography>
                             </Grid>
                             <Grid item xs={12} sm={6} xl={4}>
@@ -450,6 +462,49 @@ function App() {
       onClose={() => setDialogOpen(false)}
       showGyro={false}
     />
+
+    <Dialog
+      open={showBeta}
+      fullWidth
+      maxWidth="sm"
+      style={{
+        minHeight: 300
+      }}
+      onClose={closeDialog}
+    >
+      <DialogTitle>Beta Testing</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Hi! Welcome to the Musicorum Rewind 2020 Beta testing! Please keep in mind that:
+          <Typography>
+            - Do not share the link nor the content from this website with other people.
+          </Typography>
+          <Typography>
+            - The sharing images will have a preview watermark to prevent outside sharing.
+          </Typography>
+          <Typography>
+            - The playlist saving for Spotify and Deezer and the Tweet button won't work because of the previous
+            reasons.
+          </Typography>
+          <Typography>
+            - Don't forget to give a feedback on the <Link
+            href="https://forms.gle/nPqAzonPYHDhJcXU8"
+            target="_blank"
+            rel="nofollow"
+          >beta testing feedback form</Link>. You can also access it at the end with the "Feedback" button!
+          </Typography>
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={closeDialog}
+          color="primary"
+          variant="contained"
+          disableElevation
+
+        >OK</Button>
+      </DialogActions>
+    </Dialog>
 
   </div>
 }

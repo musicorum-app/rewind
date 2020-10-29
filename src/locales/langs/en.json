@@ -162,5 +162,9 @@
     "albumMeme": {
       "text": "i love this album more than i love my life"
     }
+  },
+  "errors": {
+    "title": "Whoops!",
+    "tooNew": "Your account is too new. Keep scrobbling more and come back next year!"
   }
 }

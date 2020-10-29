@@ -1,7 +1,7 @@
 import React, {forwardRef, useImperativeHandle, useState} from 'react';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {createStyles, Theme} from "@material-ui/core";
-import {RewindData, UserProfile} from "../api/interfaces";
+import {Nullable, RewindData, UserProfile} from "../api/interfaces";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -14,7 +14,6 @@ import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import RoundedButton from "../RoundedButton";
 import {VERSION} from "../Constants";
-import {hasOrientationSensor} from "../utils";
 import {Trans, useTranslation} from "react-i18next";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -45,6 +44,7 @@ const LoadingStage: React.FC<{
   const [progressText, setProgressText] = useState('Loading...')
   const [rewindData, setRewindData] = useState<RewindData | null>(null)
   const [cacheData, setCacheData] = useState<RewindCache | null>(null)
+  const [error, setError] = useState<Nullable<string>>(null)
 
   const load = async () => {
 
@@ -64,19 +64,28 @@ const LoadingStage: React.FC<{
     }
   }
 
+  const showError = (message: string) => {
+    setError(message)
+  }
+
   const fetchData = async () => {
-    const data = await dataFetcher(t, user, (pgr, text) => {
-      setProgress(prevState => pgr ? pgr : prevState)
-      setProgressText(text)
-    })
-    console.log(data);
-    setRewindData(data)
-    localStorage.setItem('cache', JSON.stringify({
-      cachedAt: new Date().getTime(),
-      data,
-      _v: VERSION
-    }))
-    onComplete(data)
+    try {
+      const data = await dataFetcher(t, user, (pgr, text) => {
+        setProgress(prevState => pgr ? pgr : prevState)
+        setProgressText(text)
+      }, showError)
+      console.log(data);
+      setRewindData(data)
+      localStorage.setItem('cache', JSON.stringify({
+        cachedAt: new Date().getTime(),
+        data,
+        _v: VERSION
+      }))
+      onComplete(data)
+    } catch (e) {
+      console.error(e)
+      showError(e)
+    }
   }
 
   // @ts-ignore
@@ -103,58 +112,69 @@ const LoadingStage: React.FC<{
       <Box mx={3}>
         <Container maxWidth="sm">
           {
-            cacheData ? <>
+            error
+              ? <>
                 <Typography component="h5" variant="h5">
-                  <Box fontWeight={600}>{t('loading.title')}</Box>
+                  <Box fontWeight={600}>{t('errors.title')}</Box>
                 </Typography>
                 <br/>
                 <Typography>
-                  <Trans
-                    i18nKey="loading.text"
-                    components={[
-                      <strong key={0}/>
-                    ]}
-                    values={{
-                      date: getFormatted(cacheData.cachedAt)
-                    }}
-                  />
+                  {error}
                 </Typography>
-                <ListItem>
-                  <ListItemAvatar>
-                    <Avatar style={{
-                      width: 50,
-                      height: 50
-                    }} src={cacheData.data.user.image[3]["#text"]}/>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={<Box component="span" color="primary.main">
-                      {cacheData.data.user.realname}
-                    </Box>}
-                    secondary={'@' + cacheData.data.user.name}
-                  />
-                </ListItem>
-                <Box my={2}>
-                  <RoundedButton onClick={complete} fullWidth color="primary">
-                    {t('loading.continue')}
-                  </RoundedButton>
-                  <Box mt={1}>
-                    <RoundedButton onClick={fetchAgain} outlined fullWidth color="primary">
-                      {t('loading.fetchAgain')}
+              </>
+              :
+              cacheData ? <>
+                  <Typography component="h5" variant="h5">
+                    <Box fontWeight={600}>{t('loading.title')}</Box>
+                  </Typography>
+                  <br/>
+                  <Typography>
+                    <Trans
+                      i18nKey="loading.text"
+                      components={[
+                        <strong key={0}/>
+                      ]}
+                      values={{
+                        date: getFormatted(cacheData.cachedAt)
+                      }}
+                    />
+                  </Typography>
+                  <ListItem>
+                    <ListItemAvatar>
+                      <Avatar style={{
+                        width: 50,
+                        height: 50
+                      }} src={cacheData.data.user.image[3]["#text"]}/>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={<Box component="span" color="primary.main">
+                        {cacheData.data.user.realname}
+                      </Box>}
+                      secondary={'@' + cacheData.data.user.name}
+                    />
+                  </ListItem>
+                  <Box my={2}>
+                    <RoundedButton onClick={complete} fullWidth color="primary">
+                      {t('loading.continue')}
                     </RoundedButton>
+                    <Box mt={1}>
+                      <RoundedButton onClick={fetchAgain} outlined fullWidth color="primary">
+                        {t('loading.fetchAgain')}
+                      </RoundedButton>
+                    </Box>
                   </Box>
-                </Box>
-              </>
-              : <>
-                <Typography component="h4" variant="h4">
-                  <Box fontWeight={700}>{t('loading.loading')}</Box>
-                </Typography>
-                <br/>
-                <Typography>{t('loading.loadingSubText')}</Typography>
-                <Box mt={5}>
-                  <Typography color="textSecondary">{progressText}</Typography>
-                  <LinearProgress variant="determinate" value={progress}/>
-                </Box>
-              </>
+                </>
+                : <>
+                  <Typography component="h4" variant="h4">
+                    <Box fontWeight={700}>{t('loading.loading')}</Box>
+                  </Typography>
+                  <br/>
+                  <Typography>{t('loading.loadingSubText')}</Typography>
+                  <Box mt={5}>
+                    <Typography color="textSecondary">{progressText}</Typography>
+                    <LinearProgress variant="determinate" value={progress}/>
+                  </Box>
+                </>
           }
         </Container>
       </Box>

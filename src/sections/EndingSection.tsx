@@ -1,13 +1,12 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import Section from "../components/Section";
-import {Nullable, RewindData} from "../api/interfaces";
+import { RewindData} from "../api/interfaces";
 import styled from "styled-components";
 import {gsap, TimelineMax} from 'gsap';
 import CustomEase from 'gsap/CustomEase'
 import RoundedButton from "../RoundedButton";
 import {Typography, useMediaQuery} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import {generateNormalShare, generateStoriesShare} from "../image";
 import Box from "@material-ui/core/Box";
 import BigColoredButton from "../components/BigColoredButton";
 
@@ -24,10 +23,9 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import Link from "@material-ui/core/Link";
 import {TransitionProps} from "@material-ui/core/transitions";
 import Slide from "@material-ui/core/Slide";
-import {FORM_URL, THEME_COLOR} from "../Constants";
+import {FORM_URL, IS_PREVIEW, THEME_COLOR} from "../Constants";
 import {useTranslation} from "react-i18next";
 
 const Transition = React.forwardRef((
@@ -178,6 +176,7 @@ const EndingSection: React.FC<{
           duration: 0,
           onComplete: () => {
             resolve()
+            setShow(false)
           }
         })
 
@@ -191,6 +190,8 @@ const EndingSection: React.FC<{
   }
 
   const tweet = () => {
+    if (IS_PREVIEW)
+      return alert('Funtion disabled on Beta Testing!')
     const params = {
       text: t('sections.ending.tweet', { user: 'musicorumapp' }),
       url: 'https://rewind.musc.pw',

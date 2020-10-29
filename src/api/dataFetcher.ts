@@ -33,151 +33,161 @@ const endTime = (new Date(year + 1, 0, 0, 0, 0).getTime() / 1000) + offset
 const dataFetcher = async (
   t: TFunction,
   userData: UserProfile,
-  onProgress: (pgr: number | null, txt: string) => void
+  onProgress: (pgr: number | null, txt: string) => void,
+  showError: (msg: string) => void
 ): Promise<RewindData> => {
+  return new Promise(async (resolve, reject) => {
 
-  const functions: [Function, string, number?][] = [
-    [
-      () =>
-        API.userGetRecentTracks(userData.name, startTime, endTime, 1),
-      t('loading.texts.0')
-    ],
-    [
-      (r: any[]) =>
-        API.userGetRecentTracks(userData.name, startTime, endTime, 1, r[0]['@attr']['totalPages']),
-      t('loading.texts.1')
-    ],
-    [
-      (r: any[], pgr: Function) => fetchArtists(userData.name, r, pgr),
-      t('loading.texts.2')
-    ],
-    [
-      (r: any[], pgr: Function) => fetchAlbums(userData.name, r, pgr),
-      t('loading.texts.3')
-    ],
-    [
-      () => console.log('DEPRECATED'),
-      t('loading.texts.4')
-    ],
-    [
-      () =>
-        API.userGetArtistChart(userData.name, startTime, endTime, 100),
-      t('loading.texts.5')
-    ],
-    [
-      () =>
-        API.userGetAlbumChart(userData.name, startTime, endTime, 50),
-      t('loading.texts.6')
-    ],
-    [
-      () =>
-        API.userGetTrackChart(userData.name, startTime, endTime, 150),
-      t('loading.texts.7')
-    ],
-    [
-      () =>
-        fetchFavorites(userData.name),
-      t('loading.texts.8')
-    ],
-    [
-      (r: any[], pgr: Function) =>
-        fetchTrackInfos(userData.name, r, pgr),
-      t('loading.texts.9'),
-      101
+    const maxTime = (new Date(year, 7, 0, 0, 0).getTime() / 1000) + offset
+
+    if (parseInt(userData.registered.unixtime) > maxTime) {
+      showError(t('errors.tooNew'))
+      reject(t('errors.tooNew'))
+    }
+
+    const functions: [Function, string, number?][] = [
+      [
+        () =>
+          API.userGetRecentTracks(userData.name, startTime, endTime, 1),
+        t('loading.texts.0')
+      ],
+      [
+        (r: any[]) =>
+          API.userGetRecentTracks(userData.name, startTime, endTime, 1, r[0]['@attr']['totalPages']),
+        t('loading.texts.1')
+      ],
+      [
+        (r: any[], pgr: Function) => fetchArtists(userData.name, r, pgr),
+        t('loading.texts.2')
+      ],
+      [
+        (r: any[], pgr: Function) => fetchAlbums(userData.name, r, pgr),
+        t('loading.texts.3')
+      ],
+      [
+        () => console.log('DEPRECATED'),
+        t('loading.texts.4')
+      ],
+      [
+        () =>
+          API.userGetArtistChart(userData.name, startTime, endTime, 100),
+        t('loading.texts.5')
+      ],
+      [
+        () =>
+          API.userGetAlbumChart(userData.name, startTime, endTime, 50),
+        t('loading.texts.6')
+      ],
+      [
+        () =>
+          API.userGetTrackChart(userData.name, startTime, endTime, 150),
+        t('loading.texts.7')
+      ],
+      [
+        () =>
+          fetchFavorites(userData.name),
+        t('loading.texts.8')
+      ],
+      [
+        (r: any[], pgr: Function) =>
+          fetchTrackInfos(userData.name, r, pgr),
+        t('loading.texts.9'),
+        101
+      ]
     ]
-  ]
 
-  const result: any[] = []
+    const result: any[] = []
 
-  const MAX = functions.map(f => f[2] || 1).reduce((a, b) => a + b, 0)
-  const normalise = (value: number) => value * 100 / MAX
+    const MAX = functions.map(f => f[2] || 1).reduce((a, b) => a + b, 0)
+    const normalise = (value: number) => value * 100 / MAX
 
-  let fi = 0
+    let fi = 0
 
-  function progressStep(text: string) {
-    fi++
-    onProgress(normalise(fi), text)
-  }
+    function progressStep(text: string) {
+      fi++
+      onProgress(normalise(fi), text)
+    }
 
-  for (let i = 0; i < functions.length; i++) {
-    const f = functions[i]
-    const nextStep = () => progressStep(f[1])
-    nextStep()
-    result.push(await f[0](result, nextStep))
-  }
+    for (let i = 0; i < functions.length; i++) {
+      const f = functions[i]
+      const nextStep = () => progressStep(f[1])
+      nextStep()
+      result.push(await f[0](result, nextStep))
+    }
 
-  onProgress(null, t('loading.texts.10'))
+    onProgress(null, t('loading.texts.10'))
 
-  const toFetch = new Map<string, SpotifyArtistBase>()
+    const toFetch = new Map<string, SpotifyArtistBase>()
 
-  addToMap(result[5].artist.slice(0, 100).map((a: ArtistBase) => a.name), toFetch)
-  // addMonthsArtistsToMap(result[4], toFetch)
-  await fetchArtistsFromAPI(toFetch)
-  console.log(toFetch)
+    addToMap(result[5].artist.slice(0, 100).map((a: ArtistBase) => a.name), toFetch)
+    // addMonthsArtistsToMap(result[4], toFetch)
+    await fetchArtistsFromAPI(toFetch)
+    console.log(toFetch)
 
-  const topArtists: FormattedArtist[] = result[5].artist.map((a: WeeklyArtist) => ({
-    ...a,
-    spotify: toFetch.get(a.name)
-  }))
+    const topArtists: FormattedArtist[] = result[5].artist.map((a: WeeklyArtist) => ({
+      ...a,
+      spotify: toFetch.get(a.name)
+    }))
 
-  const spotifyArtists: SpotifyArtistBase[] = []
-  toFetch.forEach(a => spotifyArtists.push(a))
+    const spotifyArtists: SpotifyArtistBase[] = []
+    toFetch.forEach(a => spotifyArtists.push(a))
 
-  const artists = groupArtists(result[2])
-  const albums = groupAlbums(result[3])
-  const firstTrack: ListenedTrack = result[1].track[1] || result[1].track[0]
-  const topTracks = await formatTracks(result[9], result[7].track)
-  console.log(firstTrack)
-  const scrobbles = Number(result[0]['@attr']['total'])
+    const artists = groupArtists(result[2])
+    const albums = groupAlbums(result[3])
+    const firstTrack: ListenedTrack = result[1].track[1] || result[1].track[0]
+    const topTracks = await formatTracks(result[9], result[7].track)
+    console.log(firstTrack)
+    const scrobbles = Number(result[0]['@attr']['total'])
 
 
-  const tempData: RewindData = {
-    user: userData,
-    firstTrack: {
-      name: firstTrack.name,
-      url: firstTrack.url,
-      artist: firstTrack.artist['#text'],
-      album: firstTrack.album['#text'],
-      image: firstTrack.image[3]['#text'],
-      listenedAt: new Date(parseInt(firstTrack.date.uts) * 1000),
-      tags: []
-    },
-    lovedTracks: result[8].map((t: LovedTrack) => formatLovedTrack(t)),
-    stats: {
-      scrobbles: scrobbles,
-      playTime: 2,
-      albums: albums.length,
-      artists: artists.length
-    },
-    topAlbums: await formatAlbums(result[6].album),
-    topArtists: topArtists,
-    topTracks,
-    // months: mergeSpotifyToMonths(result[4], toFetch),
-    spotifyData: getShuffledArray(spotifyArtists)
-      .filter(a => a),
-    topTags: formatTags(topTracks)
-      .sort((a, b) => b.count - a.count)
-  }
- onProgress(null, t('loading.texts.11'))
+    const tempData: RewindData = {
+      user: userData,
+      firstTrack: {
+        name: firstTrack.name,
+        url: firstTrack.url,
+        artist: firstTrack.artist['#text'],
+        album: firstTrack.album['#text'],
+        image: firstTrack.image[3]['#text'],
+        listenedAt: new Date(parseInt(firstTrack.date.uts) * 1000),
+        tags: []
+      },
+      lovedTracks: result[8].map((t: LovedTrack) => formatLovedTrack(t)),
+      stats: {
+        scrobbles: scrobbles,
+        playTime: 2,
+        albums: albums.length,
+        artists: artists.length
+      },
+      topAlbums: await formatAlbums(result[6].album),
+      topArtists: topArtists,
+      topTracks,
+      // months: mergeSpotifyToMonths(result[4], toFetch),
+      spotifyData: getShuffledArray(spotifyArtists)
+        .filter(a => a),
+      topTags: formatTags(topTracks)
+        .sort((a, b) => b.count - a.count)
+    }
+    onProgress(null, t('loading.texts.11'))
 
-  const [
-    playlist,
-    normalShare,
-    storyShare,
-    albumMeme
-  ] = (await Promise.all([
-    generatePlaylistCover(tempData.user),
-    generateNormalShare(t, tempData, true),
-    generateStoriesShare(t, tempData, true),
-    generateAlbumMeme(t, tempData)
-  ]))
+    const [
+      playlist,
+      normalShare,
+      storyShare,
+      albumMeme
+    ] = (await Promise.all([
+      generatePlaylistCover(tempData.user),
+      generateNormalShare(t, tempData, true),
+      generateStoriesShare(t, tempData, true),
+      generateAlbumMeme(t, tempData)
+    ]))
 
-  localStorage.setItem('image.playlist', playlist)
-  localStorage.setItem('image.normalShare', normalShare)
-  localStorage.setItem('image.storyShare', storyShare)
-  localStorage.setItem('image.albumMeme', albumMeme)
+    localStorage.setItem('image.playlist', playlist)
+    localStorage.setItem('image.normalShare', normalShare)
+    localStorage.setItem('image.storyShare', storyShare)
+    localStorage.setItem('image.albumMeme', albumMeme)
 
-  return tempData
+    resolve(tempData)
+  })
 }
 
 const calculatePlayTime = (trackChart: WeeklyTrackChart, tracks: TrackInfo[], total: number): number => {

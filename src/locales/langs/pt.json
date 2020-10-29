@@ -100,8 +100,8 @@
       "notice": "Esses dados são baseados nas suas 100 músicas mais ouvidas, e então isolando-as 6."
     },
     "mainstream": {
-      "popular": "foi seu artista mais ouvido(a), com <0>{{popularity}}%</0> popularidade",
-      "least": "foi seu artista menos ouvido(a), com <0>{{popularity}}%</0> popularidade",
+      "popular": "foi seu artista mais ouvido, com <0>{{popularity}}%</0> popularidade",
+      "least": "foi seu artista menos ouvido, com <0>{{popularity}}%</0> popularidade",
       "text": "é o quão \"maria vai com as outras\" você é *",
       "notice": "* Baseado na média de popularidade dos seus 100 artistas mais ouvidos, com dados do Spotify"
     },
@@ -162,5 +162,8 @@
     "albumMeme": {
       "text": "eu amo esse álbum mais que eu amo minha vida"
     }
+  },
+  "errors": {
+    "tooNew": "Sua conta é muito nova. Continue ouvindo mais e venha ano que vem!"
   }
 }

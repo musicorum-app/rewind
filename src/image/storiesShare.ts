@@ -23,7 +23,7 @@ export default async function generateStoriesShare(t: TFunction, data: RewindDat
   ctx.fillStyle = 'black'
   ctx.fillRect(0, 0, WIDTH, HEIGHT)
 
-  if (IS_PREVIEW) ctx.filter = 'blur(5px)'
+  if (IS_PREVIEW) ctx.filter = 'blur(2px)'
 
   const HEADER_HEIGHT = 180
   ctx.fillStyle = THEME_COLOR

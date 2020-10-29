@@ -1,7 +1,6 @@
-import {Nullable, RewindData} from "../api/interfaces";
+import {RewindData} from "../api/interfaces";
 import {IS_PREVIEW, THEME_COLOR} from "../Constants";
 import {
-  exportCanvasToBlob,
   handleArtistImage,
   handleTrackImage, loadFont,
   loadImage,
@@ -22,7 +21,7 @@ export default async function generateNormalShare(t: TFunction, data: RewindData
   ctx.fillStyle = 'black'
   ctx.fillRect(0, 0, SIZE, SIZE)
 
-  if (IS_PREVIEW) ctx.filter = 'blur(4px)'
+  if (IS_PREVIEW) ctx.filter = 'blur(2px)'
 
   const HEADER_HEIGHT = 64
   ctx.fillStyle = THEME_COLOR
