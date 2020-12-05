@@ -71,7 +71,6 @@ function App() {
   const [showGyroscopePrompt, setShowGyroscopePrompt] = useState(false)
   const [useSensor, setUseSensor] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [showBeta, setShowBeta] = useState(IS_PREVIEW)
 
   const loadingRef = useRef(null)
   const smallHeight = useMediaQuery('(max-height:700px)');
@@ -116,14 +115,9 @@ function App() {
     //   setShowStage1(true)
     //   document.documentElement.style.position = 'fixed'
     // } catch (e) {
-    if (!IS_PREVIEW) doAnimation()
+    doAnimation()
     // }
   }, [])
-
-  const closeDialog = () => {
-    setShowBeta(false)
-    doAnimation()
-  }
 
   const doAnimation = () => {
     TweenMax.fromTo([mainTextRef, mainSubTextRef, mainButtonRef].map(r => r.current), 2.8, {
@@ -462,49 +456,6 @@ function App() {
       onClose={() => setDialogOpen(false)}
       showGyro={false}
     />
-
-    <Dialog
-      open={showBeta}
-      fullWidth
-      maxWidth="sm"
-      style={{
-        minHeight: 300
-      }}
-      onClose={closeDialog}
-    >
-      <DialogTitle>Beta Testing</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Hi! Welcome to the Musicorum Rewind 2020 Beta testing! Please keep in mind that:
-          <Typography>
-            - Do not share the link nor the content from this website with other people.
-          </Typography>
-          <Typography>
-            - The sharing images will have a preview watermark to prevent outside sharing.
-          </Typography>
-          <Typography>
-            - The playlist saving for Spotify and Deezer and the Tweet button won't work because of the previous
-            reasons.
-          </Typography>
-          <Typography>
-            - Don't forget to give a feedback on the <Link
-            href="https://forms.gle/nPqAzonPYHDhJcXU8"
-            target="_blank"
-            rel="nofollow"
-          >beta testing feedback form</Link>. You can also access it at the end with the "Feedback" button!
-          </Typography>
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          onClick={closeDialog}
-          color="primary"
-          variant="contained"
-          disableElevation
-
-        >OK</Button>
-      </DialogActions>
-    </Dialog>
 
   </div>
 }
