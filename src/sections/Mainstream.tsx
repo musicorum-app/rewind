@@ -209,6 +209,7 @@ const Mainstream: React.FC<{
 
   useEffect(() => {
     if (show) {
+      console.log(ordered[0], ordered[ordered.length - 1])
       const tl = new TimelineMax()
         .to('#mainstreamSection', {
           // opacity: 1,
@@ -320,7 +321,7 @@ const Mainstream: React.FC<{
                       <b/>
                     ]}
                     values={{
-                      popularity: ordered[0].popularity
+                      popularity: (ordered[0].popularity || '0')
                     }}
                   />
                 </SmallContentBottomText>
@@ -354,7 +355,7 @@ const Mainstream: React.FC<{
                     <b/>
                   ]}
                   values={{
-                    popularity: last.popularity
+                    popularity: (last.popularity || '0')
                   }}
                 />
                 </SmallContentBottomText>
@@ -376,7 +377,7 @@ const Mainstream: React.FC<{
                     <b/>
                   ]}
                   values={{
-                    popularity: ordered[0].popularity
+                    popularity: (ordered[0].popularity || '0')
                   }}
                 />
               </ArtistSide>
@@ -410,7 +411,7 @@ const Mainstream: React.FC<{
                     <b/>
                   ]}
                   values={{
-                    popularity: last.popularity
+                    popularity: (last.popularity || '0')
                   }}
                 />
               </ArtistSide>

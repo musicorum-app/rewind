@@ -368,14 +368,12 @@ const EndingSection: React.FC<{
                 <Grid item xs={12}>
                   <CreditName>{t('sections.ending.creditsNames.patrons')} <HeartIcon /></CreditName>
                   <CreditTitle>Micael Guerriero</CreditTitle>
+                  <CreditTitle>Hugo Crevel</CreditTitle>
+                  <CreditTitle>Maicon Medeiros</CreditTitle>
                 </Grid>
                 <Grid item xs={12}>
                   <CreditName>{t('sections.ending.creditsNames.special')}</CreditName>
                   <CreditTitle>Pedro Fracassi and Raphael Sousa Lima</CreditTitle>
-                </Grid>
-                <Grid item xs={12}>
-                  <CreditName>{t('sections.ending.creditsNames.betaTesters')}</CreditName>
-                  <CreditTitle><em>Soon™</em></CreditTitle>
                 </Grid>
               </Grid>
             </Box>

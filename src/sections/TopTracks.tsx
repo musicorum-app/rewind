@@ -202,6 +202,7 @@ const TopTracks: React.FC<{
   useEffect(() => {
     if (show) {
       setupScroll()
+      setCurrentTrack(0)
       const tl = new TimelineMax()
         .from('.topTracksItem', {
           scale: .7

@@ -29,7 +29,7 @@
     "continueWithout": "Continue without sensor"
   },
   "loading": {
-    "title": "We found out a past rewind.",
+    "title": "We found a past rewind.",
     "text": "You already used Musicorum Rewind at <0>{{date}}</0>",
     "continue": "Continue",
     "fetchAgain": "Clear and try again",

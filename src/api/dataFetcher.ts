@@ -38,7 +38,7 @@ const dataFetcher = async (
 ): Promise<RewindData> => {
   return new Promise(async (resolve, reject) => {
 
-    const maxTime = (new Date(year, 7, 0, 0, 0).getTime() / 1000) + offset
+    const maxTime = (new Date(year, 9, 0, 0, 0).getTime() / 1000) + offset
 
     if (parseInt(userData.registered.unixtime) > maxTime) {
       showError(t('errors.tooNew'))

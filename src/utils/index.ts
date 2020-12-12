@@ -138,6 +138,7 @@ export function roundedCanvas(image: HTMLImageElement, r: number = image.width *
 }
 
 export function writeText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, x: number, y: number) {
+  text = text || ''
   let width = ctx.measureText(text).width
   let letters = text.split('')
   let reduced = false

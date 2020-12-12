@@ -46,7 +46,7 @@
       "7": "Organizando as músicas que mais ouviu esse ano...",
       "8": "Ouvindo suas músicas favoritas...",
       "9": "Observando mais suas músicas favoritas...",
-      "10": "Cruzando dados. Isso pode demorar um pouco, por favor, seja paciente.",
+      "10": "Cruzando dados e isso pode demorar um pouco. Seja paciente.",
       "11": "Desenhando umas imagens bonitinhas..."
     }
   },
@@ -79,9 +79,9 @@
       "text": "Os artistas que você mais ouviu foram"
     },
     "albums": {
-      "title": "OS ALBUMS",
+      "title": "OS ÁLBUNS",
       "scrobbles": "scrobbles",
-      "text": "Os albums que você mais ouviu foram"
+      "text": "Os álbuns que você mais ouviu foram"
     },
     "tracks": {
       "title": "AS MÚSICAS",
@@ -100,8 +100,8 @@
       "notice": "Esses dados são baseados nas suas 100 músicas mais ouvidas, e então isolando-as 6."
     },
     "mainstream": {
-      "popular": "foi seu artista mais ouvido, com <0>{{popularity}}%</0> popularidade",
-      "least": "foi seu artista menos ouvido, com <0>{{popularity}}%</0> popularidade",
+      "popular": "foi seu artista mais famoso, com <0>{{popularity}}%</0> de popularidade",
+      "least": "foi seu artista menos famoso, com <0>{{popularity}}%</0> de popularidade",
       "text": "é o quão \"maria vai com as outras\" você é *",
       "notice": "* Baseado na média de popularidade dos seus 100 artistas mais ouvidos, com dados do Spotify"
     },
@@ -136,7 +136,7 @@
       "text2": "Este site foi desenvolvido por uma pessoa, sem retorno financeiro. Se gostou da ideia e deseja ver mais no futuro, considere apoiar-nos no Patreon, ou apenas compartilhe e nos de uma opinião sobre o projeto  :)",
       "text3": "Esperamos vê-lo novamente ano que vem! Feliz 2021!",
       "patreon": "Patreon",
-      "tweetButton": "Tweeetar",
+      "tweetButton": "Tweetar",
       "credits": "Créditos",
       "feedback": "Dar opinião",
       "tweet": "Venha ver seu ano na música do lastfm, por @{{user}}",
@@ -164,6 +164,6 @@
     }
   },
   "errors": {
-    "tooNew": "Sua conta é muito nova. Continue ouvindo mais e venha ano que vem!"
+    "tooNew": "Sua conta é muito nova. Continue ouvindo mais no Last.fm e venha ano que vem!"
   }
 }

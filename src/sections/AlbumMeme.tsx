@@ -40,6 +40,7 @@ const Middle = styled.div`
 const MemeImage = styled.img`
   border-radius: 4px;
   width: 100%;
+  max-width: 1100px;
 `
 
 const ButtonSide = styled.div`

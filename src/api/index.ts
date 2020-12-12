@@ -9,7 +9,7 @@ import {
 import {MAX_TRIES} from "../Constants";
 
 const LASTFM_API = 'https://ws.audioscrobbler.com/2.0/'
-const LASTFM_KEY = '0ae2a02cb6ec0686e560b365074020b3'
+const LASTFM_KEY = 'e9ef11d7aa5628b2c663223d4fee731f'
 
 export default class API {
   static async _request(method: string, params: Record<string, any>): Promise<Record<string, any>> {
